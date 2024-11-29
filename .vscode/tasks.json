@@ -6,7 +6,7 @@
             "command": "python -m http.server",
             "type": "shell",
             "isBackground": true,
-            "problemMatcher": ["$jshint"],
+            "problemMatcher": "$jshint",
             "options": {
                 "cwd": "${workspaceFolder}"
             }

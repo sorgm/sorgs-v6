@@ -44,7 +44,7 @@ function assertType(parameterValue, expectedType) {
             throw new TypeError(`TypeError: ${e} during evaluation of "${parameterValue}" being ${expectedType} when calling typing.assert in ${fun.caller()}`)
         }
         if (!result) {
-            throw new TypeError(`TypeError: "${parameterValue}" is not in ${expectedTypes.map(t => t.name)} when calling typing.assert in ${fun.caller()}`)
+            throw new TypeError(`TypeError: "${parameterValue}" is not in ${expectedTypes.map(t => (t??{}).name)} when calling typing.assert in ${fun.caller()}`)
         }
         return true;
     }
@@ -53,6 +53,8 @@ function assertType(parameterValue, expectedType) {
 
         if (!expectedType && !parameterValue) {return true;}
         if (expectedType === null) {expectedType = Object}; // there is no null type for legacy reasons
+        if (expectedType === undefined) {return parameterValue === undefined}
+        if (expectedType === Date) {return !isNaN(new Date(parameterValue));}
 
         if (!isClass(expectedType)) {
             throw new TypeError(`TypeError: "${expectedType}" is not a type when calling typing.assert in ${fun.caller()}`)

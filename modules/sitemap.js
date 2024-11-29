@@ -11,7 +11,7 @@ class Webpage {
 
         this.location = loc;
         this.title = title;
-        this.style = loc.split("/")[1];
+        this.style = loc.pathname.split("/")[1];
         this.imgsrc = imgsrc;
         this.lastmod = lastmod;
         this.changefreq = changefreq;
@@ -19,24 +19,22 @@ class Webpage {
 
     static fromUrlEntry(urlEntry) {
         typing.assert(urlEntry, Object);
+        const clang = document.documentElement.lang;
+        var loc, title, imgsrc, lastmod, changefreq;
 
         Object.entries(urlEntry).map(([key, value]) => {
-            const clang = document.documentElement.lang;
-            var loc, thetitle, anytitle, imgsrc, lastmod, changefreq;
+            if (value instanceof Array) {
+                value = value.reduce((p,c) => (p == "" || c['sgl:lang'] == clang) ? c : p, "")
+            }
             switch (key) {
                 case 'loc':
-                    loc = value;
+                    loc = new URL(value);
                     break;
                 case 'sgl:title':
-                    if (value['sgl:lang'] == clang) {
-                        thetitle = value['sgl:lang'];
-                    }
-                    else {
-                        anytitle = value['sgl:lang'];
-                    }
+                    title = value.text ?? value;
                     break;
                 case 'sgl:img':
-                    imgsrc = value['sgl:src'];
+                    imgsrc = new URL(value['sgl:src'], window.location.origin);
                     break;
                 case 'lastmod':
                     lastmod = Date.parse(value);
@@ -51,12 +49,13 @@ class Webpage {
                     console.log(`Unknown tag in sitemap: ${key}`);
             }
         });
-        return new Webpage(loc, thetitle??anytitle, imgsrc, lastmod, changefreq);
+        try {
+            return new Webpage(loc, title, imgsrc, lastmod, changefreq);
+        }
+        catch (e) {
+            console.error(e, loc.href, title, imgsrc, lastmod, changefreq)
+        }
     }
-}
-
-if (!document.sitemap) {
-    document.sitemap = [];
 }
 
 async function fetch_sitemap(filename = "/sitemap.xml") {
@@ -65,11 +64,15 @@ async function fetch_sitemap(filename = "/sitemap.xml") {
     .then(str => typing.string_to_xml(str))
     .then(xml => typing.xml_to_object(xml))
     .then(obj => obj.urlset.url.map(url => Webpage.fromUrlEntry(url)))
-    .then(webpages => document.sitemap = webpages)
-    .then(webpages => events.get("sitemap_ready").dispatch())
+    .then(webpages => {console.log(webpages); return webpages;})
+    .then(webpages => Object.assign(sitemap, 
+        Object.fromEntries(webpages.map((w) => [w.location.pathname,w]))))
+    .then(_ => events.get("sitemap_ready").dispatchEvent())
 }
 
 events.create("sitemap_ready");
 events.get("language_changed").addListener(e => fetch_sitemap());
 
-export default document.sitemap;
+const sitemap = {}
+
+export default sitemap;

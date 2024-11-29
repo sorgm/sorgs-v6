@@ -20,17 +20,17 @@
     function refreshGallery() {
         const gallery = document.getElementsByClassName("gallery")[0];
 
-        gallery.innerHTML = sitemap.reduce((p,e) => {
+        gallery.innerHTML = Object.values(sitemap).reduce((p,e) => {
             if (e.imgsrc == undefined) {
                 return p + `<a href="${e.loc}" class="${e.style}" title="${e.loc}">
                 <span class="title">${e.title}</span><br/>
-                <span class="year">${e.lastmod.getFullYear()}</span></a>`
+                <span class="year">${new Date(e.lastmod).getFullYear()}</span></a>`
             }
             else {
                 return p + `<a href="${e.loc}" class="${e.style}" title="${e.loc}">
                 <img src="${e.imgsrc}"><br/>
                 <span class="title">${e.title}</span><br/>
-                <span class="year">${e.lastmod.getFullYear()}</span></a>`
+                <span class="year">${new Date(e.lastmod).getFullYear()}</span></a>`
             }
         }, "");
     }

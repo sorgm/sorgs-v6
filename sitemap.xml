@@ -31,7 +31,6 @@
         <sgl:title sgl:lang="de">Analyse von GEDCOM-Dateien (in Arbeit)</sgl:title>
         <sgl:title sgl:lang="en">GEDCOM file analysis (work in progress)</sgl:title>
         <lastmod>2023-02-13</lastmod>
-        <priority>0.0</priority>
         <changefreq>monthly</changefreq>
     </url>
     <url>
@@ -39,7 +38,6 @@
         <sgl:title sgl:lang="de">Integration externer GEDCOM-Parser (in Arbeit)</sgl:title>
         <sgl:title sgl:lang="en">Integration GEDCOM parser module (work in progress)</sgl:title>
         <lastmod>2023-02-13</lastmod>
-        <priority>0.0</priority>
         <changefreq>monthly</changefreq>
     </url>
     <url>
@@ -111,7 +109,6 @@
         <sgl:title sgl:lang="en">Legacy: Middle-Earth The Wizards (german only)</sgl:title>
         <lastmod>2000-03-06</lastmod>
         <changefreq>never</changefreq>
-        <priority>0.0</priority>
     </url>
     <url>
         <loc>https://sorgs.de/impressum.html</loc>
