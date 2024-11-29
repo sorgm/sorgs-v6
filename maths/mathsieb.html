@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Mathe-Sieb-Experiment</title>
+	<script src="/init.js" type="module"></script>
+</head>
+
+<body>
+	<h1>Mathe-Sieb-Experiment</h1>
+	<p>
+		Das Mathe-Sieb ermittelt Berechnungsvorschriften, um aus vorgegeben Werten möglichst die Zahlen
+		von 1 bis 100 zu ermitteln.
+	</p>
+	<script type="text/javascript">
+		<!--
+		
+		function mathsieb(ausgabe, a, b, c, d) {
+		
+		var strMath;
+		var arrAufbau = new Array("a+b-c*d","a+b-(c*d)","a+(b-c)*d","(a+b)-c*d","(a+b)-(c*d)","(a+b-c)*d","a+(b-c*d)","((a+b)-c)*d","a+((b-c)*d)","(a+(b-c))*d","a+(b-(c*d))");
+		var iAufbau;
+		var arrVal = new Array(a,b,c,d);
+		var iVala;
+		var iValb;
+		var iValc;
+		var iVald;
+		var arrOp = new Array("+","-","*","/");
+		var iOp1;
+		var iOp2;
+		var iOp3;
+		var erg;
+		var fehler;
+		var arrErg = new Array();
+		var iErg;
+		var arrMath = new Array();
+		var iSort;
+		
+		for(iAufbau=0;iAufbau<11;iAufbau++) {
+		for(iOp1=0;iOp1<4;iOp1++) {
+		for(iOp2=0;iOp2<4;iOp2++) {
+		for(iOp3=0;iOp3<4;iOp3++) {
+		for(iVala=0;iVala<4;iVala++) {
+		for(iValb=0;iValb<4;iValb++) {
+		if (iValb!=iVala) {
+		for(iValc=0;iValc<4;iValc++) {
+		if (iValc!=iVala) {
+		if (iValc!=iValb) {
+		for(iVald=0;iVald<4;iVald++) {
+		if (iVald!=iVala) {
+		if (iVald!=iValb) {
+		if (iVald!=iValc) {
+		
+			strMath = arrAufbau[iAufbau].toString();
+			strMath = strMath.replace(/a/,arrVal[iVala].toString());
+			strMath = strMath.replace(/b/,arrVal[iValb].toString());
+			strMath = strMath.replace(/c/,arrVal[iValc].toString());
+			strMath = strMath.replace(/d/,arrVal[iVald].toString());
+			strMath = strMath.replace(/[+]/,arrOp[iOp1].toString());
+			strMath = strMath.replace(/[-]/,arrOp[iOp2].toString());
+			strMath = strMath.replace(/[*]/,arrOp[iOp3].toString());
+		
+			try {
+				erg = eval(strMath);
+			}
+			catch (fehler) {
+			}
+		
+			if ((isNaN(erg)!=true) && (erg>0) && (Math.ceil(erg)==Math.floor(erg)) && (erg<=100)) {
+		
+			for(iErg=0;iErg<arrErg.length;iErg++)
+				if (arrErg[iErg]==erg) break
+		
+			if (iErg==arrErg.length) {
+		
+				arrErg[iErg] = erg;
+				arrMath[iErg] = strMath;
+		
+			}}
+		
+		}}}}}}}}}}}}}}
+		
+		
+		if (ausgabe==true) {
+		
+		var result=("<table border=\"border\"><tr><th>Aufgabe</th><th>Lösung</th></tr>");
+		
+		for(iErg=0;iErg<arrErg.length-1;iErg++)
+		for(iSort=iErg+1;iSort<arrErg.length;iSort++)
+		if (arrErg[iSort]<arrErg[iErg]) {
+			strMath = arrMath[iErg];
+			erg = arrErg[iErg];
+			arrMath[iErg] = arrMath[iSort];
+			arrErg[iErg] = arrErg[iSort];
+			arrMath[iSort] = strMath;
+			arrErg[iSort] = erg;
+		}
+		
+		for(iErg=0;iErg<arrErg.length;iErg++)
+			result+=("<tr><td>" + arrMath[iErg] + "</td><td>" + arrErg[iErg].toString() + "</td></tr>");
+		
+		result+=("<tr><th>Anzahl</th><th>" + arrErg.length.toString() + "</th></tr>");
+		result+=("</table><p>fertig.</p>");
+		}
+		
+		document.querySelector("p.result").innerHTML = result;
+		
+		return (arrErg.length);
+		}
+		
+		function mathsiebx() {
+		var a;
+		var b;
+		var c;
+		var d;
+		var erg;
+		var amax;
+		var bmax;
+		var cmax;
+		var dmax;
+		var ergmax;
+		
+		ergmax = 0;
+		
+		for(a=2;a<=8;a++)
+		for(b=a+1;b<=9;b++)
+		for(c=b+1;c<=10;c++)
+		for(d=c+1;d<=11;d++) {
+		
+			erg = mathsieb(false,a,b,c,d);
+		
+			if (erg>ergmax) {
+		
+				amax=a;
+				bmax=b;
+				cmax=c;
+				dmax=d;
+				ergmax=erg;
+		
+			}
+		
+		}
+		
+		mathsieb(true,amax,bmax,cmax,dmax);
+		}
+		
+		//-->
+	</script>
+
+	<form>
+		Variablen a,b,c,d:
+		<input name="inputa" id="inputa" type="text" value="2" size="5">
+		<input name="inputb" id="inputb" type="text" value="3" size="5">
+		<input name="inputc" id="inputc" type="text" value="7" size="5">
+		<input name="inputd" id="inputd" type="text" value="10" size="5">
+		<input type="button" value="Anzeigen"
+			onClick="mathsieb(true,document.getElementById('inputa').value,document.getElementById('inputb').value,document.getElementById('inputc').value,document.getElementById('inputd').value);">
+		<input type="button" value="Optimieren" onClick="mathsiebx();">
+	</form>
+
+	<p class="result"></p>
+</body>
+
+</html>

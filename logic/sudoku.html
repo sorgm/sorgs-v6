@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Sudoku</title>
+    <script src="/init.js" type="module"></script>
+</head>
+<body>
+    <h1>Sudoku</h1>
+    <input class="cell" data-value="s.getValue(1,1)" data-change="s.setValue(1,1,e.value)" />
+    <pre class="protocol"></pre>
+</body>
+<script type="module">
+    import {Sudoku} from '/logicals/sudoku.js'
+
+    const s = new Sudoku(9, document.querySelector("pre.protocol"));
+    s.preset(40);
+    for(let i=1; i<30; i++) s.hint()
+    s.logValues();
+    s.logOptions();
+
+    Array.from(document.querySelectorAll("[data-value]"))
+    .forEach(e => e.value = eval(e.dataset.value));
+
+    Array.from(document.querySelectorAll("[data-value]"))
+    .forEach(e => e.addEventListener("change", inputValueChanged));
+
+    function inputValueChanged(event) {
+        const e = event.target;
+        eval(e.dataset.change);
+        return true;
+    }
+</script>
+<style>
+    pre.protocol {
+        width: 100%-10px;
+        padding: 5px;
+        background-color: black;
+        color: whitesmoke;
+    }
+</style>

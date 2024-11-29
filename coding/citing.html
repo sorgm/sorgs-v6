@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>On the art of citing in HTML</title>
+        <script src="/init.js" type="module"></script>
+    </head>
+    <body>
+        <h1>On the art of citing in HTML</h1>
+
+        <p>
+            For any scientific work, good citation is essential, but even for layman's research,
+            a good citation practise enables the reader to validate the basis used for reasoning.
+            Thus, I try to use a valid way of citing sources, but there are some challenges on my
+            way. One thing is, most of my sources are on the internet. Not wanting to revisit
+            the referenced sources every other year, results in outdating links. In addition,
+            many of my historic sources are hundreds of years old and therefore stay the same
+            source while being referenced by a multitude of secondary or tertiary sources. Even
+            the secondary sources are very old in some cases, so it is questionable, how they
+            can be cited correctly.
+            I follow the
+            <span class="figure">
+                <span class="figcaption"><a href="#apa2022"><cite>Basic Principles</cite>
+                    (APA, 2022)</a></span></span>
+            to a large extend, but adapt them to my needs and to HTML5 based on
+            <span class="figure">
+                <span class="figcaption"><a href="#whatwg"><cite>WHATWG - Standards</cite>
+                    (WHATWG, cont.)</a></span></span>.
+        </p>
+
+        <h2>Clarification of terms used</h2>
+
+        <dl>
+            <dt>Citing (or quoting)</dt>
+            <dd><span class="figure">
+                    <q>The act of giving credit to someone else's work.</q>
+                    <span class="figcaption"><a href="#copilot"
+                        ><cite>Microsoft Copilot: Your AI companion</cite>
+                        (Copilot, 2024)</a></span></span>                
+            </dd>
+            <dt>Quote</dt>
+            <dd><span class="figure">
+                    <q>Using the exact words from someone else's work.</q>
+                    <span class="figcaption"><a href="#copilot"
+                        >(Copilot, 2024)</a></span></span>                
+            </dd>
+            <dt>to cite</dt>
+            <dd><span class="figure">
+                    <q>Giving credit to the original sources ... include[s] 
+                        quotes, paraphrases, or summaries.</q>
+                    <span class="figcaption"><a href="#copilot"
+                        >(Copilot, 2024)</a></span></span>                
+            </dd>
+            <dt>Citation</dt>
+            <dd><span class="figure">
+                    <q>An act of quoting.</q>
+                    <span class="figcaption"><a href="#webster"
+                        ><cite>Merriam-Webster: America's Most Trusted Dictionary</cite>
+                        (Webster, 2024)</a></span></span>                
+            </dd>
+            <dt>Reference</dt>
+            <dd><span class="figure">
+                    <q>The detailed information about the source you cited or quoted.
+                        It usually includes the author, title, publication date, and more.
+                        It's what you list in your bibliography or work cited page.
+                    </q>
+                    <span class="figcaption"><a href="#copilot"
+                        >(Copilot, 2024)</a></span></span>                
+            </dd>
+
+        </dl>
+
+        <h2>Where I deviate</h2>
+
+        <ul>
+            <li>
+                Detailled descriptions on how to handle multiple authors, secondary sources etc. in
+                text are overly complex. I think gut feeling is enough for this, if the citation refers to a
+                thoroughly described reference entry.
+            </li>
+            <li>
+                To have a clear key, I wanted to skip the definition "author. (publishing date)" 
+                for references in favor of keeping the citation short name of "(author, publishing year)".
+                Trying with real data this lead to a loss of information or a massive duplication.
+                I therefore chose, the link being "#authorYear" as primary key.
+            </li>
+            <li>
+                For website sources with no clear date, that are continuously edited, I chose
+                to use "cont." as year. "cont.", "n.d.", and "NN" are omitted in the link, because they
+                contain no information.
+            </li>
+            <li>
+                For sources where I just know a century, I chose not to use
+                "7<sup>th</sup> or 8<sup>th</sup> century CE" in the text. "~800" for "about 800 CE"
+                is exact enough for the citation, while the reference contains a thorough dating.
+            </li>
+            <li>
+                If a source is complex, the link does not directly lead to the references.
+                In such cases, it might lead to a whole chapter of dating and analysis of sources.
+            </li>
+            <li>
+                For questionable internet sources with valuable content, I try to preserve a copy.
+                This copy is linked in the reference for research purpose only. Same is true for
+                links into internet archives or alternative locations.
+            </li>
+            <li>
+                In case of ambiguous writing or translation of old sources, the original name or
+                title is preferred, but the alternatives are added in the references.
+            </li>
+            <li>
+                Repeated citation is shortened to the reference or to "ibid." meaning "same again".
+            </li>
+        </ul>
+
+        <h2>Resulting HTML examples</h2>
+
+        <figure>
+            <img src="https://apastyle.apa.org/Content/Images/megamenu/images@2x/apa-style-med-sml.png"
+                title="APA Style Icon" />
+            <blockquote>
+                In scholarly writing, it is essential to acknowledge how others contributed to your work. 
+                By following the principles of proper citation, writers ensure that readers understand 
+                their contribution in the context of the existing literature - how they are building on, 
+                critically examining, or otherwise engaging the work that has come before.
+            </blockquote>
+            <figcaption>
+                <a href="#apa2022"><cite>In-Text Citations</cite> (APA, 2022)</a>
+            </figcaption>
+        </figure>
+
+        <pre>
+            &lt;figure>
+                &lt;img width=553 height=93
+                    src="https://apastyle.apa.org/Content/Images/megamenu/images@2x/apa-style-med-sml.png"
+                    title="APA Style Icon" />
+                &lt;blockquote>
+                    In scholarly writing, it is essential to acknowledge how others contributed to your work. 
+                    By following the principles of proper citation, writers ensure that readers understand 
+                    their contribution in the context of the existing literature - how they are building on, 
+                    critically examining, or otherwise engaging the work that has come before.
+                &lt;/blockquote>
+                &lt;figcaption>
+                    &lt;a href="#apa2022">&lt;cite>In-Text Citations&lt;/cite> (APA, 2022)&lt;/a>
+                &lt;/figcaption>
+            &lt;/figure>
+        </pre>
+
+        <p>
+            In the Author-Date Citation System 
+            <span class="figure">
+                <img width=55.3 height=9.3
+                    src="https://apastyle.apa.org/Content/Images/megamenu/images@2x/apa-style-med-sml.png"
+                    title="APA Style Icon" />
+                <q>each work used in a paper has two parts: an in-text citation 
+                    and a corresponding reference list entry</q>
+                <span class="figcaption"><a href="#apa2022"><cite>In-Text Citations</cite>
+                    (APA, 2022)</a></span></span>.
+            Both are linked by a reference in brackets containing the author and the publishing year.
+        </p>
+
+        <pre>
+            In the Author-Date Citation System 
+            &lt;span class="figure">
+                &lt;img width=55.3 height=9.3
+                    src="https://apastyle.apa.org/Content/Images/megamenu/images@2x/apa-style-med-sml.png"
+                    title="APA Style Icon" />
+                &lt;q>each work used in a paper has two parts: an in-text citation 
+                    and a corresponding reference list entry&lt;/q>
+                &lt;span class="figcaption">&lt;a href="#apa2022">&lt;cite>In-Text Citations&lt;/cite>
+                    (APA, 2022)&lt;/a>&lt;/span>&lt;/span>.
+            Both are linked by a reference in brackets containing the author and the publishing year.
+        </pre>
+
+        <p>
+            Reference:
+            <a name="apa2022">American Psychological Association (APA). (2022).</a>
+            <cite>In-Text Citations</cite>.
+            APA Style Homepage.
+            <a href="https://apastyle.apa.org/style-grammar-guidelines/citations"
+            >https://apastyle.apa.org/style-grammar-guidelines/citations</a>.
+        </p>
+
+        <pre>
+            &lt;a name="apa2022">American Psychological Association (APA). (2022).&lt;/a>
+            &lt;cite>In-Text Citations&lt;/cite>.
+            APA Style Homepage.
+            &lt;a href="https://apastyle.apa.org/style-grammar-guidelines/citations"
+            >https://apastyle.apa.org/style-grammar-guidelines/citations&lt;/a>.
+        </pre>
+
+        <p>CSS formatting used is:</p>
+
+        <pre>
+            figure {border: 1pt solid lightgrey; width: max-content; text-align: center;}            
+            figure img, figure figcaption {text-align: center;}
+            figure blockquote {text-align: center; white-space: pre;}
+            figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; color: black;}
+        </pre>
+
+        <h2>Complex situations in historical research</h2>
+
+        <p>Artifical example: About 1200 a type of person wore a specific dress. This dress was described in Latin 1250 by a monk of a monastery in St. Gallen. The original was lost, but a 16th century translation into French exists, whose origins are lost, but which is known as the Thornwright manuscript because family Thornwright kept it until they gave it to the British Library in 1957. In addition, a picture of an unknown artist exists in Louvre, which shows the situation, that had been described in the manuscript. The Thornwright is relevant for other information quoted elsewhere in the document, too. How to cite?</p>
+
+        <p>Idea: The main text of the research document contains a quote of manuscript 2, translated to English, and the latter picture. Both is needed to explain context. Both are cited with the original event in English (e.g., coronation of xyz) and the original year without an author. The reference to this citation contains nested evidence.</p>
+
+        <!-- Main text -->
+        <figure>
+            <img width=553 height=93
+                src="#louvre/picid/47110815"
+                title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
+            <blockquote>
+                Translated quote of the French manuscript, which has nothing in common with above
+                picture except the conincidence, that both refer to the same occasion.
+            </blockquote>
+            <figcaption>
+                <a href="#coronation_xyz_1200"><cite>Coronation of xyz</cite> (1200)</a>
+            </figcaption>
+        </figure>
+        <p>
+            Context, context, and reasoning...
+        </p>
+        ...
+        <!-- References -->
+        <h3>
+            <a name="coronation_xyz_1200">Coronation of xyz. (1200).</a>
+        </h3>
+        <p>
+            Event documented by 
+            <a href="#louvre_1957">Louvre 1957</a> and
+            <a href="#thornwright1550">Thornwright ~1550</a>.
+        </p>
+        <p>Desciption of the event</p>
+        <h3>
+            <a name="louvre1957">Mus&eacute;e du Louvre, Paris. (n.d.).</a>
+            <cite>Coronation de le roi xyz</cite>.
+        </h3>
+        <p>
+            Louvre website, restricted access.
+            <a href="#louvre/picid/47110815"
+            >#louvre/picid/47110815</a>.
+            Artist, original place and date are lost.
+            Picture shows <a href="#coronation_xyz_1200">Coronation of xyz. (1200)</a>.
+        </p>
+        <img src="#louvre/picid/47110815"
+        title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
+        <h3>
+            <a name="thornwright1550">Thornwright. (1550).</a>
+            <cite>Memoire des les Alpes</cite>.
+        </h3>
+        <p>
+            British Library. e12/14
+            <a href="https://bl.uk/pid/e12/14"
+            >https://bl.uk/pid/e12/14</a>.
+            Original text was Latin written by a St. Gallen monk in 1250,
+            but is lost.
+            Text describes <a href="#coronation_xyz_1200">Coronation of xyz. (1200)</a> and ...
+        </p>
+        <blockquote lang="fr">French original text</blockquote>
+
+        <pre>
+            &lt;!-- Main text -->
+            &lt;figure>
+                &lt;img width=553 height=93
+                    src="#louvre/picid/47110815"
+                    title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
+                &lt;blockquote>
+                    Translated quote of the French manuscript, which has nothing in common with above
+                    picture except the conincidence, that both refer to the same occasion.
+                &lt;/blockquote>
+                &lt;figcaption>
+                    &lt;a href="#coronation_xyz_1200">&lt;cite>Coronation of xyz&lt;/cite> (1200)&lt;/a>
+                &lt;/figcaption>
+            &lt;/figure>
+            &lt;p>
+                Context, context, and reasoning...
+            &lt;/p>
+            ...
+            &lt;!-- References -->
+            &lt;h3>
+                &lt;a name="coronation_xyz_1200">Coronation of xyz. (1200).&lt;/a>
+            &lt;/h3>
+            &lt;p>
+                Event documented by 
+                &lt;a href="#louvre_1957">Louvre 1957&lt;/a> and
+                &lt;a href="#thornwright1550">Thornwright ~1550&lt;/a>.
+            &lt;/p>
+            &lt;p>Desciption of the event&lt;/p>
+            &lt;h3>
+                &lt;a name="louvre1957">Mus&eacute;e du Louvre, Paris. (n.d.).&lt;/a>
+                &lt;cite>Coronation de le roi xyz&lt;/cite>.
+            &lt;/h3>
+            &lt;p>
+                Louvre website, restricted access.
+                &lt;a href="#louvre/picid/47110815"
+                >#louvre/picid/47110815&lt;/a>.
+                Artist, original place and date are lost.
+                Picture shows &lt;a href="#coronation_xyz_1200">Coronation of xyz. (1200)&lt;/a>.
+            &lt;/p>
+            &lt;img src="#louvre/picid/47110815"
+            title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
+            &lt;h3>
+                &lt;a name="thornwright1550">Thornwright. (1550).&lt;/a>
+                &lt;cite>Memoire des les Alpes&lt;/cite>.
+            &lt;/h3>
+            &lt;p>
+                British Library. e12/14
+                &lt;a href="https://bl.uk/pid/e12/14"
+                >https://bl.uk/pid/e12/14&lt;/a>.
+                Original text was Latin written by a St. Gallen monk in 1250,
+                but is lost.
+                Text describes &lt;a href="#coronation_xyz_1200">Coronation of xyz. (1200)&lt;/a> and ...
+            &lt;/p>
+            &lt;blockquote lang="fr">French original text&lt;/blockquote>
+        </pre>
+
+        <h2>References</h2>
+
+        <ol>
+            <li><a name="apa2022"
+                >American Psychological Association (APA). (2022).</a>
+                <cite>In-Text Citations</cite>.
+                APA Style Homepage.
+                <a href="https://apastyle.apa.org/style-grammar-guidelines/citations"
+                >https://apastyle.apa.org/style-grammar-guidelines/citations</a>.
+              </li>
+              <li><a name="whatwg"
+                >WHATWG (Apple, Google, Mozilla, Microsoft). (cont.).
+                <cite>WHATWG - Standards</cite>.
+                WHATWG Homepage.
+                <a href="https://spec.whatwg.org/"
+                >https://spec.whatwg.org/</a>.
+              </a></li>
+              <li><a name="mozilla"
+                >Mozilla. (cont.).</a>
+                <cite>WHATWG - Standards</cite>.
+                MDN (Mozilla Developers' Network) Web Docs.
+                <a href="https://developer.mozilla.org/en-US/"
+                >https://developer.mozilla.org/en-US/</a>.
+              </a></li>
+              <li><a name="webster"
+                >Merriam-Webster, Incorporated. (cont.).</a>
+                <cite>Merriam-Webster: America's Most Trusted Dictionary</cite>.
+                <a href="https://www.merriam-webster.com/"
+                >https://www.merriam-webster.com/</a>
+              </li>
+              <li><a name="copilot"
+                >Microsoft Copilot (2024).</a>
+                <cite>Microsoft Copilot: Your AI companion</cite>.
+                Microsoft Corp.
+                <a href="https://copilot.microsoft.com/"
+                >https://copilot.microsoft.com/</a>
+              </li>
+        </ol>
+    </body>
+</html>

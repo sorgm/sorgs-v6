@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <title>Imaginäre Zahlen</title>
+    <script src="/init.js" type="module"></script>
+</head>
+<body>
+    <h1>I, Vektoren und Polarkoordinaten</h1>
+    
+    <p>Äquivalenz von imaginären Zahlen und zweidimensionalen Vektoren unter Ausnutzung von Polarkoordinaten.</p>
+
+    <p>Eine jede imaginäre Zahl j=ai+b (mit a,b reell) läßt sich unter Anwendung eines Koordinatensystems
+    mit der Achsenbeschriftung (1,i) als zweidimensionaler Vektor (a,b) darstellen. Dieser wiederum
+    läßt sich als Länge l und Winkel µ des Vektor in Polarkoordinaten umrechnen.</p>
+
+    <p>Daraus ergibt sich:</p>
+
+    <pre>
+    a = l * cos µ
+    b = l * sin µ
+    </pre>
+
+    <p>und</p>
+
+    <pre>
+    j = l * i * cos µ + l * sin µ
+    bzw.
+    j = l * (icosµ + sinµ)
+    </pre>
+
+    <p>Daraus ergibt sich, dass vereinfachend mit normierten Zahlen (l=1) gearbeitet werden kann:</p>
+
+    <pre>
+    j = l * nj
+
+    mit l = sqrt(a²+b²) und nj = icosµ+sinµ
+    </pre>
+
+    <p>Daraus ergibt sich:</p>
+
+    <pre>
+    j / l = nj
+    (ai+b)/l = icosµ+sinµ
+    </pre>
+
+    <p>a,b,cosµ,sinµ reell ergibt sich:</p>
+
+    <pre>
+    a/l = cosµ und b/l=sinµ
+    a/sqrt(a²+b²) = cosµ und b/sqrt(a²+b²) = sinµ
+    sqrt(a²/(a²+b²)) = cosµ und sqrt(b²/(a²+b²)) = sinµ
+    </pre>
+
+</body>
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <title>Primzahlsieb</title>
+    <script src="/init.js" type="module"></script>
+</head>
+<body>
+	<h1>Primzahlsieb</h1>
+	<p>nach Eratosthenes, alle Primzahlen bis 100000</p>
+
+<script type="text/javascript">
+var arr = new Array(1, 2); //Startzahlen
+
+var ip;
+var it;
+var i;
+
+ip=arr.length-1;
+it=arr[ip]+1;
+document.write(arr.join(", "));
+document.write(", ");
+
+while (it<=99999) {
+	i=1;
+	while (i<=ip) {
+		if (it%arr[i]==0) break;
+		if (i==ip) {
+			ip=ip+1;
+			arr[ip]=it;
+			document.write(arr[ip]);
+			document.write(", ");
+			break;
+		}
+		i=i+1;
+	}
+	it=it+1;
+}
+</script>
+</body>
+</html>

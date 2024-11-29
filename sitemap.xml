@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+            http://sorgs.de/sitemap.xsd"
+         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+         xmlns:sgl="http://sorgs.de/sitemap.xsd">
+    <url>
+        <loc>https://sorgs.de/coding/citing.html</loc>
+        <sgl:title sgl:lang="de">Richtig zitieren in HTML (Englisch)</sgl:title>
+        <sgl:title sgl:lang="en">On the art of citing in HTML</sgl:title>
+        <lastmod>2024-10-19</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/logic/sudoku.html</loc>
+        <sgl:title sgl:lang="de">Sudoku (erste Anfänge)</sgl:title>
+        <sgl:title sgl:lang="en">Sudoku (just the beginning)</sgl:title>
+        <lastmod>2024-10-19</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/history/sorgs.html</loc>
+        <sgl:title sgl:lang="de">Die Geschichte der Sorgs</sgl:title>
+        <sgl:title sgl:lang="en">History of the Sorgs (german only)</sgl:title>
+        <lastmod>2024-09-28</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/history/gedcom-analysis.html</loc>
+        <sgl:title sgl:lang="de">Analyse von GEDCOM-Dateien (in Arbeit)</sgl:title>
+        <sgl:title sgl:lang="en">GEDCOM file analysis (work in progress)</sgl:title>
+        <lastmod>2023-02-13</lastmod>
+        <priority>0.0</priority>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/history/parse-gedcom.html</loc>
+        <sgl:title sgl:lang="de">Integration externer GEDCOM-Parser (in Arbeit)</sgl:title>
+        <sgl:title sgl:lang="en">Integration GEDCOM parser module (work in progress)</sgl:title>
+        <lastmod>2023-02-13</lastmod>
+        <priority>0.0</priority>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/maths/piermittlung.html</loc>
+        <sgl:title sgl:lang="de">Die Ermittlung von Pi</sgl:title>
+        <sgl:title sgl:lang="en">How to calc Pi (german only)</sgl:title>
+        <lastmod>2023-04-02</lastmod>
+        <changefreq>yearly</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/maths/polarkoordinaten.html</loc>
+        <sgl:title sgl:lang="de">Polar&#173;koordinaten errechnen</sgl:title>
+        <sgl:title sgl:lang="en">Calculate polar coordinates (german only)</sgl:title>
+        <lastmod>2023-02-06</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/maths/mattscheibe.html</loc>
+        <sgl:title sgl:lang="de">Abbildung auf Mattscheibe</sgl:title>
+        <sgl:title sgl:lang="en">3D to 2D optically correct (german only)</sgl:title>
+        <lastmod>2023-01-30</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/maths/primsiebjs.html</loc>
+        <sgl:title sgl:lang="de">Primärzahlen, Sieb von Erathostenes</sgl:title>
+        <sgl:title sgl:lang="en">Primary numbers, Erathostenes' sieve (german only)</sgl:title>
+        <lastmod>2019-05-06</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/history/medievalscottishdress.html</loc>
+        <sgl:title sgl:lang="de">Mittel&#173;alterliche Schottische Kleidung (English)</sgl:title>
+        <sgl:title sgl:lang="en">Medieval Scottish dress</sgl:title>
+        <lastmod>2016-10-24</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/maths/wurzelziehen.html</loc>
+        <sgl:title sgl:lang="de">Wurzel&#173;ziehen, manuell</sgl:title>
+        <sgl:title sgl:lang="en">Square roots, manual calculation (german only)</sgl:title>
+        <lastmod>2009-10-15</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/maths/mathsieb.html</loc>
+        <sgl:title lang="de">Mathe-Sieb-Experiment</sgl:title>
+        <sgl:title lang="en">Math sieve experiment (german only)</sgl:title>
+        <lastmod>2006-07-19</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/maths/imaginaer.html</loc>
+        <sgl:title sgl:lang="de">i, Vektoren und Polar&#173;koordinaten</sgl:title>
+        <sgl:title sgl:lang="en">i, vectors and polar coordinates (german only)</sgl:title>
+        <lastmod>2005-01-03</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/logic/marineraetsel.html</loc>
+        <sgl:title sgl:lang="de">Marinerätsel</sgl:title>
+        <sgl:title sgl:lang="en">Battleship game logical (german only)</sgl:title>
+        <lastmod>2001-05-28</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/metw/index.html</loc>
+        <sgl:title sgl:lang="de">Mittelerde-Sammel&#173;karten (Archiv)</sgl:title>
+        <sgl:title sgl:lang="en">Legacy: Middle-Earth The Wizards (german only)</sgl:title>
+        <lastmod>2000-03-06</lastmod>
+        <changefreq>never</changefreq>
+        <priority>0.0</priority>
+    </url>
+    <url>
+        <loc>https://sorgs.de/impressum.html</loc>
+        <sgl:title>Impressum</sgl:title>
+        <lastmod>2024-09-25</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgs.de/index.html</loc>
+        <sgl:title sgl:lang="en">The Sorgs' Collection</sgl:title>
+        <sgl:title sgl:lang="de">Die Sorg'sche Sammlung</sgl:title>
+        <sgl:img sgl:src="/favicon.ico"></sgl:img>
+        <lastmod>2024-09-28</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+</urlset>

@@ -1,0 +1,143 @@
+body {
+    margin: 0rem;
+    border: 0rem;
+    padding: 0rem;
+    background: white;
+    color: black;
+    font-family: cursive;
+    font-style: normal;
+    font-size: 1rem;
+    word-break: break-word;
+}
+
+p {
+    display: block;
+    font-size: 1rem;
+    margin-block-start: 1rem;
+    margin-block-end: 1rem;
+    margin-inline-start: 0rem;
+    margin-inline-end: 0rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    display: block;
+    font-weight: bold;
+    margin-inline-start: 0rem;
+    margin-inline-end: 0rem;
+}
+h1 {
+    font-size: 2rem;
+    margin-block-start: 1.5rem;
+    margin-block-end: 1.5rem;
+}
+h2 {
+    font-size: 1.5rem;
+    margin-block-start: 1.245rem;
+    margin-block-end: 1.245rem;
+}
+h3 {
+    font-size: 1.17rem;
+    margin-block-start: 1.17rem;
+    margin-block-end: 1.17rem;
+}
+h4 {
+    margin-block-start: 1.33rem;
+    margin-block-end: 1.33rem;
+}
+
+pre, span.pre {
+    font-family: monospace;
+    white-space: pre-wrap;
+    font-size: 1rem;
+}
+pre {
+    margin-top: .1rem;
+    margin-right: .1rem;
+    margin-left: -6rem; /* contra 12 leading blanks for formatting in html */
+    margin-bottom: -1rem; /* contra last line-break between text and tag */
+    word-wrap: break-word;
+}
+
+sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+table {
+    display: table;
+    border-collapse: separate;
+    box-sizing: border-box;
+    font-size: 1rem;
+    color: black;
+    border-spacing: .2rem;
+    border-color: gray;
+}
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+}
+th {
+    display: table-cell;
+    vertical-align: inherit;
+    font-weight: bold;
+    text-align: center;
+}
+td {
+    display: table-cell;
+}
+
+dt {
+    font-weight: bold;
+}
+dt::after {
+    content: ":";
+}
+
+.left {
+    text-align: left;
+    float: left;
+}
+.right {
+    text-align: right;
+    float: right;
+}
+
+a:not([name]) {
+    text-decoration: gray dotted underline;
+    color: black;
+}
+
+nav {columns: 24rem auto !important; font-size: .85rem !important;}
+nav .H2 {list-style: none; margin: 0; padding: 0; font-weight: bold;}
+nav .H3 {list-style: disc inside; padding-left: 0rem; font-weight: normal;}
+nav a {text-decoration: none;}
+
+figure {
+    width: fit-content;
+    margin-block-start: 1rem;
+    margin-block-end: 1rem;
+    margin-inline-start: .1rem;
+    margin-inline-end: .1rem;
+    border: .1rem solid lightgrey;
+    padding: 1rem;
+    text-align: center;
+}
+figure img {
+    text-align: center;
+}
+blockquote {
+    margin: 0rem;
+    margin-top: -1rem; /* contra first line-break between tag and text */
+    border: 0rem;
+    padding: 0rem;
+    text-align: center;
+    white-space: pre-line; /* this keeps existing line breaks, but ignores blanks for formatting */
+}
+figcaption {
+    text-align: center;
+}
+
