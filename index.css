@@ -1,0 +1,59 @@
+div.gallery {
+    padding: 2%;
+}
+
+div.gallery a {
+    width: 6rem;
+    height: 9.708rem;
+    /* golden ratio 1.618... */
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    align-content: center;
+    padding: .15rem;
+    margin: .15rem;
+    border: solid .15rem gray;
+    background: lightgray;
+    color: black;
+    text-decoration: none;
+}
+
+div.gallery a img {
+    vertical-align: middle;
+    align-content: center;
+    height: 3.708rem;
+    /* golden ratio 1.618 = (8.09 - x)/x -> x=9.708/2.618=3.708 */
+}
+
+div.gallery a:hover span.title {
+    text-decoration: underline;
+}
+
+div.gallery a span.year {
+    font-size: x-small;
+}
+
+div.gallery a.arts {
+    background-color: purple;
+    color: yellow;
+}
+
+div.gallery a.coding {
+    background-color: darkgreen;
+    color: whitesmoke;
+}
+
+div.gallery a.history {
+    background-color: yellow;
+    color: darkslategray;
+}
+
+div.gallery a.logic {
+    background-color: steelblue;
+    color: black;
+}
+
+div.gallery a.maths {
+    background-color: maroon;
+    color: burlywood;
+}

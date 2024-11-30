@@ -1,43 +1,44 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="google-site-verification" content="d7ufTXK2lwvT5S9JJmFloyXXNGC2GJOL6e9-Pq4DqI0" />
     <meta name="viewport" content="width=device-width">
     <title>Die Sorg'sche Sammlung - sorgs.de</title>
-    <script src="/main.js" type="module"></script>
 </head>
+
 <body>
     <h1>Die Sorg'sche Sammlung</h1>
 
     <!-- for dynmic content -->
     <div class="gallery"></div>
-</body>
-<script type="module">
-    import {events, sitemap} from './main.js';
+    <script type="module">
+        import { events, sitemap, layout } from './main.js';
+        layout.styleSheets.add("/index.css");
 
-    // refresh dynamic content
-    function refreshGallery() {
-        const gallery = document.getElementsByClassName("gallery")[0];
+        // refresh dynamic content
+        function refreshGallery() {
+            const gallery = document.getElementsByClassName("gallery")[0];
 
-        gallery.innerHTML = Object.values(sitemap).reduce((p,e) => {
-            if (e.imgsrc == undefined) {
-                return p + `<a href="${e.loc}" class="${e.style}" title="${e.loc}">
+            gallery.innerHTML = Object.values(sitemap).reduce((p, e) => {
+                if (e.imgsrc == undefined) {
+                    return p + `<a href="${e.location.pathname}" class="${e.style}" title="${e.title}">
                 <span class="title">${e.title}</span><br/>
                 <span class="year">${new Date(e.lastmod).getFullYear()}</span></a>`
-            }
-            else {
-                return p + `<a href="${e.loc}" class="${e.style}" title="${e.loc}">
+                }
+                else {
+                    return p + `<a href="${e.location.pathname}" class="${e.style}" title="${e.title}">
                 <img src="${e.imgsrc}"><br/>
                 <span class="title">${e.title}</span><br/>
                 <span class="year">${new Date(e.lastmod).getFullYear()}</span></a>`
-            }
-        }, "");
-    }
+                }
+            }, "");
+        }
 
-    events.get("sitemap_ready").addListener(refreshGallery);
-</script>
-<script type="text/strings" lang="de">
+        events.get("sitemap_ready").addListener(refreshGallery);
+    </script>
+    <script type="text/strings" lang="en">
     HTML
       HEAD
         TITLE
@@ -47,54 +48,6 @@
           H1
             TEXT The Sorgs' Collection
     </script>
-<style>
-    div.gallery {
-        padding: 2%;
-    }
-    div.gallery a {
-        width: 6rem;
-        height: 9.708rem; /* golden ratio 1.618... */
-        display: inline-block;
-        text-align: center;
-        vertical-align: middle;
-        align-content: center;
-        padding: .15rem;
-        margin: .15rem;
-        border: solid .15rem gray;
-        background: lightgray;
-        color: black;
-        text-decoration: none;
-    }
-    div.gallery a img {
-        vertical-align: middle;
-        align-content: center;
-        height: 3.708rem; /* golden ratio 1.618 = (8.09 - x)/x -> x=9.708/2.618=3.708 */
-    }
-    div.gallery a:hover span.title {
-        text-decoration: underline;
-    }
-    div.gallery a span.year {
-        font-size: x-small;
-    }
-    div.gallery a.arts {
-        background-color: purple;
-        color: yellow;
-    }
-    div.gallery a.coding {
-        background-color: darkgreen;
-        color: whitesmoke;
-    }
-    div.gallery a.history {
-        background-color: yellow;
-        color: darkslategray;
-    }
-    div.gallery a.logic {
-        background-color:steelblue;
-        color: black;
-    }
-    div.gallery a.maths {
-        background-color: maroon;
-        color: burlywood;
-    }
-</style>
+</body>
+
 </html>

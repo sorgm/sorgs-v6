@@ -64,7 +64,6 @@ async function fetch_sitemap(filename = "/sitemap.xml") {
     .then(str => typing.string_to_xml(str))
     .then(xml => typing.xml_to_object(xml))
     .then(obj => obj.urlset.url.map(url => Webpage.fromUrlEntry(url)))
-    .then(webpages => {console.log(webpages); return webpages;})
     .then(webpages => Object.assign(sitemap, 
         Object.fromEntries(webpages.map((w) => [w.location.pathname,w]))))
     .then(_ => events.get("sitemap_ready").dispatchEvent())

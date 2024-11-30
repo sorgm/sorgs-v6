@@ -11,7 +11,7 @@ function createElementFromHtml(
         return parent.children[0];
     }
     else {
-        return htmlString;
+        return document.createTextNode(htmlString);
     }
 }
 
@@ -108,12 +108,15 @@ function select(selectors) {
 
 function prependFooter(htmlString) {
     typing.assert(htmlString, String);
+
     var footer = document.querySelector("footer")
     if (!footer) {
         footer = appendNewElement("footer", document.body)
     }
     footer.prepend(" - ")
-    footer.prepend(createElementFromHtml(htmlString))
+    var el = createElementFromHtml(htmlString)
+    footer.prepend(el)
+    return el
 }
 
 function initHtmlStructure() {
