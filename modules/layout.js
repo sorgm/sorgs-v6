@@ -185,7 +185,7 @@ const layout = {
 export default layout;
 
 appendStyle(`
-    header {
+    header h1:first-of-type {
         position: fixed;
         top: 0rem;
         left: 0rem;

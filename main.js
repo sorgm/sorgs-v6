@@ -21,6 +21,8 @@ import {default as events} from "./modules/events.js"
 import {default as layout} from "./modules/layout.js"
 import {default as lang} from "./modules/lang.js"
 import {default as sitemap} from "./modules/sitemap.js"
+import "./modules/toc.js"
+
 (() => {
     function initialize() {
         if (document.readyState == "loading") return setTimeout(initialize);
