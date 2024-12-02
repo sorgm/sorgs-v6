@@ -13,13 +13,6 @@
         <changefreq>never</changefreq>
     </url>
     <url>
-        <loc>https://sorgs.de/logic/sudoku.html</loc>
-        <sgl:title sgl:lang="de">Sudoku (erste Anfänge)</sgl:title>
-        <sgl:title sgl:lang="en">Sudoku (just the beginning)</sgl:title>
-        <lastmod>2024-10-19</lastmod>
-        <changefreq>never</changefreq>
-    </url>
-    <url>
         <loc>https://sorgs.de/history/sorgs.html</loc>
         <sgl:title sgl:lang="de">Die Geschichte der Sorgs</sgl:title>
         <sgl:title sgl:lang="en">History of the Sorgs (german only)</sgl:title>
