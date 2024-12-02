@@ -53,8 +53,6 @@ pre, span.pre {
 pre {
     margin-top: .1rem;
     margin-right: .1rem;
-    margin-left: -6rem; /* contra 12 leading blanks for formatting in html */
-    margin-bottom: -1rem; /* contra last line-break between text and tag */
     word-wrap: break-word;
 }
 
