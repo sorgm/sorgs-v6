@@ -1,0 +1,27 @@
+{
+    "remotePath": "/sorgs.de/v6/",
+    "host": "ssh.strato.de",
+    "username": "sorgs.de",
+    "password": "UAmevVQZ3hhW",
+    "port": 22,
+    "secure": true,
+    "protocol": "sftp",
+    "uploadOnSave": false,
+    "passive": true,
+    "debug": false,
+    "privateKeyPath": null,
+    "passphrase": null,
+    "agent": null,
+    "allow": [],
+    "ignore": [
+        "\\.vscode",
+        "\\.git",
+        "\\.DS_Store"
+    ],
+    "generatedFiles": {
+        "extensionsToInclude": [
+            ""
+        ],
+        "path": ""
+    }
+}
