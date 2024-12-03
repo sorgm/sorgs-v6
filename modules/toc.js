@@ -1,7 +1,7 @@
 import {default as layout} from "./layout.js"
 import {default as events} from "./events.js"
 
-const HEADER_SELECTOR = "h2, h3";
+const HEADER_SELECTOR = "h2, h3, h4";
 
 function refresh() {
     var oldLevel = 1;
@@ -45,6 +45,7 @@ if (document.querySelector("#toc")) {
 layout.styleSheets.add(`
 #toc {columns: 10rem auto !important; font-size: .5rem !important; margin-top:4rem; margin-left:1rem;}
 #toc .H2 {list-style: none; margin: 0; padding: 0; font-weight: bold;}
-#toc .H3 {list-style: disc inside; padding-left: 0rem; font-weight: normal;}
+#toc .H3 {list-style: disc outside; padding-left: 0rem; font-weight: normal;}
+#toc .H4 {list-style: circle inside; padding-left: 0rem; font-weight: normal;}
 #toc a {text-decoration: none;}
 `)

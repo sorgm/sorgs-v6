@@ -137,3 +137,6 @@ figcaption {
     text-align: center;
 }
 
+.incomplete {
+    text-decoration: underline .01rem wavy red;
+}
