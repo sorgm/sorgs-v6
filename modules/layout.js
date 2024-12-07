@@ -158,8 +158,17 @@ function initHtmlStructure() {
     var header = appendNewElement("header", document.body, true, 0, "nav, h1:first-of-type");
     appendNewElement("h1", header).innerHTML = document.title.replace(' - sorgs.de','');
     //appendNewElement("nav", header); is optional
-    appendNewElement("article", document.body, true, 1, "body>*:not(header, main, article, aside, footer, script)");
+    var article = appendNewElement("article", document.body, true, 1, "body>*:not(header, main, article, aside, footer, script)");
     var footer = appendNewElement("footer", document.body, true, -1);
+
+    Array.from(document.querySelectorAll("a[target]:not([rel])")).forEach((v,i,a) => v.rel = "noopener noreferrer"); // avoid exploitation of the window.opener API.
+
+    if (document.querySelector("code[class*=language-]")) {
+        // load code highlighting library prism
+        appendStyle("https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css");
+        appendNewElement("script", article, false)
+        .src = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js";
+    }
 }
 
 const layout = {

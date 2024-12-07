@@ -368,7 +368,8 @@ function refreshLanguageSelector() {
         lang_select_aside = layout.htmlElement.add("aside",document.querySelector("header"));
         lang_select_aside.id = "lang-select";
         var selector = layout.htmlElement.add("select",lang_select_aside)
-        selector.title = "language-selector";
+        selector.id = "language-selector";
+        selector.title = "Choose your language";
         events.capture(selector, "change", "language_changing");
     }
  

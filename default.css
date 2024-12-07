@@ -55,6 +55,12 @@ pre {
     margin-right: .1rem;
     word-wrap: break-word;
 }
+code, pre:has(code) {
+    background-color:azure ;
+}
+pre code {
+    margin-bottom: -1rem;
+}
 
 sub {
     vertical-align: sub;

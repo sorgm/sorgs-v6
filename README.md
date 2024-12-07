@@ -2,9 +2,11 @@
 
 ## Concept
 
-sorgs.de v6 is a digital collection of diverse topics. Mainly these are coding samples and artistic impressions on topics from Maths, Physics, Genealogy, History, and Computer Sciences. It is meant to be self-contained and therefore uses no external library. Nonetheless it is meant to be modern.
+sorgs.de v6 is a digital collection of diverse topics. Mainly these are coding samples and artistic impressions on topics from Maths, Physics, Genealogy, History, and Computer Sciences. It is meant to be self-contained and therefore uses nearly no external libraries. Nonetheless it is meant to be modern.
 
 Manfred Sorg, September 2024
+
+## Site structure
 
 "Academic disciplines are conventionally divided into the humanities (including philosophy, language, art and cultural studies), the scientific disciplines (such as physics, chemistry, and biology), the formal sciences like mathematics and computer science; the social sciences are sometimes considered a fourth category."[[1]](#1) I follow this logic for site structure.
 
@@ -16,28 +18,60 @@ Manfred Sorg, September 2024
 
 "Social science is one of the branches of science, devoted to the study of societies and the relationships among members within those societies. The term was formerly used to refer to the field of sociology, the original "science of society", established in the 18th century. In addition to sociology, it now encompasses a wide array of academic disciplines, including anthropology, archaeology, economics, geography, linguistics, management, communication studies, psychology, culturology and political science."[[5]](#5)
 
-## <a name="history">History and Genealogy</a>
-== folder "history" ==
+### <a name="history">History and Genealogy</a>
 
 "History (derived from Ancient Greek ἱστορία (historía) 'inquiry; knowledge acquired by investigation') is the systematic study and documentation of the human past. History is an academic discipline which uses a narrative to describe, examine, question, and analyze past events, and investigate their patterns of cause and effect."[[6]](#6)
 
 "Genealogy (from Ancient Greek γενεαλογία (genealogía) 'the making of a pedigree') is the study of families, family history, and the tracing of their lineages."[[7]](#7)
 
-## <a name="arts">Arts</a>
+### <a name="arts">Arts</a>
 
 "The arts or creative arts are a vast range of human practices of creative expression, storytelling, and cultural participation. The arts encompass diverse and plural modes of thinking, doing, and being in an extensive range of media."[[8]](#8)
 
-## <a name="logic">Logic</a>
+### <a name="logic">Logic</a>
 
 "Logic is the study of correct reasoning. It includes both formal and informal logic. Formal logic is the study of deductively valid inferences or logical truths. It examines how conclusions follow from premises based on the structure of arguments alone, independent of their topic and content. Informal logic is associated with informal fallacies, critical thinking, and argumentation theory"[[9]](#9)
 
-## <a name="maths">Mathematics / Maths</a>
+### <a name="maths">Mathematics / Maths</a>
 
 "Mathematics is a field of study that discovers and organizes methods, theories and theorems that are developed and proved for the needs of empirical sciences and mathematics itself. There are many areas of mathematics, which include number theory (the study of numbers), algebra (the study of formulas and related structures), geometry (the study of shapes and spaces that contain them), analysis (the study of continuous changes), and set theory (presently used as a foundation for all mathematics)."[[10]](#10)
 
-## <a name="coding">Computer science</a>
+### <a name="coding">Computer science</a>
 
 "Computer science is the study of computation, information, and automation.[1][2][3] Computer science spans theoretical disciplines (such as algorithms, theory of computation, and information theory) to applied disciplines (including the design and implementation of hardware and software)."[[11]](#11)
+
+## Capabilities
+
+From a technical point of view some features had to be implemented in modules in the backend. Aim is to implement near to nothing in the individual pages. The pages' codes should focus on the content itself. The standard tasks are made in the background. These are initiated by including **/main.js** as script or as import.
+
+Implemented capabilities are:
+- automated loading of modules, layout and stylesheets for consistent user experience.
+- automated checking and sorting of document structure.
+  ```html
+  <html lang=".."><head><title/><link/><meta/><style/></head>
+  <body><header><h1/></header><article/><aside/><footer/><script/></body></html>
+  ```
+- event structure for code events e.g. 
+  ```js
+  events.get("language-changed").addListener(..)
+  ```
+- sitemap-based index page, page titles and (soon) prev/next links
+- multi-language text preparation via declaration
+  ```html
+  <script type="text/strings" lang="..">
+  ```
+- conditionally load [prism.js](https://prismjs.com/docs/) for syntax highlighting
+  ```html
+  <pre><code class="language-html">...</code></pre>
+  ```
+- automated table of contents with
+  ```html
+  <nav id="toc"></nav>
+  ```
+- assertion logic for pseudo-typed function parameters in javascript.
+  ```js
+  typing.assert(optionalObjectParameter, Object, undefined);
+  ```
 
 ## References
 
