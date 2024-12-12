@@ -43,7 +43,8 @@ if (document.querySelector("#toc")) {
 }
 
 layout.styleSheets.add(`
-#toc {columns: 10rem auto !important; font-size: .5rem !important; margin-top:4rem; margin-left:1rem;}
+#toc {columns: 10rem auto !important; font-size: .5rem !important;}
+#toc .H1 {list-style: none; margin: 0; padding: 0; font-weight: bold; font-size: bigger;}
 #toc .H2 {list-style: none; margin: 0; padding: 0; font-weight: bold;}
 #toc .H3 {list-style: disc outside; padding-left: 0rem; font-weight: normal;}
 #toc .H4 {list-style: circle inside; padding-left: 0rem; font-weight: normal;}

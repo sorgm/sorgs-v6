@@ -1,5 +1,8 @@
 body {
-    margin: 0rem;
+    margin-top: 4rem;
+    margin-bottom: 3rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
     border: 0rem;
     padding: 0rem;
     background: white;
@@ -110,7 +113,7 @@ dt::after {
     float: right;
 }
 
-a:not([name]) {
+a[href] {
     text-decoration: gray dotted underline;
     color: black;
 }
@@ -133,11 +136,11 @@ figure img {
 }
 blockquote {
     margin: 0rem;
-    margin-top: -1rem; /* contra first line-break between tag and text */
     border: 0rem;
     padding: 0rem;
     text-align: center;
-    white-space: pre-line; /* this keeps existing line breaks, but ignores blanks for formatting */
+    white-space: pre-line;
+    /* this keeps existing line breaks, but ignores blanks for formatting */
 }
 figcaption {
     text-align: center;

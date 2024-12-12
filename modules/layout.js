@@ -211,9 +211,6 @@ appendStyle(`
         border: 0rem;
         padding: 0rem;
     }
-    article {
-        margin: 3rem 1rem 2rem 1rem;
-    }
     footer {
         position: fixed;
         bottom: 0rem;
