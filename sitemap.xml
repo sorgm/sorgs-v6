@@ -104,12 +104,26 @@
         <changefreq>never</changefreq>
     </url>
     <url>
+        <loc>https://sorgs.de/archive/canmore/index.html</loc>
+        <sgl:title sgl:lang="de">Canmore - saved sites (Archiv, englisch)</sgl:title>
+        <sgl:title sgl:lang="en">Canmore - saved sites (archive)</sgl:title>
+        <lastmod>2001</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
         <loc>https://sorgs.de/archive/riley1997/Textiles_Page.htm</loc>
         <sgl:title sgl:lang="de">Clothing of the Ancient Celts (Archiv, englisch)</sgl:title>
-        <sgl:title sgl:lang="en">Clothing of the Ancient Celts</sgl:title>
+        <sgl:title sgl:lang="en">Clothing of the Ancient Celts (archive)</sgl:title>
         <lastmod>1997</lastmod>
         <changefreq>never</changefreq>
     </url>
+    <url>
+        <loc>https://sorgs.de/archive/newton1991/index.htm</loc>
+        <sgl:title sgl:lang="de">Celtic Museum (Archiv, englisch)</sgl:title>
+        <sgl:title sgl:lang="en">Celtic Museum (archive)</sgl:title>
+        <lastmod>1991</lastmod>
+        <changefreq>never</changefreq>
+     </url>
     <url>
         <loc>https://sorgs.de/impressum.html</loc>
         <sgl:title>Impressum</sgl:title>
