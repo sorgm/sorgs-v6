@@ -22,7 +22,7 @@
             can be cited correctly.
             I follow the
             <span class="figure">
-                <span class="figcaption"><a href="#apa2022"><cite>Basic Principles</cite>
+                <span class="figcaption"><a href="#apa-2022"><cite>Basic Principles</cite>
                     (APA, 2022)</a></span></span>
             to a large extend, but adapt them to my needs and to HTML5 based on
             <span class="figure">
@@ -77,14 +77,14 @@
         <ul>
             <li>
                 Detailled descriptions on how to handle multiple authors, secondary sources etc. in
-                text are overly complex. I think gut feeling is enough for this, if the citation refers to a
+                text are overly complex. I think, gut feeling is enough for this, if the citation refers to a
                 thoroughly described reference entry.
             </li>
             <li>
                 To have a clear key, I wanted to skip the definition "author. (publishing date)" 
                 for references in favor of keeping the citation short name of "(author, publishing year)".
                 Trying with real data this lead to a loss of information or a massive duplication.
-                I therefore chose, the link being "#authorYear" as primary key.
+                I therefore chose, the link being "#author-year" as primary key, using snake-case like usual in html attributes.
             </li>
             <li>
                 For website sources with no clear date, that are continuously edited, I chose
@@ -98,7 +98,7 @@
             </li>
             <li>
                 If a source is complex, the link does not directly lead to the references.
-                In such cases, it might lead to a whole chapter of dating and analysis of sources.
+                In such cases, it might lead to a whole chapter of dating and analysis of secondary or tertiary sources.
             </li>
             <li>
                 For questionable internet sources with valuable content, I try to preserve a copy.
@@ -114,7 +114,7 @@
             </li>
         </ul>
 
-        <h2>Resulting HTML examples</h2>
+        <h2>Full quote</h2>
 
         <figure>
             <img src="https://apastyle.apa.org/Content/Images/megamenu/images@2x/apa-style-med-sml.png"
@@ -126,7 +126,7 @@
                 critically examining, or otherwise engaging the work that has come before.
             </blockquote>
             <figcaption>
-                <a href="#apa2022"><cite>In-Text Citations</cite> (APA, 2022)</a>
+                <a href="#apa-2022"><cite>In-Text Citations</cite> (APA, 2022)</a>
             </figcaption>
         </figure>
 
@@ -142,10 +142,12 @@
         critically examining, or otherwise engaging the work that has come before.
     &lt;/blockquote>
     &lt;figcaption>
-        &lt;a href="#apa2022">&lt;cite>In-Text Citations&lt;/cite> (APA, 2022)&lt;/a>
+        &lt;a href="#apa-2022">&lt;cite>In-Text Citations&lt;/cite> (APA, 2022)&lt;/a>
     &lt;/figcaption>
 &lt;/figure>
 </code></pre>
+
+        <h2>Inline quote</h2>
 
         <p>
             In the Author-Date Citation System 
@@ -155,7 +157,7 @@
                     title="APA Style Icon" />
                 <q>each work used in a paper has two parts: an in-text citation 
                     and a corresponding reference list entry</q>
-                <span class="figcaption"><a href="#apa2022"><cite>In-Text Citations</cite>
+                <span class="figcaption"><a href="#apa-2022"><cite>In-Text Citations</cite>
                     (APA, 2022)</a></span></span>.
             Both are linked by a reference in brackets containing the author and the publishing year.
         </p>
@@ -167,29 +169,48 @@ In the Author-Date Citation System &lt;span class="figure">
     title="APA Style Icon" />
 &lt;q>each work used in a paper has two parts: an in-text citation 
     and a corresponding reference list entry&lt;/q>
-&lt;span class="figcaption">&lt;a href="#apa2022">&lt;cite>In-Text Citations&lt;/cite>
+&lt;span class="figcaption">&lt;a href="#apa-2022">&lt;cite>In-Text Citations&lt;/cite>
     (APA, 2022)&lt;/a>&lt;/span>&lt;/span>.
 Both are linked by a reference in brackets containing the author and the publishing year.
 </code></pre>
 
+        <h2>Paraphrases or indirect citing</h2>
+
         <p>
-            Reference:
-            <a name="apa2022">American Psychological Association (APA). (2022).</a>
+            In <a href="#apa-2022">APA (2022)</a> defined a quotation style originally for social reasearch documents, that very well fits other topics and hypertext markup language (HTML).
+        </p>
+
+<pre><code class="language-html">
+In &lt;a href="#apa2022">APA (2022)&lt;/a> defined...
+</code></pre>
+
+        <h2>Simple Reference</h2>
+
+        <ul><li>
+            <a name="apa-2022">American Psychological Association (APA). (<time>2022</time>).</a>
             <cite>In-Text Citations</cite>.
             APA Style Homepage.
             <a href="https://apastyle.apa.org/style-grammar-guidelines/citations"
             >https://apastyle.apa.org/style-grammar-guidelines/citations</a>.
-        </p>
+            Published <time>2022</time>.
+            <a href="https://web.archive.org/web/20241203024949/https://apastyle.apa.org/style-grammar-guidelines/citations">Archived</a> on <time datetime="2024-12-03T02:49:49Z">3 Dec 2024</time>.
+            Retrieved in <time datetime="2025-01">Jan 2025</time>.
+        </li></ul>
 
 <pre><code class="language-html">
-&lt;a name="apa2022">American Psychological Association (APA). (2022).&lt;/a>
+&lt;ul>&lt;li>
+&lt;a name="apa-2022">American Psychological Association (APA). (&lt;time>2022&lt;/time>).&lt;/a>
 &lt;cite>In-Text Citations&lt;/cite>.
 APA Style Homepage.
 &lt;a href="https://apastyle.apa.org/style-grammar-guidelines/citations"
 >https://apastyle.apa.org/style-grammar-guidelines/citations&lt;/a>.
+Published &lt;time>2022&lt;/time>.
+&lt;a href="https://web.archive.org/web/20241203024949/https://apastyle.apa.org/style-grammar-guidelines/citations">Archived&lt;/a> on &lt;time datetime="2024-12-03T02:49:49Z">3 Dec 2024&lt;/time>.
+Retrieved in &lt;time datetime="2025-01">Jan 2025&lt;/time>.
+&lt;/li>&lt;/ul>
 </code></pre>
 
-        <p>CSS formatting used is:</p>
+        <h2>CSS formatting</h2>
 
 <pre><code class="language-css">
 figure {border: 1pt solid lightgrey; width: max-content; text-align: center;}            
@@ -202,7 +223,7 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
 
         <p>Artifical example: About 1200 a type of person wore a specific dress. This dress was described in Latin 1250 by a monk of a monastery in St. Gallen. The original was lost, but a 16th century translation into French exists, whose origins are lost, but which is known as the Thornwright manuscript because family Thornwright kept it until they gave it to the British Library in 1957. In addition, a picture of an unknown artist exists in Louvre, which shows the situation, that had been described in the manuscript. The Thornwright is relevant for other information quoted elsewhere in the document, too. How to cite?</p>
 
-        <p>Idea: The main text of the research document contains a quote of manuscript 2, translated to English, and the latter picture. Both is needed to explain context. Both are cited with the original event in English (e.g., coronation of xyz) and the original year without an author. The reference to this citation contains nested evidence.</p>
+        <p>Idea: The main text of the research document contains a quote of manuscript, translated to English, and the latter picture. Both are needed to explain context. Both are cited with the original event in English (e.g., coronation of xyz) and the original year without an author. The reference to this citation contains nested evidence.</p>
 
         <!-- Main text -->
         <figure>
@@ -211,10 +232,10 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
                 title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
             <blockquote>
                 Translated quote of the French manuscript, which has nothing in common with above
-                picture except the conincidence, that both refer to the same occasion.
+                picture except the coincidence, that both refer to the same occasion.
             </blockquote>
             <figcaption>
-                <a href="#coronation_xyz_1200"><cite>Coronation of xyz</cite> (1200)</a>
+                <a href="#coronation-xyz-1200"><cite>Coronation of xyz</cite> (1200)</a>
             </figcaption>
         </figure>
         <p>
@@ -223,16 +244,16 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
         ...
         <!-- References -->
         <h3>
-            <a name="coronation_xyz_1200">Coronation of xyz. (1200).</a>
+            <a name="coronation-xyz-1200">Coronation of xyz. (1200).</a>
         </h3>
         <p>
             Event documented by 
-            <a href="#louvre_1957">Louvre 1957</a> and
-            <a href="#thornwright1550">Thornwright ~1550</a>.
+            <a href="#louvre-1957">Louvre 1957</a> and
+            <a href="#thornwright-1550">Thornwright ~1550</a>.
         </p>
         <p>Desciption of the event</p>
         <h3>
-            <a name="louvre1957">Mus&eacute;e du Louvre, Paris. (n.d.).</a>
+            <a name="louvre-1957">Mus&eacute;e du Louvre, Paris. (n.d.).</a>
             <cite>Coronation de le roi xyz</cite>.
         </h3>
         <p>
@@ -240,12 +261,12 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
             <a href="#louvre/picid/47110815"
             >#louvre/picid/47110815</a>.
             Artist, original place and date are lost.
-            Picture shows <a href="#coronation_xyz_1200">Coronation of xyz. (1200)</a>.
+            Picture shows <a href="#coronation-xyz-1200">Coronation of xyz. (1200)</a>.
         </p>
         <img src="#louvre/picid/47110815"
         title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
         <h3>
-            <a name="thornwright1550">Thornwright. (1550).</a>
+            <a name="thornwright-1550">Thornwright. (1550).</a>
             <cite>Memoire des les Alpes</cite>.
         </h3>
         <p>
@@ -254,7 +275,7 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
             >https://bl.uk/pid/e12/14</a>.
             Original text was Latin written by a St. Gallen monk in 1250,
             but is lost.
-            Text describes <a href="#coronation_xyz_1200">Coronation of xyz. (1200)</a> and ...
+            Text describes <a href="#coronation-xyz-1200">Coronation of xyz. (1200)</a> and ...
         </p>
         <blockquote lang="fr">French original text</blockquote>
 
@@ -269,7 +290,7 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
         picture except the conincidence, that both refer to the same occasion.
     &lt;/blockquote>
     &lt;figcaption>
-        &lt;a href="#coronation_xyz_1200">&lt;cite>Coronation of xyz&lt;/cite> (1200)&lt;/a>
+        &lt;a href="#coronation-xyz-1200">&lt;cite>Coronation of xyz&lt;/cite> (1200)&lt;/a>
     &lt;/figcaption>
 &lt;/figure>
 &lt;p>
@@ -278,16 +299,16 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
 ...
 &lt;!-- References -->
 &lt;h3>
-    &lt;a name="coronation_xyz_1200">Coronation of xyz. (1200).&lt;/a>
+    &lt;a name="coronation-xyz-1200">Coronation of xyz. (1200).&lt;/a>
 &lt;/h3>
 &lt;p>
     Event documented by 
-    &lt;a href="#louvre_1957">Louvre 1957&lt;/a> and
-    &lt;a href="#thornwright1550">Thornwright ~1550&lt;/a>.
+    &lt;a href="#louvre-1957">Louvre 1957&lt;/a> and
+    &lt;a href="#thornwright-1550">Thornwright ~1550&lt;/a>.
 &lt;/p>
 &lt;p>Desciption of the event&lt;/p>
 &lt;h3>
-    &lt;a name="louvre1957">Mus&eacute;e du Louvre, Paris. (n.d.).&lt;/a>
+    &lt;a name="louvre-1957">Mus&eacute;e du Louvre, Paris. (n.d.).&lt;/a>
     &lt;cite lang="frm">Coronation de le roi xyz&lt;/cite>.
 &lt;/h3>
 &lt;p>
@@ -300,7 +321,7 @@ figure figcaption a, span.figcaption a {text-decoration: gray dotted underline; 
 &lt;img src="#louvre/picid/47110815"
 title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
 &lt;h3>
-    &lt;a name="thornwright1550">Thornwright. (1550).&lt;/a>
+    &lt;a name="thornwright-1550">Thornwright. (1550).&lt;/a>
     &lt;cite>Memoire des les Alpes&lt;/cite>.
 &lt;/h3>
 &lt;p>
@@ -317,7 +338,7 @@ title="Coronation of xyz, 1200, drawn by an unknown artist, Louvre" />
     <h2>References</h2>
 
     <ol>
-        <li><a name="apa2022"
+        <li><a name="apa-2022"
             >American Psychological Association (APA). (2022).</a>
             <cite>In-Text Citations</cite>.
             APA Style Homepage.

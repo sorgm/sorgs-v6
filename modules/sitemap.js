@@ -45,6 +45,9 @@ class Webpage {
                 case 'text':
                     // ignore
                     break;
+                case 'priority':
+                    // ignore
+                    break;
                 default:
                     console.log(`Unknown tag in sitemap: ${key}`);
             }

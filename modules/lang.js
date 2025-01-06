@@ -45,6 +45,7 @@ class LangElement {
             }
         }
         if (!element.tagName) {
+            // remove leading and trailing blanks
             this.textContent = element.textContent.replace(/^\s*|\s*$/, '');
         }
         this.children = [];
@@ -141,7 +142,9 @@ class LangElement {
         var errors = [];
 
         if (this.tagName == "TEXT" && this.element) {
-            try {this.element.textContent = ' '+this.textContent+' ';}
+            // re-add leading and trailing blanks ??? only where needed
+            //try {this.element.textContent = ' '+this.textContent+' ';}
+            try {this.element.textContent = this.textContent;}
             catch (e) {errors.push(e);}
         }        
         for(const attr of this.attributes) {
