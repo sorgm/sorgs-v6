@@ -1,0 +1,6 @@
+(function(){
+function run(n,t,i){var a=new XMLHttpRequest;a.onreadystatechange=function(){if(this.readyState===4&&this.status===200){var t=n.createElement("script");t.type="text/javascript";t.innerHTML="(function() { var load = function() {"+a.responseText+";\n return this;}.bind({}); var _ = load();__CMD__ })()".replace(/__CMD__/g,i);(n.head||n.documentElement).appendChild(t)}};a.onerror=function(){};a.open("GET",t,!0);a.send()}
+function add(t,n){var i=t.createElement("script");i.type="text/javascript";i.src=n;i.async=!0;(t.head||t.documentElement).appendChild(i)}
+run(document, 'https://cdn.pbstck.com/user-sessions-b6ed2f5.js', '_.userSessions.pubstackAutoconfig(' + JSON.stringify({"endpoint":{"gateway":"https://intake.pbstck.com/v1/intake"},"scopeId":"8a694078-921d-41b8-a714-a9e05959db58","tagId":"b1a985ab-4519-4935-98ef-54f412272e1d","sessionTrackingDisabled":true}) + ');');
+run(document, 'https://cdn.pbstck.com/collector-8473192.js', '_.collector.pubstackAutoconfig(' + JSON.stringify({"endpoint":{"gateway":"https://intake.pbstck.com/v1/intake"},"scopeId":"8a694078-921d-41b8-a714-a9e05959db58","tagId":"b1a985ab-4519-4935-98ef-54f412272e1d","viewabilityEnabled":true,"refreshEnabled":false,"smartEnabled":false,"pbjsVariableName":"pbjs"}) + ');');
+})()

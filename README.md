@@ -68,6 +68,11 @@ Implemented capabilities are:
   ```html
   <nav id="toc"></nav>
   ```
+- automated list of references with
+  ```html
+  <reference>...</reference>
+  <ul id="references"></ul>
+  ```
 - assertion logic for pseudo-typed function parameters in javascript.
   ```js
   typing.assert(optionalObjectParameter, Object, undefined);

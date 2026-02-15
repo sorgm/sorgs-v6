@@ -1,0 +1,25 @@
+(function () {
+  // LOAD ANALYSIS SCRIPT
+  
+  const meta = document.getElementsByTagName("meta");
+  for (let i = 0; i < meta.length; i++) {
+    let property = meta[i].getAttribute("property");
+    let content = meta[i].getAttribute("content");
+    if (property === "og:image") {
+      if (
+        content !== "https://static.spektrum.de/pix/sde_fallback.png" &&
+        content !==
+          "https://assets.cicero.de/styles/cc_980x550/public/article-placeholder.png?itok=Zrx3DrA8"
+      ) {
+        var head = document.getElementsByTagName("head")[0];
+        var anascript = document.createElement("script");
+        anascript.type = "text/javascript";
+        anascript.src =
+          "https://pubads.g.doubleclick.net/gampad/adx?iu=/4099689/twiago.de-wrapper-1x1&t=twgpid%3d3351&d_imp=1&sz=1x1&c=" +
+          Math.round(Math.random() * 999999999) +
+          "&m=text/javascript";
+        head.appendChild(anascript);
+      }
+    }
+  }
+})();

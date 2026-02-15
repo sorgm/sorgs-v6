@@ -1,0 +1,10 @@
+(function() {
+  'use strict';
+  var pingLoader = document.createElement('script');
+  pingLoader.async = true;
+  pingLoader.src = 'https://reco.twiago.com/ping-staging/contentperformer-ping.min.js';
+  pingLoader.dataset.accountId = 'twiagode-analyzer';
+  pingLoader.dataset.logglyToken = '46a0daff-23d8-4d70-ae45-e4016a4bc78e/tag/v3.ablida.de,cpp/';
+	pingLoader.dataset.documentUri = decodeURIComponent('');
+  document.body.appendChild(pingLoader);
+})();

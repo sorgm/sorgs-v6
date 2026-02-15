@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- saved from url=(0133)https://s0.2mdn.net/sadbundle/5572686560968404243/index.html?e=69&leftOffset=0&topOffset=0&c=Ff5EVcs9ff&t=1&renderingType=2&ev=01_253 -->
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,maximum-scale=1">
+    <meta name="ad.size" content="width=970, height=250">
+    <meta data-template-name="TechLab_HTML5_LocalConnect">
+    <meta data-template-name="TechLab_HTML5_ResponsiveAd">
+    <title>Banner</title>
+    <script>
+      window.c9 = {
+        bannerWidth: 970,
+        bannerHeight: 250,
+        mainJs: "970x250_lh_de-de_brand.js",
+        jsPath: "https://s0.2mdn.net/creatives/assets/4703545/",
+        adHoster: "dcs",
+      };
+      window.mainBundle = "";
+    </script>
+  <script src="./main.js.Herunterladen"></script><meta http-equiv="origin-trial" content="A4AD7vbM2W0e5fHylDM4fFrsUvtmQ95U+ZVrdOdh3fgH0l0e7RVkAsZryrSQIRhPVvmC60wTlh880eDyo+HpXQAAAABueyJvcmlnaW4iOiJodHRwczovL3MwLjJtZG4ubmV0OjQ0MyIsImZlYXR1cmUiOiJQcml2YWN5U2FuZGJveEFkc0FQSXMiLCJleHBpcnkiOjE2OTUxNjc5OTksImlzVGhpcmRQYXJ0eSI6dHJ1ZX0="></head>
+  <body>
+    <script src="./Enabler_01_250.js.Herunterladen"></script>
+    <script>
+      Enabler.setProfileId(10793484);
+    </script>
+    <script>
+      window.onload = function () {
+        if (Enabler.isInitialized()) {
+          enablerInitHandler();
+        } else {
+          Enabler.addEventListener(studio.events.StudioEvent.INIT, enablerInitHandler);
+        }
+      };
+
+      function enablerInitHandler() {
+        let rooted = {};
+        let data = window.dynamicContent;
+        for (const key of Object.keys(data)) {
+          if (Array.isArray(data[key])) {
+            rooted = Object.assign({}, rooted, data[key][0]);
+          }
+        }
+
+        if (rooted.jsPath) {
+          c9.jsPath = rooted.jsPath;
+        }
+
+        injectScript(c9.jsPath, function () {
+          loadPrimaryJS(rooted);
+        });
+      }
+
+      function injectScript(src, callback) {
+        const primaryScript = document.createElement("script");
+
+        primaryScript.addEventListener("load", callback);
+
+        primaryScript.src = `${c9.jsPath}main.js`;
+
+        document.head.appendChild(primaryScript);
+      }
+    </script>
+    <script>
+      window.isLocal = function () {
+        var regex = new RegExp(/(localhost:|local|lakito.de|file:|:8080|:5757|:8888)/);
+        return regex.test(window.location.origin);
+      };
+    </script>
+  
+
+<img src="./970x250.jpg" style="display: block; width: 970px; height: 250px; position: absolute; top: 0px; left: 0px;"><iframe style="display: none;" src="./saved_resource(4).html"></iframe></body></html>

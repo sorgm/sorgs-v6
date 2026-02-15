@@ -3,7 +3,7 @@ import {default as events} from "./events.js"
 
 const HEADER_SELECTOR = "h2, h3, h4";
 
-function refresh() {
+function refreshTableOfContents() {
     var oldLevel = 1;
     var retval = Array.from(document.querySelectorAll(HEADER_SELECTOR)).map(el => {
         var anchor = el.querySelector("a[name]");
@@ -39,7 +39,26 @@ function refresh() {
 }
 
 if (document.querySelector("#toc")) {
-    events.get("language_changed").addListener(refresh);
+    events.get("language_changed").addListener(refreshTableOfContents);
+}
+
+function refreshReferences() {
+    var refList = document.querySelector("#references");
+    var refTagName = "P";
+    if ((refList.tagName == "UL") || (refList.tagName == "OL")){
+        refTagName = "LI"
+    }
+
+    Array.from(document.querySelectorAll("reference")).map(el => {
+        const newel = document.createElement(refTagName);
+        newel.innerHTML = el.innerHTML;
+        refList.appendChild(newel);
+        el.parentElement.removeChild(el);
+    })
+}
+
+if (document.querySelector("#references")) {
+    events.get("language_changed").addListener(refreshReferences);
 }
 
 layout.styleSheets.add(`
@@ -49,4 +68,5 @@ layout.styleSheets.add(`
 #toc .H3 {list-style: disc outside; padding-left: 0rem; font-weight: normal;}
 #toc .H4 {list-style: circle inside; padding-left: 0rem; font-weight: normal;}
 #toc a {text-decoration: none;}
+reference {display: none;}
 `)
