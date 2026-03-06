@@ -61,7 +61,7 @@ class Webpage {
     }
 }
 
-async function fetch_sitemap(filename = "/sitemap.xml") {
+async function fetch_sitemap(filename = "../sitemap.xml") {
     return fetch(filename)
     .then(res => res.text())
     .then(str => typing.string_to_xml(str))

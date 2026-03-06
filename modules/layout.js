@@ -230,4 +230,9 @@ appendStyle(`
     footer div, footer address {
         display: inline-block;
     }
+    iframe {
+        width: 100%;
+        height: 10000rem;
+        border: none;
+    }
 `);
