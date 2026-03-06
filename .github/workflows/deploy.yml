@@ -1,4 +1,4 @@
-name: Deploy to STRATO
+name: Deploy to STRATO via SFTP
 
 on:
   push:
