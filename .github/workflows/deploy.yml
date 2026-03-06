@@ -11,13 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy via SFTP using lftp
+        uses: pressidium/lftp-mirror-action@v1
         with:
-          server: ${{ secrets.SFTP_HOST }}
+          host: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASS }}
-          protocol: ftps
-          local-dir: ./
-          server-dir: ${{ secrets.SFTP_REMOTE_PATH }}
+          user: ${{ secrets.SFTP_USER }}
+          pass: ${{ secrets.SFTP_PASS }}
+          localDir: "./"
+          remoteDir: ${{ secrets.SFTP_REMOTE_PATH }}
+          options: "--verbose --parallel=2 --reverse --delete --only-newer"
