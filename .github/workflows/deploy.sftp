@@ -1,0 +1,5 @@
+version
+lcd .
+cd $SFTP_REMOTE_PATH
+put -R *
+bye

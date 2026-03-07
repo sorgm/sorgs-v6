@@ -25,12 +25,5 @@ jobs:
             -o "StrictHostKeyChecking=no" \
             -p \
             -v \
-            $SFTP_USER@$SFTP_HOST:$SFTP_PORT \
-            <<EOF
-            version
-            lcd .
-            cd $SFTP_REMOTE_PATH
-            put -R *
-            bye
-            EOF
-
+            -b deploy.sftp \
+            $SFTP_USER@$SFTP_HOST:$SFTP_PORT
