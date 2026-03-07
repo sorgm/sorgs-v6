@@ -23,6 +23,7 @@ async function appendStyle(fileNameOrCSS, callback=null) {
     if (fileNameOrCSS.match(fileNamePattern)) {
         if (fileNameOrCSS.startsWith("/")) {
             fileNameOrCSS = document.baseURI + fileNameOrCSS.slice(1);
+        }
         return await fetch(fileNameOrCSS)
         .then(response => response.text())
         .then(text => {
@@ -136,7 +137,7 @@ function initHtmlStructure() {
     var baseEl = appendNewElement("base", document.documentElement, true, 0);
     // set base to parent of main.js to make all links relative to it; don't overwrite "base"
     baseEl.href = '/' + import.meta.url.split('/').slice(3, -2).map(s=>s+ '/').join('');
-    
+
     appendNewElement("head", document.documentElement, true, 0, "title, link, meta, style");
 
     // meta tags must be part of original html file
