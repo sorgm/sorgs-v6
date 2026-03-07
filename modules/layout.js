@@ -136,7 +136,21 @@ function initHtmlStructure() {
     }
     var baseEl = appendNewElement("base", document.documentElement, true, 0);
     // set base to parent of main.js to make all links relative to it; don't overwrite "base"
-    baseEl.href = '/' + import.meta.url.split('/').slice(3, -2).map(s=>s+ '/').join('');
+    var base_pathname = '/' + import.meta.url.split('/').slice(3, -2).map(s=>s+ '/').join('');
+    baseEl.href = base_pathname;
+
+    console.assert(new URL(document.baseURI).pathname == base_pathname, "Base URI's pathname must be given base URI.");
+    console.assert(window.location.pathname.startsWith(base_pathname), "Base URI must be parent of current document for correct relative links.");
+
+    // add current document in all #fragment-only links - and check them for corresponding anchors
+    var current_path_ex_base = window.location.pathname.slice(base_pathname.length);
+    Array.from(document.querySelectorAll("a[href^='#']")).map(el => {
+        var target_fragment = el.getAttribute('href');
+        if (target_fragment!="#") {
+            console.assert(!!document.querySelector("a[name='"+target_fragment.slice(1)+"']"), `Fragment-only links must have a corresponding anchor element with the same name attribute: ${target_fragment}`);
+        }
+        el.href = current_path_ex_base + target_fragment;
+    });
 
     appendNewElement("head", document.documentElement, true, 0, "title, link, meta, style");
 
@@ -159,6 +173,10 @@ function initHtmlStructure() {
             console.warn(fragment,"is missing in HEAD.");
             appendNewElement(fragment, document.head)
         }
+    }
+
+    if (!document.querySelector("link[rel='icon']")) {
+        appendNewElement('<link rel="icon" href="favicon.ico" type="image/x-icon">', document.head);
     }
 
     appendNewElement("body", document.documentElement, true, 1, "header, article:not(article article), aside:not(aside aside), footer:not(footer footer), script");
@@ -195,7 +213,8 @@ const layout = {
     },
     footer: {
         add: prependFooter
-    }
+    },
+    current_path_ex_base: () => window.location.pathname.slice(new URL(document.baseURI).pathname.length)
 }
 
 export default layout;

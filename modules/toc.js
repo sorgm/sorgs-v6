@@ -27,7 +27,7 @@ function refreshTableOfContents() {
             retval += "</li></ul>";
         }
 
-        retval += `<li><a href="#${anchorName}">${el.innerText}</a>`;
+        retval += `<li><a href="${layout.current_path_ex_base()}#${anchorName}">${el.innerText}</a>`;
 
         return retval;
     }).join("")
