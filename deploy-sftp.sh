@@ -7,6 +7,9 @@ echo "Host $SFTP_HOST
   StrictHostKeyChecking no
   UserKnownHostsFile=/dev/null" >> ~/.ssh/config
 
+# Pass the pwd
+sshpass -p "$SFTP_PASS"
+
 # Run SFTP in batch mode
 sftp \
   -o "BatchMode=no" \
