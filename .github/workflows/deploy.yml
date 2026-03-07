@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Make script executable
+        run: chmod +x ./deploy-sftp.sh
+        
       - name: Deploy via SFTP (pure OpenSSH)
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
