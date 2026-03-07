@@ -21,5 +21,5 @@ jobs:
           SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}
         run: |
           sftp -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST" <<EOF
-put -r * "$SFTP_REMOTE_PATH"
-EOF
+          put -r * "$SFTP_REMOTE_PATH"
+          EOF
