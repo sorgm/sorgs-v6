@@ -12,6 +12,9 @@ body {
     font-size: 1rem;
     word-break: break-word;
 }
+a[name] {
+    scroll-margin-top: 4rem;
+}
 
 p {
     display: block;
