@@ -19,11 +19,4 @@ jobs:
           SFTP_USER: ${{ secrets.SFTP_USER }}
           SFTP_PASS: ${{ secrets.SFTP_PASS }}
           SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}
-        run: |
-          # Start SFTP session
-          sftp \
-            -o "StrictHostKeyChecking=no" \
-            -p \
-            -v \
-            -b ./deploy.sftp \
-            $SFTP_USER@$SFTP_HOST:$SFTP_PORT
+        run: ./deploy-sftp.sh
