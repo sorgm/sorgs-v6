@@ -22,16 +22,15 @@ jobs:
         run: |
           # Start SFTP session
           sftp \
-            -o "BatchMode=yes" \
             -o "StrictHostKeyChecking=no" \
-            -P $SFTP_PORT \
             -p \
             -v \
-            $SFTP_USER@$SFTP_HOST <<EOF
-          version
-          lcd .
-          cd $SFTP_REMOTE_PATH
-          put -R *
-          bye
-          EOF
+            $SFTP_USER@$SFTP_HOST:$SFTP_PORT \
+            <<EOF
+            version
+            lcd .
+            cd $SFTP_REMOTE_PATH
+            put -R *
+            bye
+            EOF
 
