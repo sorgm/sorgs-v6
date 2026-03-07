@@ -20,16 +20,19 @@ jobs:
           SFTP_PASS: ${{ secrets.SFTP_PASS }}
           SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}
         run: |
-          mkdir -p ~/.ssh
-
-          # Add STRATO host key
-          ssh-keyscan -p $SFTP_PORT $SFTP_HOST >> ~/.ssh/known_hosts
-
           # Start SFTP session
-          sftp -oBatchMode=no -P $SFTP_PORT $SFTP_USER@$SFTP_HOST <<EOF
+          sftp \
+            -o "BatchMode=yes" \
+            -o "Host=$SFTP_HOST" \
+            -o "StrictHostKeyChecking=no" \
+            -P $SFTP_PORT \
+            -p \
+            -v \
+            $SFTP_USER@$SFTP_HOST <<EOF
+          version
           lcd .
           cd $SFTP_REMOTE_PATH
-          put -r *
+          put -R *
           bye
           EOF
 
