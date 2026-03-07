@@ -12,14 +12,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Make script executable
-        run: chmod +x ./deploy-sftp.sh
-        
-      - name: Deploy via SFTP (pure OpenSSH)
+      - name: list files (debug)
+        run: ls -l
+
+      - name: show script (debug)
+        run: cat deploy-sftp.sh
+
+      - name: Run deployment script
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
           SFTP_USER: ${{ secrets.SFTP_USER }}
           SFTP_PASS: ${{ secrets.SFTP_PASS }}
           SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}
-        run: ./deploy-sftp.sh
+        run: |
+          set -x
+          chmod +x deploy-sftp.sh
+          ./deploy-sftp.sh
