@@ -11,29 +11,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy via SFTP using lftp
-        uses: pressidium/lftp-mirror-action@v1
+      - name: Deploy via SFTP
+        uses: atmoz/sftp-deploy@v1
         with:
-          # SFTP credentials
           host: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          user: ${{ secrets.SFTP_USER }}
-          pass: ${{ secrets.SFTP_PASS }}
-          # lftp settings
-          forceSSL: true
-          verifyCertificate: false
-          restoreMTime: true
-          settings: |
-            sftp:auto-confirm=yes
-            net:timeout=10
-            net:max-retries=1
-            net:reconnect-interval-base=1
-            cmd:fail-exit=yes
-          # Mirror command options
-          localDir: '.'
-          remoteDir: ${{ secrets.SFTP_REMOTE_PATH }}
-          ignoreFile: '.lftpignore'
-          reverse: true
-          onlyNewer: true
-          parallel: '1'
-          options: '--verbose'
+          username: ${{ secrets.SFTP_USER }}
+          password: ${{ secrets.SFTP_PASS }}
+          local_path: "./"
+          remote_path: ${{ secrets.SFTP_REMOTE_PATH }}
+          exclude: |
+            .git/
+            .github/
+            *.log
+            node_modules/
+            .DS_Store
+          options: "--verbose"
