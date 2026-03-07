@@ -7,23 +7,22 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy via SFTP
-        uses: atmoz/sftp-deploy@v1
-        with:
-          host: ${{ secrets.SFTP_HOST }}
-          port: ${{ secrets.SFTP_PORT }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASS }}
-          local_path: "./"
-          remote_path: ${{ secrets.SFTP_REMOTE_PATH }}
-          exclude: |
-            .git/
-            .github/
-            *.log
-            node_modules/
-            .DS_Store
-          options: "--verbose"
+      - name: Deploy via SFTP (pure OpenSSH)
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SFTP_HOST }}" >> ~/.ssh/known_hosts
+
+          # Upload everything except ignored files
+          sftp -P ${{ secrets.SFTP_PORT }} \
+               ${{ secrets.SFTP_USER }}@${{ secrets.SFTP_HOST }} <<EOF
+          lcd .
+          cd ${{ secrets.SFTP_REMOTE_PATH }}
+          put -r *
+          bye
+          EOF
+
