@@ -8,7 +8,7 @@
     </script>
 
     or if you don't have own code
-    <script src="/main.js" type="module"></script>
+    <script src="../main.js" type="module"></script>
 */
 export {default as layout} from "./modules/layout.js"
 export {default as events} from "./modules/events.js"
