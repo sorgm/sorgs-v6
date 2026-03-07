@@ -25,5 +25,5 @@ jobs:
             -o "StrictHostKeyChecking=no" \
             -p \
             -v \
-            -b deploy.sftp \
+            -b ./deploy.sftp \
             $SFTP_USER@$SFTP_HOST:$SFTP_PORT
