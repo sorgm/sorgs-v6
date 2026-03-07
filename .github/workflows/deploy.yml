@@ -23,7 +23,6 @@ jobs:
           # Start SFTP session
           sftp \
             -o "BatchMode=yes" \
-            -o "Host=$SFTP_HOST" \
             -o "StrictHostKeyChecking=no" \
             -P $SFTP_PORT \
             -p \
