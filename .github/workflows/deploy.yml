@@ -12,16 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      - name: list files (debug)
-        run: ls -l
-
-      - name: show script (debug)
-        run: cat deploy-sftp.sh
-
-      - name: Run deployment script
+      - name: Upload to ftp
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
@@ -29,6 +20,6 @@ jobs:
           SFTP_PASS: ${{ secrets.SFTP_PASS }}
           SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}
         run: |
-          set -x
-          chmod +x deploy-sftp.sh
-          ./deploy-sftp.sh
+          sftp -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST" <<EOF
+put -r * "$SFTP_REMOTE_PATH"
+EOF
