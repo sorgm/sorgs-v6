@@ -22,13 +22,18 @@ jobs:
           # lftp settings
           forceSSL: true
           verifyCertificate: false
-          onlyNewer: true
           restoreMTime: true
-          parallel: 1
-          settings: 'sftp:auto-confirm=yes'
+          settings: |
+            sftp:auto-confirm=yes
+            net:timeout=10
+            net:max-retries=1
+            net:reconnect-interval-base=1
+            cmd:fail-exit=yes
           # Mirror command options
           localDir: '.'
           remoteDir: ${{ secrets.SFTP_REMOTE_PATH }}
-          reverse: true
           ignoreFile: '.lftpignore'
+          reverse: true
+          onlyNewer: true
+          parallel: '1'
           options: '--verbose'
