@@ -13,15 +13,22 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy via SFTP (pure OpenSSH)
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASS: ${{ secrets.SFTP_PASS }}
+          SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SFTP_HOST }}" >> ~/.ssh/known_hosts
 
-          # Upload everything except ignored files
-          sftp -P ${{ secrets.SFTP_PORT }} \
-               ${{ secrets.SFTP_USER }}@${{ secrets.SFTP_HOST }} <<EOF
+          # Add STRATO host key
+          ssh-keyscan -p $SFTP_PORT $SFTP_HOST >> ~/.ssh/known_hosts
+
+          # Start SFTP session
+          sftp -oBatchMode=no -P $SFTP_PORT $SFTP_USER@$SFTP_HOST <<EOF
           lcd .
-          cd ${{ secrets.SFTP_REMOTE_PATH }}
+          cd $SFTP_REMOTE_PATH
           put -r *
           bye
           EOF
