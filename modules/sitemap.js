@@ -28,13 +28,13 @@ class Webpage {
             }
             switch (key) {
                 case 'loc':
-                    loc = new URL(new URL(value).pathname.slice(1), document.baseURI);
+                    loc = new URL(value);
                     break;
                 case 'sgl:title':
                     title = value.text ?? value;
                     break;
                 case 'sgl:img':
-                    imgsrc = new URL(new URL(value['sgl:src']).pathname.slice(1), document.baseURI);
+                    imgsrc = new URL(value['sgl:src']);
                     break;
                 case 'lastmod':
                     lastmod = Date.parse(value);
