@@ -131,6 +131,9 @@ function initHtmlStructure() {
     if (!document.documentElement.attributes.getNamedItem("lang")) {
         document.documentElement.lang = "und" // undefined
     }
+    var base = appendNewElement("base", document.documentElement, true, 0);
+    // set base to parent of main.js to make all links relative to it
+    base.href = '/' + import.meta.url.split('/').slice(3, -2).map(s=>s+ '/').join('');
     appendNewElement("head", document.documentElement, true, 0, "title, link, meta, style");
 
     // meta tags must be part of original html file
