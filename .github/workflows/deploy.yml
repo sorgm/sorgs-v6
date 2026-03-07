@@ -1,23 +1,40 @@
-name: Deploy to STRATO via SFTP
+name: Deploy to STRATO
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+  # Enables manually triggering of Workflow with file synchronization option
+  workflow_dispatch:
+    inputs:
+      sync:
+        description: "File synchronization to STRATO server via SFTP. Options: 'delta' (default) or 'mirror'. 'delta' will only upload changed files, while 'mirror' will make the remote directory an exact copy of the local directory (deleting any remote files that are not present locally)."
+        required: true
+        default: "delta"
 
 jobs:
-  deploy:
+  deploy-main:
+    name: "main branch"
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Deploy via SFTP using lftp
-        uses: pressidium/lftp-mirror-action@v1
+      - name: "Checkout"
+        uses: actions/checkout@v6
         with:
-          host: ${{ secrets.SFTP_HOST }}
-          port: ${{ secrets.SFTP_PORT }}
-          user: ${{ secrets.SFTP_USER }}
-          pass: ${{ secrets.SFTP_PASS }}
-          localDir: "./"
-          remoteDir: ${{ secrets.SFTP_REMOTE_PATH }}
-          options: "--verbose --parallel=2 --reverse --delete --only-newer"
+          fetch-depth: 0
+      - name: "Deploy"
+        uses: milanmk/actions-file-deployer@master
+        with:
+          remote-protocol: "sftp"
+          remote-host: ${{ secrets.SFTP_HOST }}
+          remote-port: ${{ secrets.SFTP_PORT }}
+          remote-user: ${{ secrets.SFTP_USER }}
+          remote-password: ${{ secrets.SFTP_PASS }}
+          local-path: "./"
+          remote-path: ${{ secrets.SFTP_REMOTE_PATH }}
+          sync: delta
+          sync-delta-excludes: ".git/,.gitignore,LICENSE,README.md,.github/,.vscode/,.DS_Store,Thumbs.db,*.log,dist/,build/,.lftignore"
+          ftp-options: 	"--verbose --parallel=1"
+          ftp-mirror-options: ""
+          debug: true
