@@ -22,7 +22,7 @@ async function appendStyle(fileNameOrCSS, callback=null) {
     const fileNamePattern = /^(http|\/|\.\/|\.\.\/)/;
     if (fileNameOrCSS.match(fileNamePattern)) {
         if (fileNameOrCSS.startsWith("/")) {
-            fileNameOrCSS = document.baseURI + fileNameOrCSS.slice(1);
+            fileNameOrCSS = layout.script_base_pathname() + fileNameOrCSS.slice(1);
         }
         return await fetch(fileNameOrCSS)
         .then(response => response.text())
@@ -128,22 +128,28 @@ function initHtmlStructure() {
     // <body><header><h1></h1><nav></nav></header><article></article><footer></footer></body>
 
     if (document.doctype?.name != "html") {
-        console.warn("Doctype is not defined or not html!")
+        console.warn("<!DOCTYPE html> is missing before HTML.")
     };
     appendNewElement("html",null,true,0,"base, head, body");
     if (!document.documentElement.attributes.getNamedItem("lang")) {
         document.documentElement.lang = "und" // undefined
     }
     var baseEl = appendNewElement("base", document.documentElement, true, 0);
-    // set base to parent of main.js to make all links relative to it; don't overwrite "base"
-    var base_pathname = '/' + import.meta.url.split('/').slice(3, -2).map(s=>s+ '/').join('');
-    baseEl.href = base_pathname;
-
-    console.assert(new URL(document.baseURI).pathname == base_pathname, "Base URI's pathname must be given base URI.");
-    console.assert(window.location.pathname.startsWith(base_pathname), "Base URI must be parent of current document for correct relative links.");
+    var script_base_pathname = layout.script_base_pathname();
+    if (!baseEl.href && 
+        window.location.pathname.startsWith(script_base_pathname)) {
+        baseEl.href = script_base_pathname;
+    }
+    document_base_pathname = layout.document_base_pathname();
+    if (document_base_pathname != script_base_pathname) {
+        console.warn("Document base differs from script base. fetch might fail.");
+    }
+    if (!window.location.pathname.startsWith(document_base_pathname)) {
+        console.warn("Current document is not in document base path. Relative links might fail.");
+    }
 
     // add current document in all #fragment-only links - and check them for corresponding anchors
-    var current_path_ex_base = window.location.pathname.slice(base_pathname.length);
+    var current_path_ex_base = window.location.pathname.slice(document_base_pathname.length);
     Array.from(document.querySelectorAll("a[href^='#']")).map(el => {
         var target_fragment = el.getAttribute('href');
         if (target_fragment!="#") {
@@ -214,7 +220,9 @@ const layout = {
     footer: {
         add: prependFooter
     },
-    current_path_ex_base: () => window.location.pathname.slice(new URL(document.baseURI).pathname.length)
+    current_path_ex_base: () => window.location.pathname.slice(new URL(document.baseURI).pathname.length),
+    script_base_pathname: () => '/' + import.meta.url.split('/').slice(3, -2).map(s=>s+ '/').join(''),
+    document_base_pathname: () => new URL(document.baseURI).pathname
 }
 
 export default layout;

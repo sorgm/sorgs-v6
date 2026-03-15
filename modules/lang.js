@@ -402,7 +402,12 @@ function initLanguage() {
             s.lang
         ));
 
-    lang[languages()[0]].assign();
+    try {
+        lang[languages()[0]].assign();
+    }
+    catch (e) {
+        console.warn(`Error assigning language ${languages()[0]}: ${e}`);
+    }
 }
 
 layout.styleSheets.add(`

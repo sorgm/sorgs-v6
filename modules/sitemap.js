@@ -1,5 +1,6 @@
 import events from './events.js'
 import typing from './typing.js'
+import layout from './layout.js'
 
 class Webpage {
     constructor (loc, title, imgsrc, lastmod, changefreq) {
@@ -61,7 +62,7 @@ class Webpage {
     }
 }
 
-async function fetch_sitemap(filename = document.baseURI + "sitemap.xml") {
+async function fetch_sitemap(filename = layout.script_base_pathname() + "sitemap.xml") {
     return fetch(filename)
     .then(res => res.text())
     .then(str => typing.string_to_xml(str))
