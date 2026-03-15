@@ -23,7 +23,7 @@
 
             gallery.innerHTML = Object.values(sitemap).reduce((p, e) => {
                 var href=e.location.href
-                if (window.location.hostname=="sorgs.de") {
+                if (e.location.hostname=="sorgs.de") {
                     href=e.location.pathname.slice(1)
                 }
                 if (e.imgsrc == undefined) {
