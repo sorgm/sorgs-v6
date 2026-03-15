@@ -22,11 +22,9 @@
             const gallery = document.getElementsByClassName("gallery")[0];
 
             gallery.innerHTML = Object.values(sitemap).reduce((p, e) => {
+                var href=e.location.href
                 if (window.location.hostname=="sorgs.de") {
                     href=e.location.pathname.slice(1)
-                }
-                else {
-                    href=e.location.href
                 }
                 if (e.imgsrc == undefined) {
                     return p + `<a href="${href}" class="${e.style}" title="${e.title}">
