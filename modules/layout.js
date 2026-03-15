@@ -140,7 +140,7 @@ function initHtmlStructure() {
         window.location.pathname.startsWith(script_base_pathname)) {
         baseEl.href = script_base_pathname;
     }
-    document_base_pathname = layout.document_base_pathname();
+    var document_base_pathname = layout.document_base_pathname();
     if (document_base_pathname != script_base_pathname) {
         console.warn("Document base differs from script base. fetch might fail.");
     }
