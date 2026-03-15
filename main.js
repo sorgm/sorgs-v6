@@ -38,11 +38,11 @@ import "./modules/toc.js"
         const dateElTitle = {"en": "Content last modified on", "de": "Inhalt zuletzt geändert am"}
         events.get("language_changed").addListener(() => 
             dateEl.title = (dateElTitle[document.documentElement.lang] ?? dateElTitle["en"]));
-        const homeEl = layout.footer.add("<a href='index.html' rel='bookmark'>Home</a>");
+        const homeEl = layout.footer.add(`<a href='${layout.script_base_pathname()}index.html' rel='bookmark'>Home</a>`);
         const homeElTitle = {"en": "Index of pages at sorgs.de", "de": "Übersicht der Seiten auf sorgs.de"}
         events.get("language_changed").addListener(() => 
             homeEl.title = (homeElTitle[document.documentElement.lang] ?? homeElTitle["en"]));
-        layout.footer.add("<a href='impressum.html' rel='author license terms-of-service' title='Impressum'>Impressum</a>");
+        layout.footer.add(`<a href='${layout.script_base_pathname()}impressum.html' rel='author license terms-of-service' title='Impressum'>Impressum</a>`);
         
         lang.init();
 

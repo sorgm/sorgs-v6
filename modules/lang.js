@@ -334,6 +334,10 @@ function languages() {
     var text_languages = Object.keys(lang)
         .filter(l => l.length<=2);
 
+    if (text_languages.length == 0) {
+        text_languages = ['und']; // undefined
+    };
+
     var navigator_languages = navigator.languages
         .map(l => l.substring(0,2))
         .reduce((p,v) => p.includes(v)?p:p.concat([v]), []);
