@@ -127,7 +127,7 @@ function initHtmlStructure() {
     // <head><title></title><meta name="viewport" .../></head>
     // <body><header><h1></h1><nav></nav></header><article></article><footer></footer></body>
 
-    if (document.doctype.name != "html") {
+    if (document.doctype?.name != "html") {
         throw new Error("Doctype is not html!")
     };
     appendNewElement("html",null,true,0,"base, head, body");
