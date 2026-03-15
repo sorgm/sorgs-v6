@@ -128,7 +128,7 @@ function initHtmlStructure() {
     // <body><header><h1></h1><nav></nav></header><article></article><footer></footer></body>
 
     if (document.doctype?.name != "html") {
-        throw new Error("Doctype is not html!")
+        console.warn("Doctype is not defined or not html!")
     };
     appendNewElement("html",null,true,0,"base, head, body");
     if (!document.documentElement.attributes.getNamedItem("lang")) {
