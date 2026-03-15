@@ -118,6 +118,13 @@
         <changefreq>never</changefreq>
     </url>
     <url>
+        <loc>https://sorgm.github.io/carlson1999-archive/</loc>
+        <sgl:title sgl:lang="de">Marc Carlson 2 (Archiv, englisch)</sgl:title>
+        <sgl:title sgl:lang="en">Marc Carlson 2 (archive)</sgl:title>
+        <lastmod>1999</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
         <loc>https://sorgs.de/archive/riley1997/Textiles_Page.htm</loc>
         <sgl:title sgl:lang="de">Clothing of the Ancient Celts (Archiv, englisch)</sgl:title>
         <sgl:title sgl:lang="en">Clothing of the Ancient Celts (archive)</sgl:title>

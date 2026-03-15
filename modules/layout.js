@@ -182,7 +182,7 @@ function initHtmlStructure() {
     }
 
     if (!document.querySelector("link[rel='icon']")) {
-        appendNewElement('<link rel="icon" href="favicon.ico" type="image/x-icon">', document.head);
+        appendNewElement(`<link rel="icon" href="${layout.script_base_pathname()}favicon.ico" type="image/x-icon">`, document.head);
     }
 
     appendNewElement("body", document.documentElement, true, 1, "header, article:not(article article), aside:not(aside aside), footer:not(footer footer), script");
