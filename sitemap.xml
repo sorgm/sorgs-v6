@@ -111,6 +111,27 @@
         <changefreq>never</changefreq>
     </url>
     <url>
+        <loc>https://sorgm.github.io/nicholl2016-archive/</loc>
+        <sgl:title sgl:lang="de">The Annaholty Bog Shoe Replica (Archiv, englisch)</sgl:title>
+        <sgl:title sgl:lang="en">The Annaholty Bog Shoe Replica (archive)</sgl:title>
+        <lastmod>2000</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgm.github.io/taylor2008-archive/</loc>
+        <sgl:title sgl:lang="de">Annaholty Bog Report (Archiv, englisch)</sgl:title>
+        <sgl:title sgl:lang="en">Annaholty Bog Report (archive)</sgl:title>
+        <lastmod>2008</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
+        <loc>https://sorgm.github.io/mcgann2000-archive/</loc>
+        <sgl:title sgl:lang="de">The Moy Gown (Archiv, englisch)</sgl:title>
+        <sgl:title sgl:lang="en">The Moy Gown (archive)</sgl:title>
+        <lastmod>2000</lastmod>
+        <changefreq>never</changefreq>
+    </url>
+    <url>
         <loc>https://sorgm.github.io/carlson1999-archive/</loc>
         <sgl:title sgl:lang="de">Marc Carlson (Archiv, englisch)</sgl:title>
         <sgl:title sgl:lang="en">Marc Carlson (archive)</sgl:title>
