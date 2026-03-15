@@ -22,13 +22,19 @@
             const gallery = document.getElementsByClassName("gallery")[0];
 
             gallery.innerHTML = Object.values(sitemap).reduce((p, e) => {
+                if (window.location.hostname=="sorgs.de") {
+                    href=e.location.pathname.slice(1)
+                }
+                else {
+                    href=e.location.href
+                }
                 if (e.imgsrc == undefined) {
-                    return p + `<a href="${e.location.pathname.slice(1)}" class="${e.style}" title="${e.title}">
+                    return p + `<a href="${href}" class="${e.style}" title="${e.title}">
                 <span class="title">${e.title}</span><br/>
                 <span class="year">${new Date(e.lastmod).getFullYear()}</span></a>`
                 }
                 else {
-                    return p + `<a href="${e.location.pathname.slice(1)}" class="${e.style}" title="${e.title}">
+                    return p + `<a href="${href}" class="${e.style}" title="${e.title}">
                 <img src="${e.imgsrc.pathname.slice(1)}" title="${e.title}"><br/>
                 <span class="title">${e.title}</span><br/>
                 <span class="year">${new Date(e.lastmod).getFullYear()}</span></a>`
