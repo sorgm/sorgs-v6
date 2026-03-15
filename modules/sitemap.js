@@ -12,7 +12,19 @@ class Webpage {
 
         this.location = loc;
         this.title = title;
-        this.style = loc.pathname.split("/")[1];
+
+        if (loc.hostname == "sorgs.de") {
+            if (loc.pathname.split("/").length>2) {
+                this.style = loc.pathname.split("/")[1];
+            }
+            else {
+                this.style = "internal"
+            }
+        }
+        else {
+            this.style = "external"
+        }
+        
         this.imgsrc = imgsrc;
         this.lastmod = lastmod;
         this.changefreq = changefreq;

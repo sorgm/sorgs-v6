@@ -20,8 +20,16 @@
         // refresh dynamic content
         function refreshGallery() {
             const gallery = document.getElementsByClassName("gallery")[0];
+            
+            const all_styles = Array.from(new Set(Object.values(sitemap).map(e => e.style)));
+
+            const params = new URLSearchParams(window.location.search);
+            const filter_style = params.has("style") ? Array.from(params.getAll("style")) : all_styles;
 
             gallery.innerHTML = Object.values(sitemap).reduce((p, e) => {
+                if (!filter_style.includes(e.style)) {
+                    return p
+                }
                 var href=e.location.href
                 if (e.location.hostname=="sorgs.de") {
                     href=e.location.pathname.slice(1)

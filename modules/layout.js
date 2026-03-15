@@ -136,13 +136,17 @@ function initHtmlStructure() {
     }
     var baseEl = appendNewElement("base", document.documentElement, true, 0);
     var script_base_pathname = layout.script_base_pathname();
-    if (!baseEl.href && 
-        window.location.pathname.startsWith(script_base_pathname)) {
-        baseEl.href = script_base_pathname;
+    if (!baseEl.getAttribute("href")) {
+        if (window.location.pathname.startsWith(script_base_pathname)) {
+            baseEl.href = script_base_pathname;
+        }
+        else {
+            baseEl.href = window.location.pathname.split('/').slice(0,-1).join('/')+'/';
+        }
     }
     var document_base_pathname = layout.document_base_pathname();
     if (document_base_pathname != script_base_pathname) {
-        console.warn("Document base differs from script base. fetch might fail.");
+        console.warn(`Document base "${document_base_pathname}" differs from script base "${script_base_pathname}". fetch might fail.`);
     }
     if (!window.location.pathname.startsWith(document_base_pathname)) {
         console.warn("Current document is not in document base path. Relative links might fail.");

@@ -57,3 +57,14 @@ div.gallery a.maths {
     background-color: maroon;
     color: burlywood;
 }
+
+div.gallery a.internal {
+    background-color: cyan;
+    color: black;
+    display: none;
+}
+
+div.gallery a.external {
+    background-color: lightgray;
+    color: black;
+}
