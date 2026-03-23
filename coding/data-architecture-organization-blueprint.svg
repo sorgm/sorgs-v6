@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 800 400" role="img" aria-labelledby="org-title org-desc">
+
+    <title id="org-title">Data Organization (Blueprint, Federated, Functionally Steered)</title>
+    <desc id="org-desc">
+            Federated data organization with functional steering across
+            business and product organizations as a blueprint.
+    </desc>
+
+    <defs>
+        <style>
+              .node {
+                fill: none;
+                stroke: #000;
+                stroke-width: 1;
+              }
+
+              .label {
+                font-size: 13px;
+                text-anchor: middle;
+                dominant-baseline: middle;
+                stroke: white;
+                stroke-width: 1rem;
+                paint-order: stroke;
+              }
+
+              .solid {
+                stroke: #000;
+                stroke-width: 1;
+                fill: none;
+              }
+
+              .dotted {
+                stroke: #000;
+                stroke-dasharray: 4 4;
+                fill: none;
+              }
+        </style>
+    </defs>
+
+    <!-- Data organization, headed by Corporate Data Officer (CDO) -->
+    <ellipse class="node" cx="200" cy="50" rx="20" ry="20" />
+    <text class="label" x="200" y="50">Corporate Data Officer</text>
+
+    <!-- Business liaison (staff to CDO)-->
+    <ellipse class="node" cx="250" cy="100" rx="20" ry="20" />
+    <text class="label" x="250" y="100">Business liaison</text>
+
+    <path class="solid" d="M 200 70 V 90 H 235" />
+
+    <!-- External Data Governance -->
+    <ellipse class="node" cx="100" cy="200" rx="20" ry="20" />
+    <text class="label" x="100" y="200">External Data Governance</text>
+
+    <path class="solid" d="M 200 70 V 150 H 100 V 180" />
+
+    <!-- External Data Governance positions -->
+    <ellipse class="node" cx="200" cy="250" rx="20" ry="20" />
+    <text class="label" x="200" y="250">Lawyers</text>
+
+    <path class="solid" d="M 100 220 V 240 H 185" />
+
+    <ellipse class="node" cx="200" cy="300" rx="20" ry="20" />
+    <text class="label" x="200" y="300">Data specialists</text>
+
+    <path class="solid" d="M 100 220 V 290 H 185" />
+
+    <ellipse class="node" cx="200" cy="350" rx="20" ry="20" />
+    <text class="label" x="200" y="350">Laws and contracts chatbot</text>
+
+    <path class="solid" d="M 100 220 V 340 H 185" />
+
+    <!-- Internal Data Governance -->
+    <ellipse class="node" cx="300" cy="200" rx="20" ry="20" />
+    <text class="label" x="300" y="200">Internal Data Governance</text>
+
+    <path class="solid" d="M 200 70 V 150 H 300 V 180" />
+
+    <!-- Internal Data Governance positions -->
+    <ellipse class="node" cx="400" cy="250" rx="20" ry="20" />
+    <text class="label" x="400" y="250">Metadata and Semantics</text>
+
+    <path class="solid" d="M 300 220 V 240 H 385" />
+
+    <ellipse class="node" cx="400" cy="300" rx="20" ry="20" />
+    <text class="label" x="400" y="300">Data Stewardship</text>
+
+    <path class="solid" d="M 300 220 V 290 H 385" />
+
+    <ellipse class="node" cx="400" cy="350" rx="20" ry="20" />
+    <text class="label" x="400" y="350">Technical metadata crawler</text>
+
+    <path class="solid" d="M 300 220 V 340 H 385" />
+
+    <!-- Functional steering: Business liaison -> Data Officer in Product organizations -->
+    <ellipse class="node" cx="600" cy="100" rx="20" ry="20" />
+    <text class="label" x="600" y="100">Product organization</text>
+
+    <ellipse class="node" cx="550" cy="150" rx="20" ry="20" />
+    <text class="label" x="550" y="150">Data Officer</text>
+
+    <path class="solid" d="M 600 110 V 140 H 565" />
+    <line class="dotted" x1="265" y1="110" x2="535" y2="140" />
+
+    <!-- Functional steering: Data Stewardship -> Data Owner in Business organizations -->
+    <ellipse class="node" cx="650" cy="300" rx="20" ry="20" />
+    <text class="label" x="650" y="300">Business organization</text>
+
+    <ellipse class="node" cx="600" cy="350" rx="20" ry="20" />
+    <text class="label" x="600" y="350">Data Owner</text>
+
+    <path class="solid" d="M 650 320 V 340 H 635" />
+    <line class="dotted" x1="415" y1="310" x2="585" y2="340" />
+
+</svg>

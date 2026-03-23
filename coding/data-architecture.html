@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="author" content="Manfred Sorg" />
+  <meta name="description" content="A conceptual, AI-ready perspective on data architecture." />
+  <title>My perspective on Data Architecture</title>
+  <meta charset="UTF-8">
+  <meta name="google-site-verification" content="d7ufTXK2lwvT5S9JJmFloyXXNGC2GJOL6e9-Pq4DqI0">
+  <meta name="viewport" content="width=device-width">
+  <script src="../main.js" type="module"></script>
+</head>
+
+<body>
+  <article>
+    <hgroup>
+      <h1>Data Architecture</h1>
+      <p>A conceptual, AI-ready perspective based on my experience and expectations. - Manfred Sorg, March 2026.</p>
+
+      <nav id="toc"></nav>
+    </hgroup>
+    <article id="overview">
+      <hgroup>
+      <h2>Overview</h2>
+      </hgroup>
+    <section id="what-is-data-architecture">
+      <h3>What is Data Architecture?</h3>
+      <p>Data Architecture refers to the comprehensive structure and design of an organization&#x27;s data assets and
+        data management resources. It encompasses the models, policies, rules, and standards that govern how data is
+        collected, stored, arranged, integrated, and utilized across the enterprise. The goal of data architecture is to
+        ensure that data is organized in a way that supports business objectives, enables efficient access, and
+        maintains data quality and security (DAMA DMBOK).</p>
+      <p>At its core, data architecture provides a blueprint for how data flows within an organization, connecting
+        different systems, processes, and stakeholders. It defines relationships between data entities, specifies how
+        data is transformed and moved, and sets guidelines for data governance and compliance. This structured approach
+        helps teams make informed decisions, streamline operations, and unlock insights from data (IBM Cloud Education:
+        What is Data Architecture?).</p>
+      <p>Effective data architecture is critical for scalability, adaptability, and innovation. It allows organizations
+        to respond quickly to changing requirements, integrate new technologies, and support analytics and reporting
+        needs. By establishing clear frameworks for data management, data architecture lays the foundation for robust,
+        reliable, and actionable information throughout the business (Gartner Glossary: Data Architecture).</p>
+      <p>In my honest opinion, Data Architecture should <em>avoid focusing on technology</em>
+        too much. Focus should remain data, being the digital representation of information - the technology used to
+        implement and maintain the information is secondary. <em>Data contains business value</em>, technology is used
+        to persist, secure, transport and make it visible.</p>
+    </section>
+    <section id="scope-stance-and-non-goals">
+      <h3>Scope, stance, and non-goals</h3>
+      <p>This documentation is mainly to clear up my mind on the many facets of Data Architecture. Experience helps to
+        get a deep understanding, but it blurs sight by giving too many variations in solving the same problem.</p>
+      <p>In addition, it is meant as an inspiration for you, the reader. Which questions are to be considered when it
+        comes to Data Architecture - and which possible solutions proofed good or not working. This document is not a
+        tool comparison, vendor architecture, or reference implementation. It describes one approach to tackle <em>Data
+          Architecture as a mental model</em> based on principles and derived from enterprise
+        practice. It explicitly prioritizes data semantics, lifecycle, and AI-readiness over platform choices. A
+        proposal for implementation follows at the end.</p>
+      <p><em>Target groups</em> are as diverse as topics, but target group here mainly are fellow data architects and
+        managers in data offices deciding on their data strategies. An additional target group is AI learning Data
+        Architecture. I therefore assume readers already understand extended data engineering concepts.</p>
+      <p>This document reflects the personal professional perspective of the author. While it draws on experience gained
+        in various roles and organizations, it does not represent the strategy, architecture, or implementation of any
+        specific company. Examples and patterns discussed are illustrative and derived from general enterprise
+        experience; they do not describe the architecture, systems, or operating model of any specific organization.</p>
+      <p>Made with some help from Microsoft Copilot. For me a modern LLM is like an assistant and not like a tool - and
+        therefore deserves being mentioned.</p>
+    </section>
+    </article>
+    <article id="concepts-mental-model">
+      <hgroup>
+      <h2>Concepts &amp; Mental Model</h2>
+      <p>This chapter translates the definition of Data Architecture as seen above into a solution space where it can
+        guide implementation. Based on general thoughts on information, it develops a <em>generic architecture
+          recommendation</em>. Every individual implementation must deviate, but having a big picture helps drawing the
+        details. I try to include all relevant aspects without losing focus, as always trying to keep the balance
+        between business and technology, preparation effort and benefit gain and clarity and completeness. Even if you
+        disagree with this model, later sections can be beneficial.</p>
+      </hgroup>
+    <section id="foundational-mental-model">
+      <h3>Foundational mental model</h3>
+      <p><em>Information</em> about the world in general and about a specific company or enterprise are distributed
+        across multiple representations. Starting with mental models, information is shared in documents as text and
+        graphics, and it is digitalized into data models. Reading text and answering questions from it is a solved
+        problem since the advent of Large Language Model Artificial Intelligence (LLM-AI); supporting actions on general
+        business tasks are solved by standard business applications. Company-specific analyses on standard data extended
+        by specific data and metadata need a data architecture balancing effort and effect - integrated into reporting
+        and into AI systems. Thus, the need-for-data could be solved for each specific context keeping data confidential
+        but making it available, <em>data modelling</em> is needed here.</p>
+      <p>Data Architecture in its technological dimension ensures a working <em>data pipeline</em> from data sources
+        down to the use cases, that need data. During this process, data needs to be transformed from externally defined
+        source or raw data models to a business language representation of truth. Technology helps with transport and is
+        needed to make data available; models and semantics help to shape data and make it understandable, but the data
+        itself must be seen as immutable, being unchangeably true measurement of reality. Therefore, downstream
+        transformations and transport must be automated and reproducible.</p>
+      <p>Conceptually, this ends up in a layered approach like following as a possible reference architecture
+        (technological perspective):</p>
+
+
+      <figure>
+        <table id="reference-architecture">
+          <tr>
+            <th>Use cases</th>
+            <th colspan="2">Data Access</th>
+            <th colspan="3">Data Provisioning</th>
+            <th>Data Sources</th>
+          </tr>
+          <tr>
+            <td rowspan="2">Data retrieval,<br />Reporting</td>
+            <td rowspan="2">various</td>
+            <td>&nbsp;</td>
+            <td rowspan="5">Gold layer,<br />use case-oriented,<br />secured</td>
+            <td rowspan="5">Silver layer,<br />domain-owned,<br />semantified</td>
+            <td rowspan="5">Bronze layer,<br />source-aligned</td>
+            <td rowspan="6">Relational Databases,<br />NoSQL,<br />external data,<br />metadata,<br />semantics</td>
+          </tr>
+          <tr>
+            <td rowspan="3">&nbsp;<br/>MCP Server<br/>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Generic AI</td>
+            <td>MCP Host</td>
+          </tr>
+          <tr>
+            <td rowspan="3">Application</td>
+            <td rowspan="3">API</td>
+          </tr>
+          <tr>
+            <td rowspan="2">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="3">Application-specific data access</td>
+          </tr>
+        </table>
+
+        <figcaption>
+          Conceptual data architecture blueprint with layered data provisioning,
+          centralized access via MCP, and consumption by use cases.
+        </figcaption>
+      </figure>
+
+
+
+
+
+
+      <p>Simple cases might reduce complexity e.g. with just one financial system in place, all data product layers
+        might collapse and the application's MCP server might be used for AI-access directly. The larger the company and
+        the more specific the type of business, the complex the architecture gets.</p>
+      <p>Data Architecture does not end with this technological dimension. To make data Findable, Accessible,
+        Interoperable, Reusable (FAIR) and safe, secure and trustworthy, <em>people and processes</em> are needed to
+        integrate data into business, to foster data-driven management, and to make data to value.</p>
+    </section>
+    <section id="basic-assumptions-theorems">
+      <h3>Basic assumptions / Theorems</h3>
+      <ul>
+        <li>Information is complex and needs models for digitalization.</li>
+        <li>Original data must be kept immutable; derivations may transform but not change it.</li>
+        <li>Original data needs backup of data and semantics; data pipelines need backup of derivation logic and
+          business purpose.</li>
+        <li>Standard business software makes businesses comparable, individual data architecture shows their competitive
+          advantage.</li>
+        <li>AI is already mature enough to co-operate, see it as partner and not as a tool.</li>
+      </ul>
+    </section>
+    <section id="types-of-use-cases">
+      <h3>Types of use cases</h3>
+      <p>To foster data-driven management and decision making, the various types of use cases must be considered, where
+        data can prove its value.</p>
+      <p><em>Data retrieval and reporting</em> - the analytical use case - was the major use case in the past. In every
+        case a human wants to know about business to increase business value, information about the business and its
+        external boundaries are needed. In pre-computing times, humans were asked to gather information via human
+        networks. Existence of data should ease this task, but knowledge about existence of data is scarce. The foremost
+        task to be solved for data retrieval therefore is <em>cataloguing</em>. This does not mean to report all known
+        data models in a long uncomprehensible list of applications, but it does mean a semantified source of knowledge
+        about existing and available (known) data sources inside and outside the company including confidential and
+        licensed data. Thus, internal knowledge and licenses can be levered to provide business value in cases
+        additional to the original ones (reusability). The technical details of data, including their accessibility and
+        interoperability, are needed in a second step only. Findability is key for this type of use case, which is
+        typically performed by humans with the use of search technology.</p>
+      <p>Generic AI can automate this research and include data access for ad hoc reporting. A question like “show me
+        the regional distribution of sales of a certain product group in comparison to our competitors including the
+        competitors' locations” was a typical task for a market intelligence group, but it can be solved by an LLM
+        provided with suitable data. In this case the data is internal (sales and customer location) combined with
+        external data (sales reports and competitor locations) and semantics (meaning of “this certain product group” in
+        internal and external terms). The effort is moved from demand-oriented market intelligence group effort to
+        preparation effort performed by data teams upfront. This is the typical <em>trade-off curve
+          between data preparation effort and retrieval effort</em>, with an optimal sweet spot. Thus, ad hoc analysis
+        is restricted to a limited amount of data sources by conscious decision.</p>
+      <p><em>Data usage via applications</em> is still relevant. When it comes to repeated tasks in general business
+        topics, chances are high that the needed analysis is already prepared by your software vendor. Questions like
+        “how much of a certain product do we have in which warehouses” do not need individual reporting or generic AI -
+        they are part of business applications' standard offerings. Providing information about those standard offerings
+        to Generic AI could help to route individuals asking such questions to the right standardized application.</p>
+      <p>In addition to the above-mentioned use cases, raising <em>data quality</em> issues is an important use case
+        itself. It does not fit the stream metaphor used in above picture. Processes like hotlines, chatbots and more
+        are needed to allow easy reporting of data quality issues. This is a problem not solved in most growing
+        companies; the data user does not know, whom to report to, and the applications' users did no learn yet to
+        listen to data users' concerns - nor they are tasked to do so. <em>Data ownership</em> while not being a main
+        target of data architecture is a means to cope with this problem. Every set of data needs a channel to report
+        data issues back to the original sources - the simplest solution is to mention a data owner for each data set,
+        being a person who accepted their responsibility and who knows the processes needed to maintain the data.
+        Typical for data quality issues is, that you cannot automatize their solution except in the simplest cases -
+        reasons can vary from typos to failures in data pipelines and wrong metadata.</p>
+    </section>
+    <section id="data-access-and-access-restrictions">
+      <h3>Data access and access restrictions</h3>
+      <p>In times of data access via application, data access was mainly restricted to users of an application.
+        Providing a license follows a business need, implicitly allowing access to related data. As soon as you access
+        the data for analysis, the question arises, who may access which type of data for which purpose. These questions
+        rose to recognition when personal data got increased attendance; still other company data lives in the grey area
+        of being confidential but relevant for multiple purposes. To solve this problem, defining data products is a
+        first step. A <em>data product</em> must follow a consistent methodology of giving access; defining this logic
+        explicitly and providing access per role immediately greatly reduces effort in giving access to data and
+        increases security. The latter seems counterintuitive, but if you as data owner get a data request, it is nearly
+        impossible to grant or revoke it consistently unless you have an explicit logic - and if it exists, it can be
+        automated.</p>
+      <p>Generic AI increases the <em>urgency</em> of this problem. The existing AI tools can query data on your behalf,
+        but they will not request access and wait some days until a human answered the request; in this case the AI tool
+        would refer to outdated textual information instead of querying the data needed. Having access to the data
+        needed to answer your questions is essential for data-driven answers given by humans or by AI; not having access
+        leads to random answers depending on the analysts' preferences.</p>
+      <p>Model Context Protocol (<em>MCP</em>) is the evolving standard to provide context to an AI model and to enable
+        AI agents to perform actions. In the context of data architecture, MCP Servers serve as a standardized way, by
+        which AI models and especially LLMs can access data - including the question whether and which data to access.
+        Providing data products well-semantified via MCP Servers is key here - providing existential value to
+        applications beyond usage for humans via UI. While MCP is technology, it is a key technology like API or
+        database server in every future Data Architecture. But being a technology, we must be prepared to replace it
+        with its succeeding technology any day in the future without compromising data architecture then.</p>
+    </section>
+    <section id="data-provisioning-data-products">
+      <h3>Data provisioning &amp; Data Products</h3>
+      <p>Seeing <em>data as a product</em> enables thinking about coherent definitions and valuations of data,
+        independent of technology and applications. Data itself provides the value, while its representation as data
+        model, reporting, user interface or AI integration just exists to make it available to maintainers and decision
+        makers. Diving into this topic quickly results in topics, that are not provided by classical data management,
+        like access models, contracts, semantics and lineage. Every existing definition of Data Products being canvas or
+        metadata specification falls short in some of those aspects - this area of interest is still maturing. Downside
+        is the effort to collect all these metadata, which can easily exceed data's value; <em>balancing efforts and
+          reuse of existing metadata is key</em>.</p>
+      <p>In a complex business environment one must differentiate between application-specific data products provided in
+        application data models and business-driven technology-agnostic data products. The latter are important to
+        answer business questions, while the previously mentioned data products only offer facets of business truths.
+        This is related to bronze/silver/gold layers in data warehouse architecture and the differentiation between
+        source-aligned and domain-owned data products in a data mesh architecture (see above architecture picture).</p>
+      <p>Providing these data products quickly leads to the question of technology to be used to provide the data. There
+        is not one version of truth. Depending on surrounding architecture many variations of data lakes, pools or
+        ponds, warehouses, storages or locations - relational or graph, persistent, views or copies are possible. It is
+        only important to process the data automatically in a reproducible way. Parameter tables and metadata enrichment
+        are data sources, too - including having a source system, backup and an automated process of data
+        transformation. For data that appears uniform for many entries, relational data warehouses are still a good
+        option, while diverse, sparse or hierarchical forms of data are NoSQL or graph by nature. On the question
+        whether data should be persisted in the provisioning layer, I'm agnostic, too - yes, persist if it serves a
+        purpose (but keep it automated).</p>
+      <p>Event-driven data, streaming and master/reference data management add variance to this picture without changing
+        the essence: <em>Source data representation is immutable, while data provisioning must follow business
+          need.</em></p>
+    </section>
+    <section id="data-sources">
+      <h3>Data sources</h3>
+      <p>For most transactional or interactive systems, data sources are still relational. Being created by
+        object-relational mappers those models often do not fulfil the most elemental rules of data modelling like
+        referential integrity, descriptive semantics, naming conventions and so on. In addition, bought software would
+        not expose access to the database itself except by using an API with limited possibilities. In every case, raw
+        data access must accept limitations given by source systems. These are <em>source-aligned data products</em> and
+        need enrichment in multiple ways.</p>
+      <p>Integration of multiple data sources into a centrally aligned data model needs mapping of master data and
+        aligned hierarchies. Those can be added using ontologies mapping elements of physical data dictionaries e.g. via
+        DCAT and RML to concepts and their hierarchies. Thus, <em>multi-source analyses</em> enable providing synergies
+        single applications could not provide. Those mappings and additional hierarchies are data sources themselves.
+        Typically, those are NoSQL (file based) and following a versioning strategy best known from code - they might
+        live in GitHub. Providing user interfaces including completeness checks for those types of data is a complicated
+        topic itself.</p>
+      <p>The same effort is to be made to integrate <em>external data sources</em> or additional metadata. Restrictions
+        on data access and usage, contracts, and costs are as important as the lineage of data transformations and the
+        processes of data quality issues. These metadata need locations to be stored and UI to be maintained. Only with
+        rich metadata, humans and AI can decide to trust a data product and query it correctly.</p>
+    </section>
+    <section id="data-modelling">
+      <h3>Data modelling</h3>
+      <p>Depending on purpose, multiple methodologies of data modelling apply, e.g. normalized relational models,
+        denormalized data warehouse models, object-oriented data modelling, semantic or conceptual data models, and
+        more. Most important is <em>transformability</em> of models and separation of maintenance models from analytical
+        models. For each type of information, there is a <em>version of truth</em>, where the data is collected or
+        maintained. The model used for this generally has reduced redundancy and extensive changelogs; this is the
+        structure of data for backup, because it cannot be derived from other sources. Downstream models transform this
+        data and enrich it with data originating from other sources. For these models, the transformation algorithms
+        contain <em>business value</em> and need backup. Strictly separating original data from derived data is
+        good practice; persisting derived data is optional except for performance reasons.</p>
+      <p>Typical models for data collection and maintenance are plain text like in JSON or RDF and <em>relational</em>
+        databases like inside interactive applications. Typical models for data analysis contain star schemas including
+        facts and slowly changing dimensions (SCD) or are tabular with lot of redundant master data. While the previous
+        mostly have a live validity, most analysis models allow scenarios for comparison. These are classical data
+        models used for online transactional processing (OLTP) or online analytical processing (OLAP).</p>
+      <p>For data retrieval and for AI usage, these models generally lack understandability. <em>Semantical
+          enrichment</em> is needed to clearly provide information on the whereabouts of a single column, table or data
+        entity in general. Semantic gives information which columns and tables must be understood as an entity providing
+        which type of information; a measure could e.g. be a single value or a full stack of multiple measurements
+        including methodology, technology, agent, place, time, type of aggregation and more - semantics allow
+        understanding these models in comparison. Without semantics, an AI Agent could misunderstand a single
+        measurement for the valid result and derive wrong answers from it (“hallucination”). These types of
+        misunderstandings typically happen in data more often than in textual information, because data models have
+        <em>reduced context</em>.</p>
+      <p><em>Relationships</em> inside and between data models serve different purposes, too. In OLTP data models, they
+        typically ensure that categorical information is valid e.g. that the product sold really exists. Coming to
+        semantical models, relationships get fuzzier and allow data integration and comparison across multiple data
+        sources. Here great benefit meets great danger - it is e.g. possible to compare production facility master data
+        by product groups, unless a single production facility produces products of several groups. Describing these
+        cave-ats thoroughly is the most complex topic in adding semantics to data.</p>
+    </section>
+    <section id="data-organization">
+      <h3>Data organization</h3>
+      <p>Organizations must adapt to <em>changed working environments</em>, especially to changes in the order
+        of magnitude coming with the advent of AI.</p>
+      <p>Seeing AI as a tool is jumping short. Machine learning models (ML) are a tool. We humans prepare data, use the
+        tool to transform it into models and apply them to real world problems. Large language models (LLM) are same if
+        you see them as their developer - but if you see them as their user, their application turns out different. We
+        use them like an external consulting company: they lack internal knowledge and experience, and they sometimes
+        are bluntly wrong, but they give valuable insights. We should start giving credit to them like we do if a
+        certain consulting company helps to solve a task. Agentic AI takes the next step: it acts independently like a
+        new employee in a remote location. They&#x27;re really fulfilling what is meant, if you define a position in an
+        organization. With the range of Agentic AI from task automation to full independence, it is difficult to define
+        the border between tool and position, but if you think about humans doing the job instead, it&#x27;s getting
+        clear enough.</p>
+      <p>Following this, we should <em>add AI into org charts</em> - as a dotted line of external support when
+        it comes to LLMs and as equally important position when it comes to a mature AI Agent.</p>
+      <p>As next step we need to <em>team up for purpose</em>. A team has a purpose and, depending on this purpose, it
+        is short lived or long lived - distinguishing projects from products or business support. A team of humans
+        following this definition would have about 5 to 20 people of diverse backgrounds supported by consultants and
+        contractors. A future team might consist of 3 to 4 humans, an agentic position and LLM support. In the long run,
+        claiming a position as agentic will be considered as discrimination just as if you&#x27;d distinguish by color
+        or gender today - this is the full consequence of passing Turing's test.</p>
+      <p>In my opinion, it is important to keep a team unchanged by organizational changes while the purpose prevails.
+        Thus, it can focus on purpose and ignore organization's politics. The team in this picture is the atom of
+        <em>self-organization and agile methodology.</em> <em>Organizational management</em> is to actively arrange
+        teams into larger setups to achieve business targets. The downside is that teams must be dissolved when their
+        purpose is not needed to achieve business targets anymore or it is reduced to being just a facet of another
+        team's purpose, e.g. when a new reporting system is completed and given to reporting platform for maintenance.
+      </p>
+      <p>While management can handle the people aspects of creating, leading and dissolving teams, the aspect of
+        providing data for the organization in a FAIR+ way is beyond their imagination. Maybe this is a change process
+        and in future organizations, management will lead people and systems and data, in today's changing
+        circumstances, they need support by a <em>data organization</em>. And in addition, they need to be forced to
+        seek support from a data organization, because this deviates from accustomed ways of management.</p>
+    </section>
+    <section id="data-governance">
+      <h3>Data Governance</h3>
+      <p>When talking Data Governance, we have two separate and equally important but distinct aspects: external Data
+        Governance ensures data handling is compliant to external laws and social (and shareholder) expectations, while
+        internal Data Governance ensures data handling is effective and efficient, keeps business secrets safe, and
+        fosters data-driven management and decision-making.</p>
+      <p>For <em>external</em> Data Governance, it is crucial to gain an overview of laws, rules, contracts and other
+        boundaries, that need to be fulfilled in data handling. This is ideally a team integrating some lawyers and data
+        engineers supplied with an LLM having access to all relevant textual sources. Essential is an overview of the
+        internal data architecture and application landscape and the types of data handled. Output are rules to obey in
+        data handling and need for logs to provide to enable reporting on data sharing agreements, data access on
+        sensitive data, acceptance of data contracts and more as requested by authorities.</p>
+      <p><em>Internal</em> Data Governance is not about avoiding prosecution, but about increasing efficiency and
+        effectiveness. Industry studies indicate that 60-80% of time in data and analytics work is spent on finding and
+        accessing data, rather than on analysis or value creation (Dan Vesset, IDC). Internal Data Governance aims to
+        reduce this effort by providing means to find data, ensure and simplify accessibility and provide semantics for
+        interoperability, thus enabling reusability (FAIR). Keeping it safe and secure are boundary conditions, while a
+        focus on data quality is mandatory to gain trust in validity of data. Seeing the multitude of data owners
+        distributed across the organization, integrated into maintenance teams, any type of organization will be needed
+        to keep this community aligned. This meta organization is meant, when talking about Data Stewardship - the
+        steward typically is taking accountability while the ruler (the data owner) is not available. This is not mere
+        bureaucracy but essentially to keep distributed teams aligned on data topics.</p>
+      <p>Precondition for a working Data Governance is <em>support by all levels of management</em>. Integrating Data
+        Governance into daily work and following their rules will increase effort, but in the long run, increased
+        efficiency and avoided legal cases should outmatch this increased effort by orders of magnitude. This is not
+        only true for personal data - all types of data can have benefits if handled correctly and can result in
+        penalties if rules are disobeyed.</p>
+      <p>See also: Blueprint of a data organization</p>
+    </section>
+    <section id="lifecycle-quality">
+      <h3>Lifecycle &amp; Quality</h3>
+      <p>(by Microsoft Copilot)</p>
+      <p>Data architecture is not only about making data available — it is about making data <em>usable over time</em>.
+        Two concepts are fundamental for this: <em>data lifecycle</em> and <em>data quality</em>.</p>
+      <p>Data is created in a specific context, transformed for specific purposes, used in different ways, and
+        eventually becomes outdated or obsolete. This <em>lifecycle</em> exists whether it is explicitly managed or not.
+        Making it explicit allows conscious decisions about persistence, access, cost, and risk; it helps to distinguish
+        between <em>original data</em>, which should remain immutable, and <em>derived data</em>, which may change as
+        business logic evolves.</p>
+      <p>Data quality determines how well data represents reality for a given use case. Quality is <em>not absolute</em>
+        — it depends on purpose. Data that is sufficient for trend analysis may be unacceptable for operational
+        decisions or automated actions. Therefore, data quality must be understood as <em>fitness for use</em>, not as
+        technical perfection.</p>
+      <p>From a mental model perspective, quality and lifecycle are not properties of tables or files alone, but of
+        <em>data products</em>:</p>
+      <ul>
+        <li>A data product must declare <em>what it represents</em>, <em>how current it is</em>, and <em>where its
+            limits are</em>.</li>
+        <li>Quality is maintained through ownership, transparency, and feedback, not by one-time cleansing.</li>
+        <li>Lifecycle awareness prevents silent reuse of outdated or misleading data — a risk that increases
+          significantly with AI-driven consumption.</li>
+      </ul>
+      <p>Finally, data products, like applications, have an “end of life”. <em>Deprecation</em> is a necessary
+        architectural concept to avoid confusion, duplicated effort, and wrong conclusions. Especially for AI consumers,
+        obsolete data must be explicitly marked as such — AI will not intuitively “notice” that data should no longer be
+        used.</p>
+      <p><em>Lifecycle makes data manageable, quality makes data trustworthy, and both are prerequisites for scalable
+          analytics and AI usage.</em></p>
+      <p>See more details on Deep dive: Lifecycle &amp; Quality later in this document.</p>
+    </section>
+    </article>
+    <article id="practical-usage-detailing-the-picture">
+      <hgroup>
+        <h2>Practical usage, detailing the picture</h2>
+      </hgroup>
+    <section id="blueprint-of-data-organization">
+      <h3>Blueprint of data organization</h3>
+      <p>An effective data organization needs following or similar positions regardless of numbers and disciplinary
+        arrangement; integration into existing business organization strongly depends on its inherent structure:</p>
+
+
+      <figure>
+        <img src="data-architecture-organization-blueprint.svg" alt="Data organization blueprint" />
+
+        <figcaption>
+          Federated data organization with line hierarchy inside the data organization
+          and functional steering of data roles in business and product organizations as a blueprint.
+        </figcaption>
+      </figure>
+
+
+      <ul>
+        <li><em>Corporate Data Officer</em>: Head of data organization, represents “data” in C-level meetings.</li>
+        <li><em>Business liaison</em>: Assistant of Corporate Data Officer, acts as representative in business
+          meetings throughout the organization and keeps contact with product (IT solutions) organizations' data
+          officers.</li>
+        <li><em>External Data Governance</em>: cares for compliance.</li>
+        <li><em>Lawyers</em> are essential to understand jargon of laws and contracts and to translate them to user
+          stories for implementation in internal rulesets, processes and technology.</li>
+        <li><em>Data specialists</em> are needed as part of External Data Governance to foster understanding of
+          technological options in implementation of rules into applications and data pipelines with a focus on data
+          access models.</li>
+        <li><em>Laws and contracts chatbot</em>: Keeping all related laws, external rules and expectations and all
+          related contracts at hand is a task perfectly suited for an LLM being used as a tool for External Data
+          Governance and for direct use by data teams throughout the organization. Adding rules defined by internal data
+          governance completes the picture.</li>
+        <li><em>Internal Data Governance</em>: cares for efficiency and effectiveness.</li>
+        <li><em>Metadata and Semantics team</em>: Balances effort and value of information about existing
+          internal and external data sources and data products including information on integrating them; responsible
+          for AI-friendly MCP metadata and for human-friendly UI for data retrieval and request.</li>
+        <li><em>Data Stewardship</em>: Manages the community of data owners located in business organizations, owns the
+          process to report and fix data quality issues, acts on behalf of data owners in case of unavailability.</li>
+        <li><em>Technical Metadata crawler</em>: All existing metadata must be reused to avoid duplicate work. This task
+          is mainly technical and needs access to all relevant data sources throughout the company and can best be
+          performed by a classical crawler reading diverse data sources (databases, APIs, application-specific MCP
+          servers, application-specific metadata and semantics) and providing it as an internal silver layer metadata
+          repository e.g. following DCAT.</li>
+        <li>The <em>Data Officer,</em> as a role in every IT solution or product
+          organization, has a (partial) role to ensure compliance with internal and external data governance rules as
+          part of daily work. CDO's business liaison keeps the data officer updated and supports answering questions by
+          forwarding them into data organization. Data Officers act as representatives of the corporate data office
+          inside product teams, having the mandate to enforce compliance.</li>
+        <li>The <em>Data Owner,</em> as a role in business organizations, has a (partial)
+          role to ensure the business organization's data is represented in data architecture in a way enabling usage
+          for humans and AI, and it ensures data quality issues being solved. The data owner as part of business
+          organization clearly sets ownership of data and distinguishes own ownership from neighboring organizations'
+          ownership in a way that no data is without owner and no data has unclear ownership. Data owners decide on data
+          access models; Data Stewardship helps and coordinates the data owners and acts on their behalf if needed.</li>
+      </ul>
+    </section>
+    <section id="semantifying-meta-mcp-server">
+      <h3>Semantifying Meta MCP Server</h3>
+      <p>Above mentioned <em>technical metadata crawler</em> is essential to reuse metadata already existing in the
+        organization, but it does not support interoperability across sources and reuse by semantification in general.
+        As this is essential to correct usage of data in AI models, the result of this integration effort is targeted
+        firstly to those models and therefore must follow the MCP methodology. An MCP Server is needed to <em>integrate
+          and semantify</em> all major corporate data sources into one silver layer semantified data model including
+        data access to those resources. Reducing it to a single <em>MCP Server</em> allows a higher degree of
+        integration and performance optimization in comparison to adding multiple MCP Server to each MCP Host of used AI
+        models. This MCP Server is responsibility of <em>Metadata and Semantics team</em> and should be extended by a UI
+        for human testing and human data retrieval. Whether technical metadata crawler is just a component or a separate
+        product is not relevant for the result - for explanatory reasons, I follow an integrative description here.</p>
+      <p>“Meta” in this approach means to integrate multiple sources of metadata into one aligned model. Types of
+        metadata describing most existing sources are (exemplary, never complete):</p>
+      <ul>
+        <li><em>MCP</em>: In every case, where an MCP Server already exists, this should be the main source for metadata
+          and to allow access to data and tools as defined there. Naming of resources and tools must be mapped to
+          corporate naming conventions, while models generally should stay untouched unless necessary. Changing models
+          would add a layer of metadata and eventually results in a custom MCP Server as transformation layer.</li>
+        <li><em>INFORMATION_SCHEMA</em>: All relational database servers provide an information schema that contains the
+          basic metadata on tables and columns defined in the database. This standardized information forms the basis
+          needed to write SQL queries to underlying systems. Column and table descriptions are non-standard proprietary
+          extensions.</li>
+        <li><em>OpenAPI</em>: This standard to describe APIs including endpoints and resulting data models is essential
+          for understanding most REST APIs; including it into metadata forms the basis needed to access data from APIs.
+        </li>
+        <li><em>RDF/OWL</em>: These formats describe semantics and hierarchies widely accepted as standard for semantics
+          and ontologies as knowledge graph metadata.</li>
+        <li><em>RML/YARRRML</em>: One of the few standards to integrate relational data with semantics
+          described in ontologies; this is essential to integrate relational data across multiple data sources.</li>
+        <li><em>ODPS/OCS/ODCS</em>: Several standards describe data products, data contracts, data sharing agreements
+          and alike.</li>
+        <li>… additional standards appear daily</li>
+      </ul>
+      <p>There is no existing project in Open Source that fulfills all necessities to really integrate corporate data
+        resources into a joint data layer for MCP use. “metamcp” could lead here, but the integration of non-MCP
+        resources is not on their agenda, yet. A possible solution could be to auto-generate MCP servers per source
+        based on source's proprietary metadata converting it into MCP format, but this would not solve the issue of
+        semantified integration of MCP servers.</p>
+      <p>See Semantified AI-Ready Metadata</p>
+    </section>
+    <section id="integrate-dominant-systems">
+      <h3>Integrate dominant systems</h3>
+      <p>A data landscape usually contains one or few dominant systems, containing nearly all relevant data. This is
+        true, because all companies share basic business tasks provided by standardized software. The individual
+        software and additional data that surround that standard software mainly contain what makes a business special;
+        it differentiates the company from its competitors.</p>
+      <p>Reinventing the wheel and rebuilding the standard software's metadata is not recommended. Instead, all tools
+        provided by the software vendor should be used if all data needed is included in this standard software. Every
+        existing data pipeline like SAP's CDS views and all given metadata is a chance to avoid individual effort, but
+        SAP cannot know which modules are used to which extent and which are misused to implement a slightly different
+        business case. Integrating SAP and alike means reducing the exposed model to the used portion and renaming and
+        enriching what is misleading from a company perspective.</p>
+    </section>
+    <section id="agile-development-done-right">
+      <h3>Agile Development - done right</h3>
+      <p>Agile is not necessarily Scrum and Agile is not chaos. Starting with a pilot, adding use-case by use-case is a
+        good methodology if the overall picture is clear. First you need to have a scope and rough imagination, what
+        your data architecture project is about. Then you can extend your minimal viable product (MVP) to increase
+        business value step by step.</p>
+    </section>
+    <section id="dama-maturity-scores">
+      <h3>DAMA Maturity Scores</h3>
+      <p>(Roe, 2011) The five maturity levels used by Reeve (the Carnegie Mellon original CMM names are in parenthesis)
+        are:</p>
+      <ul>
+        <li>Immature (Initial): The best practice activities are not performed by the organization. The best practice
+          tools are not available or not used.</li>
+        <li>Repeatable (Repeatable): Some parts of organization are using recommended tools and processes while other
+          parts are not.</li>
+        <li>Managed (Defined): The organization has a documented standard for performing the assessed activity or
+          activities consistently and using applicable tools effectively.</li>
+        <li>Monitored (Managed): The process in question is established, tracked and monitored. Recommended tools are in
+          place and are being used consistently across the organization.</li>
+        <li>Continuous Improvement (Optimizing): The activity is continually reassessed, improved upon, tracked and
+          built into process.</li>
+      </ul>
+      <p>These maturity scores turned out to be reusable universally. No matter what type of task you're starting and
+        maturing, those levels apply very well. Don't reinvent the wheel, just use it for your reporting. I like to
+        simplify the definition to the following wording:</p>
+      <ul>
+        <li>You tried and succeeded, but you don't know exactly why.</li>
+        <li>You regularly succeed, but you're not able to explain yet.</li>
+        <li>You can explain your solution, but others have other solutions.</li>
+        <li>Solutions are aligned to achieve the best solution.</li>
+        <li>Solutions are regularly updated to keep them current.</li>
+      </ul>
+    </section>
+    </article>
+    <article id="deep-dive-lifecycle-quality">
+      <hgroup>
+      <h2>Deep dive: Lifecycle &amp; Quality</h2>
+      <p>(by Microsoft Copilot)</p>
+      <p>Data architecture is not complete once data is technically integrated and made accessible. Data has a
+        <em>lifecycle</em>, and throughout this lifecycle its <em>quality</em> determines whether it can be trusted,
+        reused, and safely automated — by humans as well as by AI. Ignoring lifecycle and quality leads to hidden costs,
+        erosion of trust, and eventually to data products that exist but are no longer used.</p>
+      <p>This chapter introduces pragmatic concepts for data quality, data lifecycle management, and the deprecation of
+        data products, without assuming heavy usage of tools or formal maturity models.</p>
+      </hgroup>
+    <section id="data-quality-dimensions">
+      <h3>Data Quality Dimensions</h3>
+      <p>Data quality is not a single property. It consists of multiple <em>dimensions</em>, each describing a different
+        aspect of how well data represents reality and how suitable it is for a given use case. Importantly, <em>quality
+          is contextual</em>: data that is “good enough” for one purpose may be insufficient or even misleading for
+        another.</p>
+      <p>Common and practical data quality dimensions include:</p>
+      <ul>
+        <li><em>Accuracy</em><br />Data correctly reflects the real-world object or event it represents. For example, a
+          customer's address matches their actual address at the time of use.</li>
+        <li><em>Completeness</em><br />All required data is present. Missing values may be acceptable in exploratory
+          analysis but critical in operational or regulatory contexts.</li>
+        <li><em>Timeliness</em><br />Data is up to date relative to its intended use. Near-real-time data may be
+          essential for operations, while monthly snapshots may be sufficient for strategic reporting.</li>
+        <li><em>Consistency</em><br />The same information does not contradict itself across systems or data products.
+          Inconsistencies often arise from parallel data maintenance or uncontrolled transformations.</li>
+        <li><em>Validity</em><br />Data conforms to expected formats, ranges, and business rules. Examples include valid
+          dates, allowed value ranges, or correct reference data usage.</li>
+        <li><em>Uniqueness</em><br />Entities are represented once and only once where intended. Duplicate records often
+          distort aggregates and mislead AI-based reasoning.</li>
+      </ul>
+      <p>Not all dimensions must be always optimized. <em>Declaring which dimensions matter for a data product — and why
+          — is more important than achieving theoretical perfection.</em> This declaration is part of the data product's
+        metadata and a prerequisite for trust.</p>
+    </section>
+    <section id="data-quality-as-a-process-not-a-state">
+      <h3>Data Quality as a Process, not a State</h3>
+      <p>Data quality is not something that can be “fixed once”. It evolves as:</p>
+      <ul>
+        <li>source systems change,</li>
+        <li>business definitions shift,</li>
+        <li>new use cases emerge,</li>
+        <li>and AI systems start combining data in unforeseen ways.</li>
+      </ul>
+      <p>Therefore, data quality must be treated as a <em>continuous process</em>, not as a static checklist. Key
+        elements of such a process include:</p>
+      <ul>
+        <li><em>Clear ownership</em><br />Every dataset and data product needs an accountable owner who understands its
+          meaning, limitations, and business impact.</li>
+        <li><em>Feedback channels</em><br />Users must have a simple way to report data quality issues. Without a
+          backchannel, problems remain hidden and trust erodes silently.</li>
+        <li><em>Transparency over perfection</em><br />It is often better to expose known limitations explicitly than to
+          hide them behind polished dashboards or AI answers.</li>
+        <li><em>Automation where possible, human judgment where necessary</em><br />Simple quality checks can be
+          automated, but many quality issues require contextual understanding and cannot be resolved without human
+          intervention.</li>
+      </ul>
+    </section>
+    <section id="data-lifecycle">
+      <h3>Data Lifecycle</h3>
+      <p>Every piece of data follows a lifecycle, even if it is not explicitly managed. Making this lifecycle explicit
+        helps reduce risk, control cost, and support reuse.</p>
+      <p>A simplified data lifecycle consists of the following phases:</p>
+      <ul>
+        <li><em>Creation</em><br />Data is generated or captured, typically in operational systems, external feeds, or
+          manual processes. At this stage, data reflects a local view and often lacks broader business semantics.</li>
+        <li><em>Processing &amp; Transformation</em><br />Data is cleaned, enriched, integrated, and transformed into
+          forms suitable for analytics, reporting, or AI usage. This is where much of the business value is added — but
+          also where errors can propagate if lineage and semantics are unclear.</li>
+        <li><em>Usage</em><br />Data is consumed by humans (reports, analyses, decisions), applications, or AI systems.
+          Usage patterns often reveal new quality issues or new requirements that were not anticipated during design.
+        </li>
+        <li><em>Retention &amp; Archival</em><br />Data that is no longer actively used may still need to be retained
+          for legal, regulatory, or historical reasons. At this stage, accessibility requirements typically decrease,
+          while integrity and traceability remain important.</li>
+        <li><em>Deletion</em><br />When data is no longer needed and retention obligations expire; it should be deleted
+          in a controlled and auditable way. Deletion is part of responsible data governance, not an afterthought.</li>
+      </ul>
+      <p>Not every dataset needs to pass through all phases with equal intensity. However, <em>every data product should
+          clearly state which lifecycle stage it is in and how transitions are managed</em>.</p>
+    </section>
+    <section id="lifecycle-awareness-in-data-architecture">
+      <h3>Lifecycle Awareness in Data Architecture</h3>
+      <p>Lifecycle thinking influences architectural decisions in several ways:</p>
+      <ul>
+        <li><em>Separation of raw and derived data</em><br />Original data should remain immutable wherever possible,
+          while derived data can be recalculated or replaced as logic evolves.</li>
+        <li><em>Explicit validity periods</em><br />Data products should communicate whether they represent a current
+          state, a historical snapshot, or a scenario-based view.</li>
+        <li><em>Cost-aware persistence</em><br />Persisting data indefinitely “just in case” increases cost and risk.
+          Lifecycle-aware architectures persist data intentionally and transparently.</li>
+        <li><em>AI-readiness</em><br />AI systems are particularly sensitive to outdated, inconsistent, or context-less
+          data. Lifecycle metadata helps prevent silent misuse.</li>
+      </ul>
+    </section>
+    <section id="deprecation-of-data-products">
+      <h3>Deprecation of Data Products</h3>
+      <p>Just like applications, <em>data products have a life cycle end</em>. Failing to deprecate
+        obsolete data products leads to:</p>
+      <ul>
+        <li>confusion among users,</li>
+        <li>incorrect analyses,</li>
+        <li>duplicated effort,</li>
+        <li>and increased maintenance cost.</li>
+      </ul>
+      <p>Deprecation should be treated as a <em>first-class process</em>, not as an informal decision.</p>
+      <p>A pragmatic deprecation approach includes:</p>
+      <ul>
+        <li><em>Announcement</em><br />Clearly communicate that a data product will be deprecated, including reasons and
+          timelines.</li>
+        <li><em>Successor identification</em><br />If possible, point users to a replacement data product or an
+          alternative way to obtain the required information.</li>
+        <li><em>Grace period</em><br />Allow sufficient time for consumers to migrate, depending on criticality and
+          usage patterns.</li>
+        <li><em>Status metadata</em><br />Deprecated data products should remain findable but clearly marked as such,
+          including warnings for AI systems.</li>
+        <li><em>Eventual removal</em><br />After the grace period, access should be removed or restricted to avoid
+          accidental use.</li>
+      </ul>
+      <p>For AI-enabled environments, deprecation metadata is especially important: <em>an AI agent will not “notice”
+          that a dataset is outdated unless it is explicitly told so</em>.</p>
+    </section>
+    <section id="quality-lifecycle-and-trust">
+      <h3>Quality, Lifecycle, and Trust</h3>
+      <p>Ultimately, lifecycle management and data quality serve a single purpose: <em>trust</em>.</p>
+      <ul>
+        <li>Trust that data represents reality well enough for its intended use.</li>
+        <li>Trust that limitations are known and communicated.</li>
+        <li>Trust that obsolete or misleading data is not silently reused.</li>
+        <li>Trust that AI-generated answers are grounded in valid, current, and well-understood data.</li>
+      </ul>
+      <p>A mature data architecture does not eliminate uncertainty — it makes uncertainty visible and manageable.</p>
+    </section>
+    </article>
+    <article id="deep-dive-data-modelling">
+      <hgroup>
+      <h2>Deep dive: Data modelling</h2>
+      <p>Data modelling is a topic where many authors have written lots of text over the last decades and it is a topic
+        where most applications fail to deliver decent results. I clearly object to the simplified assumption it would
+        be sufficient to dump an object model like needed to run an application into a relational model generated by an
+        object-relational (OR) mapper. If you follow this approach, you will end up with data models not suitable for
+        direct data analysis and integration into data pipelines. The model to store the data and the model to run your
+        application differ in purpose, which results in different (but equivalent) modelling. As the business value lies
+        in the data while the application's purpose is to interact with it, I recommend investing more time in a durable
+        data model that is consistent with data models already existing in the company. As a result, the application
+        will fit better to the understanding of data entities in other applications.</p>
+      <p>This section intentionally does not converge on a ‘best model'. Architecture is the discipline of choosing
+        trade-offs consciously, not eliminating them.</p>
+      </hgroup>
+    <section id="why-model">
+      <h3>Why “model”?</h3>
+      <p>Reality is difficult concept. Even the part of reality we can realize using our senses and imagination is
+        complex, complicated, fractal, interdepended, differentiated and so on. No computer system can represent a part
+        of reality to its extent and still perform well - modelling is needed to reduce complexity to a degree that is
+        <em>fit for purpose</em>. Even within one application, the data model mediates between the data representations
+        in business application, database, API, User Interface, data provisioning, business data model and more. A Data
+        Model is neither a platform nor a single schema; it is equivalent to the user's impression or mental model of an
+        application.</p>
+      <p>Always model with transformation in mind. Separate original data from derived data; original data needs backup
+        of data, derived data needs backup of derivation logic. Keep original identifiers as reference to report on
+        lineage. Automate transformations.</p>
+    </section>
+    <section id="model-to-purpose">
+      <h3>Model to purpose</h3>
+      <p>As the data models always need to serve a purpose, there are different types of data models serving different
+        types of purposes:</p>
+      <ul>
+        <li><em>Normalized relational data models</em> for online transactional processing (OLTP) reduce redundancies
+          and thereby simplify data maintenance. Changing a single value in a single table's row results in
+          automatically changing this value everywhere in the application. Differentiation whether a value in a
+          subsequent table is as-of now or historic is a decision made in modelling.</li>
+        <li><em>Star or snowflake data models</em> for online analytical processing (OLAP) keep historic data of master
+          data in so called slowly changing dimensions to allow analyzing several scenarios e.g. as-of today or in
+          historic structures. Hierarchies are mainly flattened by introducing redundant data to increase performance.
+          Fact tables refer to historical master data using surrogate keys.</li>
+        <li><em>Tabular data models</em> for OLAP flatten all hierarchies and master data into the fact tables. Columnar
+          database setups optimize these highly redundant representations into graph-like in-memory models to speed up
+          analysis further.</li>
+        <li><em>Graph data models</em> are optimized for in-memory usage by reducing referential integrity to memory
+          pointers. Hierarchical data and reasoning are perfect examples for implementation as a graph. Ontologies for
+          semantics and knowledge graphs to integrate ontologies and factual data profit from graph representation
+          enabling hierarchical queries to speed up. Storing data as triples (subject, predicate, object) directly
+          represents graph structure of nodes and edges but tampers the ability to edit data without repeating changes
+          throughout the whole storage.</li>
+        <li><em>Class-oriented graph data models</em> add a level of structure to the original object-oriented data
+          models. An object can principally have each type of relationship or attribute; this allows very detailed
+          modelling to get as near to reality as possible. Classes reduce this to a defined number of relationships and
+          attributes, to enable batch processing of equivalent objects.</li>
+        <li><em>Schema-based object models</em> follow a similar approach in plain object models like JSON
+          without introducing graph concepts. A schema defines the allowed and required structure; a certain object has
+          to follow. This is equivalent to data in classes and objects in programming languages except methods and
+          events defined there. Storage of class-based objects out of object-oriented programming languages is basically
+          schema-based before it is mapped into a data model for persistence.</li>
+        <li><em>Document models</em> (e.g. JSON) are representation forms that may encode object-oriented, relational,
+          or graph semantics depending on schema discipline and usage.</li>
+        <li><em>Key-value models or general data models</em> avoid explicit data modelling as
+          a structure and move it to metadata describing the used “keys”. Essentially this is an unpivoted
+          representation of a sparse tabular model; it is a decision of representation and not a decision of modelling.
+        </li>
+      </ul>
+      <p>In addition to these technology-based purposes, data models differentiate viewpoints (DoDAF Viewpoints and
+        Models):</p>
+      <ul>
+        <li><em>Physical data models</em> represent data as persistent to a storage medium. Technical necessities like
+          exact data formats, charsets, encryption, cardinality of relations and so on dominate here; technical
+          restrictions of the storage technology (e.g. SQL Server) used are to be considered.</li>
+        <li><em>Semantical or business data models</em> are not restricted by technological boundaries; they describe
+          data in a generalized way across multiple implementations to define business logic. High-level artifacts like
+          data domains and ownership should live on these models. </li>
+        <li><em>Logical data models</em> bridge physical data models to the overarching business model. In theory the
+          use case-oriented logical model is derived from the generalized business model to survive across multiple
+          physical implementations of an application. Practically, the mapping between physical models and business
+          models is done after the fact and needs clear consideration on effort invested vs benefit expected.</li>
+      </ul>
+      <p>More aspects to differentiate models are:</p>
+      <ul>
+        <li><em>Integrative models</em> to combine data from several sources could be minimal, only containing data
+          available in all sources, or sparse, including all data that could be available in any source.</li>
+        <li><em>Pivoting</em> allows us to decide whether information is represented in rows or in columns. Reducing
+          details allows simple representations as columns, while need for reach details is served best in rows
+          (relational models). In object-oriented models the difference is whether an attribute is a simple value or a
+          nested object or structure.</li>
+        <li><em>Time-series</em> represent development of information over time. While they are essential to detect
+          deviations and patterns in repeated measurements, aggregation and reduction to single values is often needed
+          for follow-up analyses.</li>
+        <li><em>Time-boxed data</em> like statistical aggregations on monthly level speed up analysis but allow
+          different types of errors like missing or mismatched periods. Slowly changing data typically results in
+          non-standard time boxes to represent the period when a data entry was valid.</li>
+        <li><em>Multi-language texts</em> complicate master data and result in loss of data if implemented or queried
+          wrongly but are essential for human data usage in multinational enterprises especially on working level.</li>
+        <li><em>Aggregated or emerging data vs raw data</em>: While raw or original data must be seen as immutable for a
+          certain timestamp, all aggregated data follows business logic. These data models should always be filled
+          automatically to enable change of business logic later. Data entry models usually contain only entered data
+          and some metadata about time, agent and place of entry - they need enrichment with master and hierarchical
+          data before being transformed for analysis usage.</li>
+      </ul>
+      <p>Derived from data models several specialized representations of data serve metadata purposes:</p>
+      <ul>
+        <li><em>Data landscapes</em> reduce the logical layer to show systems per data domains as an overview.</li>
+        <li><em>Lineage models</em> show the information flow from raw data collection down to data analysis to ensure
+          data quality on the move fostering trust in data transformation.</li>
+        <li><em>Data (product) catalogs</em> show the data that is available for consumption in a reduced way with
+          explanations for business users and AI.</li>
+      </ul>
+      <p><em>Define purpose before starting to model. Results will differ.</em></p>
+    </section>
+    <section id="semantic-models">
+      <h3>Semantic models</h3>
+      <p>Basic assumption for every semantic model is to have a single entity, naming and identifier for a certain
+        meaning. Inherit duplicates like “vendor” vs “supplier” need to be reduced. On the other hand, there must be a
+        separate entity if the meaning differs. Relationships explain whether in current context “charge” and “batch”
+        are equal or how their relationship is. Building those semantic (or business or conceptual) models is mainly the
+        effort to understand an area of interest to the extent that all business terms and their relations are
+        explained.</p>
+      <p>For an increasing number of general interest knowledge areas, public ontologies exist. Reuse to standardize and
+        to minimize effort. (see References for selected ontology catalogs)</p>
+      <p>In practice, there is rarely “one” general ontology for e.g. electrical engineering. Instead, the common
+        pattern is:</p>
+      <p>Upper Ontology (SUMO / BFO / gist)</p>
+      <p> ↓</p>
+      <p>Mid-level / Core Ontology (CCO, Engineering Ontologies)</p>
+      <p> ↓</p>
+      <p>Domain Ontology (Energy, Electronics, Power Systems, IoT, etc.)</p>
+      <p>This Domain Ontology should be linked to data sources e.g. using RDF Mapping Language (RML; Dimou, 2024) to
+        enable assigning data to business terms, thus enabling us to create knowledge graphs containing semantified
+        data.</p>
+    </section>
+    <section id="relational-data-models">
+      <h3>Relational data models</h3>
+      <p>(by Microsoft Copilot)</p>
+      <p>Relational data models represent information as <em>relations (tables)</em> consisting of <em>rows
+          (tuples)</em> and <em>columns (attributes)</em>. Each table describes a set of entities of the same kind, and
+        each row represents one instance of such an entity at a given point in time. Columns define the attributes that
+        are considered relevant for the modeled purpose and are typed according to a defined domain (e.g. number, text,
+        date).</p>
+      <p>A core principle of the relational model is the use of <em>keys</em>.<br />A <em>primary key</em> uniquely
+        identifies each row in a table and provides stability for referencing. <em>Foreign keys</em> establish
+        relationships between tables by referring to primary keys in other tables, enabling controlled navigation and
+        consistency across related data. These constraints are not merely technical constructions; they encode
+        assumptions about identity, ownership, and valid combinations of information.</p>
+      <p>Relational models are particularly strong in <em>maintaining consistency and integrity</em> of data. Concepts
+        such as referential integrity, uniqueness, and constraints ensure that data remains internally coherent even
+        under concurrent access and frequent updates. This makes relational models well suited for <em>transactional
+          systems</em>, where correctness, traceability, and controlled change are more important than flexibility or
+        expressiveness.</p>
+      <p>Another defining characteristic is <em>normalization</em>. By reducing redundancy and separating concerns into
+        multiple related tables, normalized relational models minimize update anomalies and clarify responsibility for
+        data maintenance. The cost of normalization is increased complexity for retrieval, which is typically addressed
+        by joins, views, or downstream denormalized representations.</p>
+      <p>From a data architecture perspective, relational models are <em>excellent maintenance and integration
+          models</em>, but they are rarely optimal consumption models. Their structure reflects rules of data
+        consistency rather than business semantics or analytical convenience. As a result, relational schemas often
+        require transformation, enrichment, and semantic annotation before they can be safely reused for analytics,
+        reporting, or AI-driven consumption.</p>
+      <p>In this sense, relational data models should be understood as <em>one representation among many</em>: a durable
+        and disciplined foundation for data persistence and integration, but not the final form in which data delivers
+        value. Downstream models—analytical, semantic, or graph-based—build on relational sources while shifting the
+        focus from consistency to understandability, comparability, and purpose-driven usage.</p>
+    </section>
+    <section id="object-models">
+      <h3>Object models</h3>
+      <p>Object models stem from internal representations in object-oriented languages. Their main structural elements
+        are a deep structure including complex data types (instances of classes themselves) and a removed separation of
+        data from code. Pure object models describe individual objects resulting in rich descriptions without
+        comparability. This is why they are rare - usually object models consist of instances of classes, where classes
+        describe an abstraction layer defining attributes and methods common to all instances of this class.</p>
+      <p><em>Inheritance</em> is a typical element introduced with object models. It is a relationship between classes
+        to define, that a sub class is a specialization of parent class; in effect, the sub class follows all rules that
+        apply to the parent class, but it may extend the class definition by additional rules (attributes, methods,
+        strict enumerations etc.). Do not mix up with <em>instantiation</em>, which is the definition
+        of an individual object based on a class definition. An additional concept appearing here is
+        <em>polymorphism</em>, which means a definition class in relation to another class definition not explicitly
+        defined while coding (“list” is polymorph and can be instantiated as list of string, list of Apple, list of
+        lists etc.). <em>Subordination</em>, defining a class being part of something, is no inheritance, like an apple
+        inherits from fruit but does not inherit from fruit salad. Subordination is rarely defined as element in
+        object-oriented programming languages, but it regularly appears as concept in data modeling.</p>
+    </section>
+    <section id="graph-models-and-hierarchies">
+      <h3>Graph models and hierarchies</h3>
+      <p>Graphs (in most cases: directed acyclic graphs, DAGs) are a means to represent relationships. Thus, they fit
+        ideally into semantic and object models playing out their strength in hierarchies and reasoning. The design
+        principle in graphs is that a node refers (has an edge) to a node. Graph language ease querying across multiple
+        references, allowing deep queries, where SQL hits its limits immediately (recursive queries and hierarchical
+        data types are possible but slow). The typical use case are all types of NP complete problems like the Traveling
+        Salesman path optimization pattern.</p>
+    </section>
+    <section id="comparing-terminology">
+      <h3>Comparing terminology</h3>
+      <p>(by Microsoft Copilot)</p>
+      <p>Terminology differs across modeling paradigms. Using this table as a Rosetta Stone helps bridge
+        misunderstandings between semantic, relational, object-oriented, and graph perspectives without assuming
+        structural equivalence.</p>
+      <table id="comparing-terminology-table">
+        <tr>
+          <th>Conceptual meaning</th>
+          <th>Semantic / Ontology</th>
+          <th>Relational</th>
+          <th>Objectoriented</th>
+          <th>Graph</th>
+        </tr>
+        <tr>
+          <td>Thing of interest (instance)</td>
+          <td>Individual</td>
+          <td>Row (Tuple)</td>
+          <td>Object</td>
+          <td>Node</td>
+        </tr>
+        <tr>
+          <td>Generalized type</td>
+          <td>Class</td>
+          <td>Table (Relation)</td>
+          <td>Class</td>
+          <td>Label / Node Type</td>
+        </tr>
+        <tr>
+          <td>Property / attribute</td>
+          <td>Property</td>
+          <td>Column</td>
+          <td>Attribute / Field</td>
+          <td>Property</td>
+        </tr>
+        <tr>
+          <td>Identifier</td>
+          <td>IRI / URI</td>
+          <td>Primary Key</td>
+          <td>Object ID</td>
+          <td>Node ID</td>
+        </tr>
+        <tr>
+          <td>Value</td>
+          <td>Literal</td>
+          <td>Cell value</td>
+          <td>Attribute value</td>
+          <td>Property value</td>
+        </tr>
+        <tr>
+          <td>Relationship</td>
+          <td>Object Property</td>
+          <td>Foreign Key</td>
+          <td>Reference</td>
+          <td>Edge</td>
+        </tr>
+        <tr>
+          <td>Relationship type</td>
+          <td>Predicate</td>
+          <td>FK constraint / join</td>
+          <td>Association</td>
+          <td>Edge type</td>
+        </tr>
+        <tr>
+          <td>Cardinality</td>
+          <td>Ontology restriction</td>
+          <td>Cardinality constraint</td>
+          <td>Multiplicity</td>
+          <td>Edge multiplicity</td>
+        </tr>
+        <tr>
+          <td>Inheritance</td>
+          <td>rdfs:subClassOf</td>
+          <td>Table inheritance / discriminator</td>
+          <td>Class inheritance</td>
+          <td>Label hierarchy</td>
+        </tr>
+        <tr>
+          <td>Classification</td>
+          <td>rdf:type</td>
+          <td>Type column</td>
+          <td>Class membership</td>
+          <td>Label assignment</td>
+        </tr>
+        <tr>
+          <td>Enumeration</td>
+          <td>Code list / SKOS</td>
+          <td>Lookup table</td>
+          <td>Enum</td>
+          <td>Node set</td>
+        </tr>
+        <tr>
+          <td>Constraint</td>
+          <td>Axiom</td>
+          <td>Constraint</td>
+          <td>Validation logic</td>
+          <td>Constraint / pattern</td>
+        </tr>
+        <tr>
+          <td>Schema definition</td>
+          <td>Ontology</td>
+          <td>DDL</td>
+          <td>Class definition</td>
+          <td>Graph schema (optional)</td>
+        </tr>
+        <tr>
+          <td>Query language</td>
+          <td>SPARQL</td>
+          <td>SQL</td>
+          <td>OQL / API</td>
+          <td>Cypher / Gremlin</td>
+        </tr>
+        <tr>
+          <td>Semantics</td>
+          <td>Explicit, formal</td>
+          <td>Implicit</td>
+          <td>Implicit</td>
+          <td>Partial / emergent</td>
+        </tr>
+        <tr>
+          <td>Reasoning</td>
+          <td>Logical inference</td>
+          <td>None</td>
+          <td>None</td>
+          <td>Path traversal</td>
+        </tr>
+        <tr>
+          <td>Typical purpose</td>
+          <td>Meaning, integration, AI</td>
+          <td>Persistence, integrity</td>
+          <td>Behavior, encapsulation</td>
+          <td>Relationships, traversal</td>
+        </tr>
+      </table>
+      <p>This table does <em>not imply equivalence</em>, but functional correspondence. Each column represents a
+        <em>modeling paradigm optimized for a different purpose</em>. Semantic models prioritize meaning and inference,
+        relational models prioritize integrity and persistence, object-oriented models prioritize behavior and
+        encapsulation, and graph models prioritize relationships and traversal. Misunderstandings arise when terms are
+        treated as literal translations instead of <em>contextual analogies</em>.</p>
+    </section>
+    <section id="object-oriented-data-modeling">
+      <h3>Object-oriented data modeling</h3>
+      <p>Trying to combine the strength of the various types of data modelling, object-oriented data modelling defines
+        common ground to translate data models by introducing object-oriented concepts into relational data modelling.
+        Object-relational (OR) mapping is a similar approach, but it takes the object model as a given and automatically
+        derives the relational model from there. The idea of object-oriented data modeling is to define a model upfront
+        that is compatible with object-orientation and with relational databases (and hopefully with graphs, too).</p>
+      <p>Elements of Object-oriented data modeling (see References):</p>
+      <ul>
+        <li><em>Objects</em>: The real-world entities and situations are represented as objects in the object-oriented
+          database model - and as rows in the relational data model.</li>
+        <li><em>Attributes and Methods</em>: Every object has certain characteristics. These are represented
+          using attributes. The behavior of the objects is represented using methods. Simple attributes are represented
+          by individual columns, while complex attributes are represented by a set of columns or by sub tables
+          (depending on cardinality). Whether methods need to be implemented in SQL depends on solution architecture.
+        </li>
+        <li><em>Object references</em>: Objects referring to other objects e.g. to implement subordination are pointers
+          in object models, edges in graph models and foreign key relations in relational data models.</li>
+        <li><em>Classes</em>: Similar attributes and methods are grouped together using a class. An object can
+          be called an instance of the class. Every class is represented as a table in the relational data model.</li>
+        <li><em>Inheritance</em>: A new class can be derived from the original class. The derived class contains
+          attributes and methods of the original class as well as its own. In the relational data model, the derived
+          class is a separate table sharing a 1:1 relationship based on a common primary key containing additional
+          columns only. As this additional table only contains identifiers of sub class entities, an inner join reduces
+          the number of rows to the number of sub class entities.</li>
+      </ul>
+      <p>The object-oriented data model aims at bridging the semantic gap between relation tables and entities of the
+        real world through objects that directly correspond to entities. An object has a unique and immutable object
+        identifier, and it belongs to a class. Thus, bidirectional mapping between modeling paradigms is possible with
+        few compromises. Metadata is needed to persist decision made during transformation.</p>
+    </section>
+    <section id="bridging-models">
+      <h3>Bridging models</h3>
+      <p>Understanding that models always represent information for a purpose, directly leads to understanding that data
+        needs to be transformed and enriched with data from other sources and with metadata to solve different purposes.
+        Following the paradigm, that original data needs to be backup up, while transformation needs to be automated, it
+        is important to build bridges between data models and to document the decision made. This results in the
+        <em>information flow or lineage</em> of data, documenting all transformations from data entry to analysis
+        thereby gaining trust in data pipelines.</p>
+      <p>Typical transformations are:</p>
+      <ul>
+        <li><em>Renaming columns</em>: While names seem to be unimportant, they often bear meaning and are
+          needed for identification. If e.g. a column named “average mass in kg” is renamed to “weight”,
+          misunderstandings happen, whenever semantics and metadata are not transported accordingly eventually leading
+          to the assumption weight was measured in pounds or Newton.</li>
+        <li><em>Moving column entries to metadata</em>: In above context a typical transformation is
+          to reduce a set of columns in measurement (number of entities measured, measured mass, unit of mass) to a
+          single column (mass in kg). Naming, semantics and metadata are again essential to avoid loss of information.
+        </li>
+        <li><em>Joining sources</em>: Whenever data is reduced from several sources or tables into one result, a
+          multitude of problems can occur: loss of entries due to inner joins, empty entries due to unresolved outer
+          joins, multiplication of entries due to different granularity. Explicitly defining referential integrity helps
+          to reduce those problems inside single data models - ontologies help to reduce them when integrating data
+          sources.</li>
+        <li><em>Pivoting</em>: Making column entries to columns and vice versa is a very common transformation resulting
+          in a plethora of issues: new column entries resulting in loss of data or new columns, multiple entries per
+          category need to be aggregated, missing entries lead to empty columns. Generally, only pivot categorized
+          columns! If a column does not have an enumeration or fixed lookup table, a defined pivot is not possible. Same
+          is with unpivoting: generate an enumeration or lookup table, defining column content by referential integrity.
+        </li>
+        <li><em>Flattening parent child hierarchies</em>: The biggest strength of graph, semantic or parent-child
+          hierarchies is that the number of hierarchy levels is flexible and may include skipping levels or having
+          children of different levels. In organizational hierarchies this can be seen easily: a level 2 manager may
+          have level 3 and level 4 and individual assistants as direct reports. To flatten those hierarchies into fixed
+          columns for reporting e.g. in PowerBI using a tabular data model, decisions must be made on how to identify
+          the level of an entry and on how to cope with skipped levels. Type of entry helps with identifying levels and
+          skipped levels may be NULL or repeated from lower levels (both ways are supported in reporting applications).
+        </li>
+      </ul>
+      <p>If those decisions are not made upfront, they will be taken by the developer ad hoc, leading to inconsistent
+        behavior. Not taking these decisions is technically impossible; in doubt they would be taken by the toolkit used
+        implicitly.</p>
+    </section>
+    <section id="special-cases-in-data-modeling">
+      <h3>Special cases in data modeling</h3>
+      <ul>
+        <li><em>Role-playing relations</em>: When referring to another object, you often see the name of the foreign
+          object's identifier (e.g. CustomerID) as reference attribute name. This implicitly assumes that the role the
+          foreign object plays in your object is clear. In case of order positions, it might be clear that OrderId
+          relates to the order, the position is part of. In most other cases, even in the case of an order's customer,
+          the relationship is clear during modeling but not clear when data is queried - it could be the customer who
+          ordered or the customer who is paying if they deviate. Naming conventions help; in case of object references,
+          always use a verb and the subject for naming e.g. orderedByCustomerId. lowerCamelCase clearly identifies it as
+          a role-playing relation, if attributes are PascalCase as standard for attribute naming. Doing so reduces the
+          need for additional metadata and avoids misunderstandings.</li>
+        <li><em>Natural, surrogate, multi-column or concatenated
+          keys</em>: <em>Natural keys</em> are best, if they are unique, stable and short. Town's short names
+          as part of number plates are a good example - “en-us” as language code for English (United States) is a good
+          example. Using such keys makes referring tables readable while not making any compromises. Inventing such keys
+          is only a good idea, if you're sure they will remain mostly stable - any change results in refactoring of all
+          referring data including historical ones. Providing successor rules avoids this but results in cluttered
+          master data. If a single natural key is not enough to identify a row, database models tend to extend the
+          primary key with additional sub keys like order id and order position id. These <em>multi-column</em> keys are
+          logical in many cases but having four or more parts they inherently result in wrongly made joins by missing
+          out single rarely used columns like a row version id. <em>Concatenated keys</em> can help in downstream models
+          by providing a canonical version of the multi-column key concatenated into one column. This is still readable
+          in the referring table but ensures completeness of joins. In original tables or with having too many columns,
+          this methodology comes to an end. If no logical key exists, in cases of time-boxed changelogs or slowly
+          changing dimensions, or if too many columns are needed for identification, <em>surrogate keys</em> help
+          identifying rows - they can be running numbers (row identifiers), hashes (compressed combinations of all
+          relevant columns) or globally unique identifiers (GUID) depending on purpose. In any case the referred to
+          object is not comprehendible in the referring table, so use them with caution. GUIDs on the other hand allow
+          unique identifiers across tables and systems, clearly identifying a semantical entity throughout the whole
+          data landscape. There is no simple answer on how to define keys.</li>
+        <li><em>Slowly changing dimensions (SCD)</em>: Master data changes over time - it usually does not change often,
+          but it changes slowly. To enable historical accuracy and scenarios like “as-of today”, OLAP models introduced
+          the concept of slowly changing dimensions. Multiple types have been defined, but the basic element is to keep
+          all versions of truth. This results in time-boxed data minimum extending the natural key by a date entry
+          identifying from which timestamp onwards this entry is valid - adding the related timestamp to fact data would
+          be sufficient to identify the related version of master data then. Unfortunately, it is very inefficient to
+          look up master data by derived time-boxes for every related dimension. Surrogate keys help: the version of
+          master data gets an internal number, the technical reference from fact data to dimensional data uses this
+          surrogate key as single column foreign key relation. <em>Scenarios</em> can be added by referencing the
+          scenario version (e.g. as-of today) from the versioned master data. There is a pitfall in doing so: some data
+          warehouses of the past collected historical data in the warehouse only; this made the data warehouse a source
+          of original data that could not be retrieved from somewhere else, resulting in potential data loss. Always
+          collect <em>historical data</em> in a separate archive system, being fast to write, not necessarily fast to
+          read, but having a sound backup.</li>
+        <li><em>Multi-language texts</em>: The standard way of implementing multi-language texts in relational data
+          models is to move all text entries into a language-related sub table. The primary key of this table is
+          extended by language, and it is referenced when displaying text. This always leads to data loss when queried
+          with the assumption that the language needed is maintained - by filtering the language to user's language, all
+          entries that do not contain texts in this language are removed from the result e.g. not contributing to
+          aggregated numbers. Always be cautious when querying language texts; left join to a filtered sub table avoids
+          loss of data, providing a default language text in main table avoids empty text fields. Object models or
+          extended relational models allowing objects as column types (e.g. containing languages as attributes as
+          possible in PostgreSQL) avoid these problems by design.</li>
+        <li><em>Categorical data</em>: Like already mentioned in pivoting, it is essential to provide a list of valid
+          entries, if an attribute or column may only contain certain values. It does not matter whether you consider
+          this list of valid entries as metadata like in enumeration data types or as lookup table like in relational
+          model, it is only important that the model disallows any entry not listed there. Those category values are
+          typically as relevant to semantical mapping as column names and considering pivot they can end up being column
+          names.</li>
+      </ul>
+    </section>
+    <section id="data-access-models">
+      <h3>Data access models</h3>
+      <p>If you ask upper management, you easily get phrased answers like “the data belongs to the company”. This is not
+        true except from a legal perspective. You will not get accepted models for data access unless you clarify data
+        ownership and business value (in loss and in usage) of data.</p>
+      <p>In first place, if data describes a (natural or legal) person, this person owns the data; this is legally
+        clear. If data is provided by a person, it should be owned by this person; looking at patent rules, this should
+        be clear, too. If data is from external sources, it is owned by the external company; this is clear by
+        contracts. If data is collected by automated processes, the owner of this process or technological component
+        being responsible for it, should stay owner. All of this is true but not helpful.</p>
+      <p>A <em>data owner</em> should take ownership and feel responsible for quality, availability, safety and security
+        of data. This is an active role not defined by the process of creation or else people leaving the company would
+        take their ownership. The data owner must respect original, legal or external ownership and consider it in any
+        action. In doubt, the data owner must give data back and remove it from the system of truth and from all
+        downstream systems unless the data has been transformed into something not revealing its original source anymore
+        (e.g. statistics). For internal purposes, the data owner is the only relevant contact when it comes to decisions
+        about data usage - and for any complaints.</p>
+      <p>As part of this role, the data owner must define a data access model. The alternative would be an individual
+        decision for any request, which is not suitable for AI models or mass data analyses, and which is not reliable
+        or reproducible at all. If data is defined as “internal”, it must be given access to all employees; if it is
+        defined as “confidential”, clear reasoning is relevant, why data must be kept from certain employees or why a
+        thorough log of data access is needed (legal or contractual reasons, pending patents, high business value, …).
+        Even for confidential data it is highly recommended to define <em>attribute-based access controls (ABAC)</em>,
+        to enable a computer system to automatically grant access based on employee's master data. Only by doing so can
+        data be made available without delay, which is essential in AI-use of data. Even project oriented or time-boxed
+        individual access can be set into master data lookup tables enriching automated access and thus adding a layer
+        of protocol to grants given. Human processes to request and grant access are outdated since the advent of
+        reporting layers and AI.</p>
+      <p>Contrarily, <em>data contracts</em> are meant to be explicitly signed before data usage. This blocks
+        data usage and eventually results in an AI using outdated publicly available data instead of current data from
+        internal systems. Only use data contracts with caution and if so, ensure they are signed before data is queried.
+        The information that access is not granted yet might be blurred by AI trying to find an answer. My
+        recommendation is to avoid them unless they are legally required.</p>
+    </section>
+    <section id="integrating-it-all">
+      <h3>Integrating it all</h3>
+      <p>As a result, there are original data sources in barely comprehensible data models, data pipelines transforming
+        data in multiple ways and analyses including ad hoc analyses accessing data by available data access models.
+        Ideally, there is a silver layer domain-driven data model with an ABAC data access layer in the middle. Data
+        architecture is tasked to understand and continuously develop this.</p>
+      <p>Full collection of metadata needed is prohibited due to the trade-off between upfront effort and downstream
+        benefit. A compromise would consist of:</p>
+      <ul>
+        <li>Use what's there: all data sources provide some kind of metadata at least a technical description of data
+          provided can be retrieved.</li>
+        <li>Document machine-readable: If you're developing data pipelines, usually you write down what you do in some
+          documentation on Confluence or similar text-based tools. Instead choose a way of implementation that
+          integrates transformation and documentation and that allows machine analysis and transformation of metadata.
+        </li>
+        <li>Add semantics when needed: Whenever a problem with interpretation occurs, extend metadata by explanation,
+          semantics or whatever is missing. Thus, an increasingly complete metadata repository is developed using agile
+          methodology.</li>
+      </ul>
+      <p>As this topic is still new, there is no standard tool existing yet to integrate all sources of metadata into a
+        single MCP-type of view.</p>
+    </section>
+    </article>
+
+    <article id="semantified-ai-ready-metadata">
+      <hgroup>
+      <h2>Semantified AI-Ready Metadata</h2>
+      <p>Draft for an Open-Source project</p>
+      </hgroup>
+      <ul>
+        <li>Python library to import, integrate and export metadata in various formats including a silver layer internal
+          metadata model and methods to find, request and access data</li>
+        <li>MCP Server, REST API and Web UI based on lib to find, request and access data</li>
+        <li>Extensive documentation</li>
+      </ul>
+    </article>
+    <article id="glossary">
+      <hgroup>
+      <h2>Glossary</h2>
+      <p>The following terms define how key concepts are used <em>in this document</em>. They are <em>normative</em>,
+        not encyclopaedic, and serve to prevent ambiguity when discussing data architecture, data products, and
+        AI-enabled data usage. Each term references the primary chapter(s) where it is introduced or applied. -- by
+        Microsoft Copilot.</p>
+      </hgroup>
+      <p>Data Architecture</p>
+      <p><em>Definition</em><br />The coherent set of principles, models, and structures that govern how data is
+        represented, transformed, accessed, and used across an organization to support business, analytics, and AI use
+        cases.</p>
+      <p><em>Clarification</em><br />In this document, data architecture explicitly prioritizes <em>data semantics,
+          lifecycle, and purpose-fit</em> over platform or vendor choices.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Overview</li>
+        <li>Concepts &amp; Mental Model</li>
+        <li>Integrating it all</li>
+      </ul>
+      <p>Data Product</p>
+      <p><em>Definition</em><br />A purpose-driven, governed representation of data that declares what it represents,
+        how it may be accessed, its quality expectations, and its lifecycle status.</p>
+      <p><em>Clarification</em><br />A data product is not defined by its storage technology or application, but by its
+        <em>business meaning, access model, and reusability</em>.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Data provisioning &amp; Data Products</li>
+        <li>Data access and access restrictions</li>
+        <li>Lifecycle &amp; Quality</li>
+      </ul>
+      <p>Semantics</p>
+      <p><em>Definition</em><br />Explicit, formalized meaning assigned to data entities, attributes, and relationships,
+        enabling correct interpretation, integration, and reuse by humans and AI.</p>
+      <p><em>Clarification</em><br />Semantics are <em>machine-interpretable meaning</em> (e.g. ontologies,
+        mappings, controlled vocabularies), not descriptive documentation text.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Concepts &amp; Mental Model</li>
+        <li>Data modelling</li>
+        <li>Semantifying Meta MCP Server</li>
+      </ul>
+      <p>Metadata</p>
+      <p><em>Definition</em><br />Data describing data, including technical, business, semantic, and governance-related
+        information necessary for discovery, access, and correct usage.</p>
+      <p><em>Clarification</em><br />Metadata is treated as <em>first-class architectural data</em>, not
+        auxiliary documentation.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Data Governance</li>
+        <li>Semantifying Meta MCP Server</li>
+        <li>Integrating it all</li>
+      </ul>
+      <p>Lifecycle</p>
+      <p><em>Definition</em><br />The explicitly managed progression of data and data products from creation through
+        transformation, usage, retention, deprecation, and deletion.</p>
+      <p><em>Clarification</em><br />Lifecycle applies to <em>data products</em>, not just tables or files.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Lifecycle &amp; Quality</li>
+        <li>Data provisioning &amp; Data Products</li>
+      </ul>
+      <p>Data Quality</p>
+      <p><em>Definition</em><br />The degree to which data is fit for a declared purpose, relative to its lifecycle
+        stage and usage context.</p>
+      <p><em>Clarification</em><br />Data quality is contextual and process-based, not an absolute or static property.
+      </p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Lifecycle &amp; Quality</li>
+        <li>Data Governance</li>
+        <li>Types of use cases</li>
+      </ul>
+      <p>Data Governance</p>
+      <p><em>Definition</em><br />The set of organizational structures, processes, and rules ensuring that data is
+        handled compliantly, efficiently, and in alignment with business objectives.</p>
+      <p><em>Clarification</em><br />This document distinguishes <em>external (compliance-driven)</em> and
+        <em>internal (efficiency-driven)</em> data governance.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Data Governance</li>
+        <li>Data organization</li>
+      </ul>
+      <p>Data Ownership</p>
+      <p><em>Definition</em><br />The explicit responsibility for deciding on data usage, access, quality handling, and
+        deprecation within an organizational context.</p>
+      <p><em>Clarification</em><br />Ownership is an <em>active role</em>, not inferred from data creation or legal
+        possession.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Data access models</li>
+        <li>Data Governance</li>
+      </ul>
+      <p>MCP Server (Model Context Protocol Server)</p>
+      <p><em>Definition</em><br />A standardized interface enabling AI models and agents to discover, understand, and
+        access data and tools in a governed and semantically enriched way.</p>
+      <p><em>Clarification</em><br />MCP is treated as an <em>architectural access pattern</em>, not a fixed technology.
+      </p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Data access and access restrictions</li>
+        <li>Semantifying Meta MCP Server</li>
+        <li>AI &amp; organization sections</li>
+      </ul>
+      <p>AI-readiness</p>
+      <p><em>Definition</em><br />The degree to which data, metadata, access models, and lifecycle information are
+        suitable for safe, correct, and automated consumption by AI systems.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Concepts &amp; Mental Model</li>
+        <li>Lifecycle &amp; Quality</li>
+        <li>MCP Server sections</li>
+      </ul>
+      <p>Immutability (of data)</p>
+      <p><em>Definition</em><br />The principle that original data, once created, must not be changed; only derived
+        representations may evolve.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Data provisioning &amp; Data Products</li>
+        <li>Data modelling</li>
+        <li>Lifecycle &amp; Quality</li>
+      </ul>
+      <p>FAIR (+)</p>
+      <p><em>Definition</em><br />A principle stating that data should be Findable, Accessible, Interoperable, and
+        Reusable, with additional emphasis on <em>safety, security, and trustworthiness</em>.</p>
+      <p><em>See also</em></p>
+      <ul>
+        <li>Data access and access restrictions</li>
+        <li>Data Governance</li>
+      </ul>
+    </article>
+    <article id="references">
+      <hgroup>
+      <h2>References</h2>
+      <p>References are provided to anchor key concepts and offer further reading.<br />They are <em>not</em> intended
+        as an exhaustive or normative standard selection, but to document the intellectual foundations underlying this
+        document.</p>
+        </hgroup>
+      <p>Data Architecture &amp; Data Management</p>
+      <ul>
+        <li>DAMA International. (2017). DAMA DMBOK: Data management body of knowledge (2nd ed.). Technics Publications.
+        </li>
+        <li>Gartner. (n.d.). Data architecture. In Gartner glossary. </li>
+        <li>Krantz, T., &amp; Jonker, A. (n.d.). What is a data architecture? IBM. </li>
+      </ul>
+      <p>Data Products &amp; Access Models</p>
+      <ul>
+        <li>Dehghani, Z. Data Mesh (conceptual contrast)</li>
+        <li>ODPS / data product specification initiatives</li>
+      </ul>
+      <p>Metadata &amp; Semantics</p>
+      <ul>
+        <li>W3C RDF / OWL</li>
+        <li>Dimou, A., De Meester, B., Heyvaert, P., Delva, T., &amp; Vander Sande, M. (2024). RDF Mapping Language
+          (RML) specification (Version 1.1.2, Unofficial draft). </li>
+        <li>DCAT</li>
+        <li>RML / YARRRML</li>
+        <li>Selected ontology catalogs:</li>
+        <li>Ozekik. (n.d.). Awesome ontology [GitHub repository]. GitHub. </li>
+        <li>World Wide Web Consortium. (n.d.). Lists of ontologies. W3C Wiki. </li>
+        <li>Pease, A. (Ed.). (n.d.). Suggested Upper Merged Ontology (SUMO). Ontology Portal. </li>
+        <li>Common Core Ontologies Working Group. (n.d.). Common Core Ontologies [Ontology suite]. GitHub. </li>
+        <li>Semantic Arts. (n.d.). gist: Upper ontology for the enterprise. </li>
+        <li>Cycorp. (n.d.). OpenCyc ontology. </li>
+        <li>Tudorache, T. (n.d.). Engineering ontologies. Protégé Wiki, Stanford University. </li>
+        <li>Wawrzik, F., Grimm, C., &amp; Neumann, P. (2023). Ontology module suite for electronics and systems
+          engineering [Dataset]. IEEE DataPort. </li>
+        <li>Open Energy Platform. (n.d.). Open Energy Ontology (OEO). </li>
+      </ul>
+      <p>Lifecycle &amp; Data Quality</p>
+      <ul>
+        <li>Roe, C. (2011, November 29). Assessing data management maturity using the DAMA DMBoK framework - Part 1.
+          Dataversity. </li>
+        <li>Fitness-for-use quality models</li>
+      </ul>
+      <p>AI &amp; Data Architecture</p>
+      <ul>
+        <li>Model Context Protocol (MCP) specification (when public)</li>
+        <li>AI governance and AI-ready data discussions</li>
+        <li>U.S. Department of Defense CIO. DoDAF Viewpoints and Models - Data and Information Viewpoint (DIV). Official
+          DoDAF V2.0 documentation describing DIV-1 (Conceptual), DIV-2 (Logical), and DIV-3 (Physical) data models.
+        </li>
+      </ul>
+      <p>Object-oriented data modelling</p>
+      <ul>
+        <li>GeeksforGeeks. (2021, December 10). Basic object oriented data model. </li>
+        <li>Castro, K. (2020, June 19). Object-oriented data model. TutorialsPoint. </li>
+        <li>EAGLES SWLG. (1997). Object-oriented data model. In Gibbon handbook (SoftEdition). University of Bielefeld.
+        </li>
+        <li>Zhao, L., &amp; Roberts, S. A. (1988). An object-oriented data model for database modelling, implementation
+          and access. The Computer Journal, 31(2), 116-124. </li>
+        <li>MyReadingRoom. (n.d.). The object oriented (OO) data model in DBMS. Internet Archive (Wayback Machine).
+        </li>
+      </ul>
+    </article>
+  </article>
+</body>
+
+<style>
+  body {
+    font-family: sans-serif !important;
+  }
+  em {
+    font-style: normal;
+    font-weight: bold;
+  }
+  #reference-architecture th {
+    border: none;
+    font-weight: bold;
+  }
+  #reference-architecture td {
+    border: 1px solid black;
+    margin: 0;
+    padding: .1rem 1rem .1rem 1rem;
+    text-align: left;
+    vertical-align: middle;
+  }
+  #comparing-terminology-table {
+    border-collapse: collapse;
+  }
+  #comparing-terminology-table th {
+    border: none;
+    font-weight: bold;
+  }
+  #comparing-terminology-table td {
+    border: 1px solid black;
+    margin: 0;
+    padding: .1rem 1rem .1rem 1rem;
+    text-align: left;
+    vertical-align: middle;
+  }
+</style>
+
+</html>

@@ -45,8 +45,8 @@ class LangElement {
             }
         }
         if (!element.tagName) {
-            // remove leading and trailing blanks
-            this.textContent = element.textContent.replace(/^\s*|\s*$/, '');
+            // remove leading and trailing blanks //why?
+            this.textContent = element.textContent; //.replace(/^\s*|\s*$/, '');
         }
         this.children = [];
         for(const c of element.childNodes) { // of not in // childNodes include text
@@ -142,8 +142,6 @@ class LangElement {
         var errors = [];
 
         if (this.tagName == "TEXT" && this.element) {
-            // re-add leading and trailing blanks ??? only where needed
-            //try {this.element.textContent = ' '+this.textContent+' ';}
             try {this.element.textContent = this.textContent;}
             catch (e) {errors.push(e);}
         }        
