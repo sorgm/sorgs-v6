@@ -112,7 +112,8 @@
           the
           details. I try to include all relevant aspects without losing focus, as always trying to keep the balance
           between business and technology, preparation effort and benefit gain and clarity and completeness. Even if you
-          disagree with this model, later sections can be beneficial.</p>
+          disagree with this model, later sections can be beneficial.
+        <a href="#appendix-b"><code>Appendix B - Architectural Decisions and Rationale</code></a></p>
       </hgroup>
       <section id="foundational-mental-model">
         <h3>Foundational mental model</h3>
@@ -189,19 +190,6 @@
         <p>Data Architecture does not end with this technological dimension. To make data Findable, Accessible,
           Interoperable, Reusable (FAIR) and safe, secure and trustworthy, <em>people and processes</em> are needed to
           integrate data into business, to foster data-driven management, and to make data to value.</p>
-      </section>
-      <section id="basic-assumptions-theorems">
-        <h3>Basic assumptions / Theorems</h3>
-        <ul>
-          <li>Information is complex and needs models for digitalization.</li>
-          <li>Original data must be kept immutable; derivations may transform but not change it.</li>
-          <li>Original data needs backup of data and semantics; data pipelines need backup of derivation logic and
-            business purpose.</li>
-          <li>Standard business software makes businesses comparable, individual data architecture shows their
-            competitive
-            advantage.</li>
-          <li>AI is already mature enough to co-operate, see it as partner and not as a tool.</li>
-        </ul>
       </section>
       <section id="types-of-use-cases">
         <h3>Types of use cases</h3>
@@ -2005,27 +1993,35 @@
         </p>
 
         <dl>
+          <dt><dfn>Data needs models</dfn></dt>
+          <dd>
+            Information is complex and needs models for digitalization.<br/>
+            Models contain purpose-fit semantics and are not just technical representations.
+          </dd>
+
           <dt><dfn>Semantics over platforms</dfn></dt>
           <dd>
-            Data semantics and meaning are treated as primary architectural concerns.
-            Platforms and technologies are considered replaceable implementation details.
+            Data semantics and meaning are treated as primary architectural concerns.<br/>
+            Platforms and technologies are considered replaceable implementation details.<br/>
+            Original data must be kept immutable; derivations may transform but not change it.<br/>
+            Original data needs backup of data and semantics; data pipelines need backup of derivation logic and business purpose.
           </dd>
 
           <dt><dfn>AI as a first-class data consumer</dfn></dt>
           <dd>
             AI systems are treated as consumers with specific requirements for context,
-            access control, and lifecycle awareness.
+            access control, and lifecycle awareness.<br/>
+            AI is already mature enough to co-operate, see it as partner and not as a tool.
           </dd>
 
           <dt><dfn>Selective adoption of standards</dfn></dt>
           <dd>
-            External standards are adopted selectively.
-            Compliance with a standard is not implied unless explicitly stated.
+            External standards are adopted selectively.<br/>
+            Compliance with a standard is not implied unless explicitly stated.<br/>
+            Standard business software makes businesses comparable; individual data architecture shows their competitive advantage.
           </dd>
         </dl>
       </section>
-
-
 
 
       <section id="appendix-c">
@@ -2187,7 +2183,7 @@
 
 
 
-      <s>
+      <!--
         <section id="appendix-d">
           <h3>Appendix D - Non-Normative Examples and Illustrations</h3>
 
@@ -2208,12 +2204,12 @@
             </li>
           </ul>
         </section>
-      </s>
+      -->
 
 
 
-      <section id="appendix-e">
-        <h3>Appendix E - Change History</h3>
+      <section id="appendix-d">
+        <h3>Appendix D - Change History</h3>
 
         <table>
           <thead>
