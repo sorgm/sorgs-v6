@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- TO DO:
-- Internal linking / cross-references (“see …”) → improves navigability and RAG chunk coherence
+- Internal linking / cross-references ("see …") → improves navigability and RAG chunk coherence
 -->
 
 <head>
@@ -66,12 +66,14 @@
           different systems, processes, and stakeholders. It defines relationships between data entities, specifies how
           data is transformed and moved, and sets guidelines for data governance and compliance. This structured
           approach
-          helps teams make informed decisions, streamline operations, and unlock insights from data <a href="#ref-ibm-data-architecture"><code>[IBM Cloud Education]</code></a>.</p>
+          helps teams make informed decisions, streamline operations, and unlock insights from data <a
+            href="#ref-ibm-data-architecture"><code>[IBM Cloud Education]</code></a>.</p>
         <p>Effective data architecture is critical for scalability, adaptability, and innovation. It allows
           organizations
           to respond quickly to changing requirements, integrate new technologies, and support analytics and reporting
           needs. By establishing clear frameworks for data management, data architecture lays the foundation for robust,
-          reliable, and actionable information throughout the business <a href="#ref-gartner-data-architecture"><code>[Gartner Glossary: Data Architecture]</code></a>.</p>
+          reliable, and actionable information throughout the business <a
+            href="#ref-gartner-data-architecture"><code>[Gartner Glossary: Data Architecture]</code></a>.</p>
         <p>In my honest opinion, Data Architecture should <em>avoid focusing on technology</em>
           too much. Focus should remain data, being the digital representation of information - the technology used to
           implement and maintain the information is secondary. <em>Data contains business value</em>, technology is used
@@ -113,7 +115,8 @@
           details. I try to include all relevant aspects without losing focus, as always trying to keep the balance
           between business and technology, preparation effort and benefit gain and clarity and completeness. Even if you
           disagree with this model, later sections can be beneficial.
-        <a href="#appendix-b"><code>Appendix B - Architectural Decisions and Rationale</code></a></p>
+          <a href="#appendix-b"><code>Appendix B - Architectural Decisions and Rationale</code></a>
+        </p>
       </hgroup>
       <section id="foundational-mental-model">
         <h3>Foundational mental model</h3>
@@ -211,11 +214,11 @@
           and
           interoperability, are needed in a second step only. Findability is key for this type of use case, which is
           typically performed by humans with the use of search technology.</p>
-        <p>Generic AI can automate this research and include data access for ad hoc reporting. A question like “show me
+        <p>Generic AI can automate this research and include data access for ad hoc reporting. A question like "show me
           the regional distribution of sales of a certain product group in comparison to our competitors including the
-          competitors' locations” was a typical task for a market intelligence group, but it can be solved by an LLM
+          competitors' locations" was a typical task for a market intelligence group, but it can be solved by an LLM
           provided with suitable data. In this case the data is internal (sales and customer location) combined with
-          external data (sales reports and competitor locations) and semantics (meaning of “this certain product group”
+          external data (sales reports and competitor locations) and semantics (meaning of "this certain product group"
           in
           internal and external terms). The effort is moved from demand-oriented market intelligence group effort to
           preparation effort performed by data teams upfront. This is the typical <em>trade-off curve
@@ -223,7 +226,7 @@
           is restricted to a limited amount of data sources by conscious decision.</p>
         <p><em>Data usage via applications</em> is still relevant. When it comes to repeated tasks in general business
           topics, chances are high that the needed analysis is already prepared by your software vendor. Questions like
-          “how much of a certain product do we have in which warehouses” do not need individual reporting or generic AI
+          "how much of a certain product do we have in which warehouses" do not need individual reporting or generic AI
           -
           they are part of business applications' standard offerings. Providing information about those standard
           offerings
@@ -362,7 +365,7 @@
           which type of information; a measure could e.g. be a single value or a full stack of multiple measurements
           including methodology, technology, agent, place, time, type of aggregation and more - semantics allow
           understanding these models in comparison. Without semantics, an AI Agent could misunderstand a single
-          measurement for the valid result and derive wrong answers from it (“hallucination”). These types of
+          measurement for the valid result and derive wrong answers from it ("hallucination"). These types of
           misunderstandings typically happen in data more often than in textual information, because data models have
           <em>reduced context</em>.
         </p>
@@ -479,10 +482,10 @@
           <li>Lifecycle awareness prevents silent reuse of outdated or misleading data — a risk that increases
             significantly with AI-driven consumption.</li>
         </ul>
-        <p>Finally, data products, like applications, have an “end of life”. <em>Deprecation</em> is a necessary
+        <p>Finally, data products, like applications, have an "end of life". <em>Deprecation</em> is a necessary
           architectural concept to avoid confusion, duplicated effort, and wrong conclusions. Especially for AI
           consumers,
-          obsolete data must be explicitly marked as such — AI will not intuitively “notice” that data should no longer
+          obsolete data must be explicitly marked as such — AI will not intuitively "notice" that data should no longer
           be
           used.</p>
         <p><em>Lifecycle makes data manageable, quality makes data trustworthy, and both are prerequisites for scalable
@@ -624,7 +627,7 @@
 
 
         <ul>
-          <li><em>Corporate Data Officer</em>: Head of data organization, represents “data” in C-level meetings.</li>
+          <li><em>Corporate Data Officer</em>: Head of data organization, represents "data" in C-level meetings.</li>
           <li><em>Business liaison</em>: Assistant of Corporate Data Officer, acts as representative in business
             meetings throughout the organization and keeps contact with product (IT solutions) organizations' data
             officers.</li>
@@ -685,7 +688,7 @@
           separate
           product is not relevant for the result - for explanatory reasons, I follow an integrative description here.
         </p>
-        <p>“Meta” in this approach means to integrate multiple sources of metadata into one aligned model. Types of
+        <p>"Meta" in this approach means to integrate multiple sources of metadata into one aligned model. Types of
           metadata describing most existing sources are (exemplary, never complete):</p>
         <ul>
           <li><em>MCP</em>: In every case, where an MCP Server already exists, this should be the main source for
@@ -714,12 +717,179 @@
           <li>… additional standards appear daily</li>
         </ul>
         <p>There is no existing project in Open Source that fulfills all necessities to really integrate corporate data
-          resources into a joint data layer for MCP use. “metamcp” could lead here, but the integration of non-MCP
+          resources into a joint data layer for MCP use. "metamcp" could lead here, but the integration of non-MCP
           resources is not on their agenda, yet. A possible solution could be to auto-generate MCP servers per source
           based on source's proprietary metadata converting it into MCP format, but this would not solve the issue of
           semantified integration of MCP servers.</p>
         <p>See Semantified AI-Ready Metadata</p>
       </section>
+
+      <section id="mcp-semantics-and-enterprise-data-architecture">
+        <h3>MCP, Semantics, and Enterprise Data Architecture</h3>
+        <p>(by Microsoft Copilot)</p>
+
+        <h5>Why MCP responses contain reduced metadata — and why this is intentional</h5>
+        <p>
+          Model Context Protocol (MCP) takes a fundamentally different stance from classical API description languages
+          such as OpenAPI.
+          OpenAPI is designed for strict contract enforcement: every endpoint, parameter, and response must be described
+          in detail, often with extensive JSON Schema definitions.
+          This is ideal for code generation and validation — but not for LLMs.
+        </p>
+        <p>
+          MCP deliberately avoids this level of verbosity. The protocol defines <em>how</em> a client and server
+          communicate, not <em>what</em> the server returns.
+          Responses are intentionally lightweight: they contain the data, but not a formal schema describing that data.
+          This design choice reflects the assumption that an LLM can interpret JSON structures without requiring a rigid
+          schema, as long as the server provides clear, human-readable descriptions.
+        </p>
+        <p>
+          In other words:
+        <ul>
+          <li><strong>OpenAPI optimizes for machines that cannot infer meaning.</strong></li>
+          <li><strong>MCP optimizes for machines that can.</strong></li>
+        </ul>
+        This shifts metadata from rigid schemas into semantic descriptions that LLMs can interpret more flexibly and
+        contextually.
+        </p>
+
+        <h5>How MCP intends metadata and semantics to be provided</h5>
+        <p>
+          Because MCP responses do not carry formal schemas, the resource metadata becomes the primary carrier of
+          meaning.
+          This metadata is not meant to be exhaustive; it is meant to be understandable.
+        </p>
+        <p>A well-designed MCP resource includes:</p>
+        <ul>
+          <li>
+            <strong>A clear description of the response structure</strong> — not as a schema, but as a structured
+            explanation of fields, meaning, relationships, and invariants.
+          </li>
+          <li>
+            <strong>Examples</strong> — LLMs learn structure from examples more reliably than from schemas.
+          </li>
+          <li>
+            <strong>Explicit descriptions of relationships</strong> — enterprise data is relational, and MCP requires
+            these relationships to be described explicitly.
+          </li>
+          <li>
+            <strong>Stable naming conventions</strong> — consistency is more important than formal typing.
+          </li>
+          <li>
+            <strong>Domain qualifiers</strong> — each resource must declare its semantic scope to prevent the LLM from
+            merging unrelated concepts.
+          </li>
+        </ul>
+
+        <h5>Why enterprises need multiple domain-based MCP Servers</h5>
+        <p>
+          Enterprises rarely have a single, unified data model. They have bounded contexts — Finance, HR, Sales,
+          Projects, Manufacturing — each with its own semantics, rules, and vocabulary.
+        </p>
+        <p>
+          Trying to force all of this into one global MCP server would recreate the classic “enterprise data warehouse
+          as the single source of truth” problem: too large, too rigid, too political, too slow to evolve, and too
+          brittle to maintain.
+        </p>
+        <p>
+          MCP is designed for the opposite: small, domain-focused servers that expose data and actions relevant to their
+          domain.
+        </p>
+        <p>Examples include:</p>
+        <ul>
+          <li><code>finance-mcp</code> for cost centers, GL accounts, controlling areas</li>
+          <li><code>projects-mcp</code> for WBS elements, project structures</li>
+          <li><code>hr-mcp</code> for employees and organizational units</li>
+          <li><code>sales-mcp</code> for customers, orders, pricing</li>
+        </ul>
+        <p>
+          Each server becomes a semantic island with clear boundaries.
+        </p>
+
+        <h5>The real challenge: avoiding semantic drift and hallucination</h5>
+        <p>
+          If multiple MCP servers exist, and some are internal while others are external, vocabulary collisions are
+          inevitable:
+        </p>
+        <ul>
+          <li>“project” in Finance ≠ “project” in IT</li>
+          <li>“order” in SAP ≠ “order” in Jira</li>
+          <li>“customer” in CRM ≠ “customer” in e-commerce</li>
+        </ul>
+        <p>
+          LLMs merge concepts unless explicitly told not to. This mirrors the human problem of consultants
+          misunderstanding internal terminology.
+        </p>
+
+        <h5>Methodology: Domain Context Isolation</h5>
+        <p>
+          The solution is not a global silver model. The solution is explicit domain boundaries.
+        </p>
+        <ul>
+          <li>
+            <strong>Each MCP server declares its domain</strong> — acting as a semantic namespace.
+          </li>
+          <li>
+            <strong>Each resource description begins with a domain qualifier</strong> — e.g., “[FINANCE] Cost Elements”.
+          </li>
+          <li>
+            <strong>Cross-domain relationships must be explicit</strong> — e.g., “This resource references
+            FINANCE.CostElement.”
+          </li>
+          <li>
+            <strong>External MCP servers must be sandboxed</strong> — clearly labeled as EXTERNAL with disclaimers about
+            vocabulary differences.
+          </li>
+          <li>
+            <strong>Enterprise vocabulary must be consistent within a domain</strong> — but not universal across all
+            domains.
+          </li>
+        </ul>
+        <p>
+          This mirrors Domain-Driven Design: bounded contexts, not a universal model.
+        </p>
+
+        <h5>How this fits into enterprise data architecture</h5>
+        <p>
+          This approach gives enterprises a way to describe a consistent, AI-ready semantic layer without building a
+          monolithic enterprise data warehouse model.
+        </p>
+        <p>
+          It avoids the pitfalls of global canonical models, rigid ontologies, and centralized modeling bottlenecks.
+          Instead, it creates a federated semantic architecture:
+        </p>
+        <ul>
+          <li>Each domain owns its semantics.</li>
+          <li>MCP servers expose domain-specific data and actions.</li>
+          <li>A shared vocabulary exists only where concepts truly overlap.</li>
+          <li>Domain qualifiers prevent hallucination and semantic drift.</li>
+          <li>LLMs navigate the enterprise landscape safely and correctly.</li>
+        </ul>
+        <p>
+          This is a modern, AI-aligned interpretation of data architecture: semantics are explicit, contextual, and
+          domain-scoped — not globally enforced.
+        </p>
+
+        <h5>Clarity for data architects</h5>
+        <p>
+          MCP represents a shift from schema-driven integration to description-driven semantics.
+          The key insights:
+        </p>
+        <ul>
+          <li>You do not need a global enterprise data model.</li>
+          <li>You do not need OpenAPI-style schemas.</li>
+          <li>You do not need to unify all vocabulary.</li>
+          <li>You do need domain boundaries.</li>
+          <li>You do need consistent semantics within each domain.</li>
+          <li>You do need explicit descriptions of relationships and meaning.</li>
+          <li>You do need a methodology to prevent LLMs from merging unrelated concepts.</li>
+        </ul>
+        <p>
+          This creates a federated semantic mesh expressed through MCP — lighter, more flexible, more scalable, and
+          aligned with how LLMs reason.
+        </p>
+      </section>
+
       <section id="integrate-dominant-systems">
         <h3>Integrate dominant systems</h3>
         <p>A data landscape usually contains one or few dominant systems, containing nearly all relevant data. This is
@@ -732,8 +902,16 @@
           existing data pipeline like SAP's CDS views and all given metadata is a chance to avoid individual effort, but
           SAP cannot know which modules are used to which extent and which are misused to implement a slightly different
           business case. Integrating SAP and alike means reducing the exposed model to the used portion and renaming and
-          enriching what is misleading from a company perspective.</p>
+          enriching what is misleading from a company perspective. The resulting set of resources need to be packaged by
+          domain and semantically integrated to additional sources.</p>
+          <p>A problem is inherently defined in MCP Server metadata being describing and not being defined in a metadata model.
+            The large software vendors will provide MCP Servers fully describing their data model in their language.
+            Interpreting this prose description will not be possible. Nonetheless a selection, rewriting and integration step
+            is needed. A solution could be an enterprise semantic fa&ccedil;ade, treating the vendor's MCP Server as an external
+            provider, and keep original description if it can be left unchanged, extend it if possible and rewrite it if needed.
+            This is another reason for the semantifying layer, but still it is a lot of work to do.</p>
       </section>
+
       <section id="agile-development-done-right">
         <h3>Agile Development - done right</h3>
         <p>Agile is not necessarily Scrum and Agile is not chaos. Starting with a pilot, adding use-case by use-case is
@@ -793,7 +971,7 @@
           different
           aspect of how well data represents reality and how suitable it is for a given use case. Importantly,
           <em>quality
-            is contextual</em>: data that is “good enough” for one purpose may be insufficient or even misleading for
+            is contextual</em>: data that is "good enough" for one purpose may be insufficient or even misleading for
           another.
         </p>
         <p>Common and practical data quality dimensions include:</p>
@@ -822,7 +1000,7 @@
       </section>
       <section id="data-quality-as-a-process-not-a-state">
         <h3>Data Quality as a Process, not a State</h3>
-        <p>Data quality is not something that can be “fixed once”. It evolves as:</p>
+        <p>Data quality is not something that can be "fixed once". It evolves as:</p>
         <ul>
           <li>source systems change,</li>
           <li>business definitions shift,</li>
@@ -881,7 +1059,7 @@
             while derived data can be recalculated or replaced as logic evolves.</li>
           <li><em>Explicit validity periods</em><br />Data products should communicate whether they represent a current
             state, a historical snapshot, or a scenario-based view.</li>
-          <li><em>Cost-aware persistence</em><br />Persisting data indefinitely “just in case” increases cost and risk.
+          <li><em>Cost-aware persistence</em><br />Persisting data indefinitely "just in case" increases cost and risk.
             Lifecycle-aware architectures persist data intentionally and transparently.</li>
           <li><em>AI-readiness</em><br />AI systems are particularly sensitive to outdated, inconsistent, or
             context-less
@@ -913,7 +1091,7 @@
           <li><em>Eventual removal</em><br />After the grace period, access should be removed or restricted to avoid
             accidental use.</li>
         </ul>
-        <p>For AI-enabled environments, deprecation metadata is especially important: <em>an AI agent will not “notice”
+        <p>For AI-enabled environments, deprecation metadata is especially important: <em>an AI agent will not "notice"
             that a dataset is outdated unless it is explicitly told so</em>.</p>
       </section>
       <section id="quality-lifecycle-and-trust">
@@ -949,7 +1127,7 @@
           trade-offs consciously, not eliminating them.</p>
       </hgroup>
       <section id="why-model">
-        <h3>Why “model”?</h3>
+        <h3>Why "model"?</h3>
         <p>Reality is difficult concept. Even the part of reality we can realize using our senses and imagination is
           complex, complicated, fractal, interdepended, differentiated and so on. No computer system can represent a
           part
@@ -1006,12 +1184,13 @@
           <li><em>Document models</em> (e.g. JSON) are representation forms that may encode object-oriented, relational,
             or graph semantics depending on schema discipline and usage.</li>
           <li><em>Key-value models or general data models</em> avoid explicit data modelling as
-            a structure and move it to metadata describing the used “keys”. Essentially this is an unpivoted
+            a structure and move it to metadata describing the used "keys". Essentially this is an unpivoted
             representation of a sparse tabular model; it is a decision of representation and not a decision of
             modelling.
           </li>
         </ul>
-        <p>In addition to these technology-based purposes, data models differentiate viewpoints <a href="#ref-dodaf-div"><code>[DoDAF Viewpoints and Models]</code></a>:</p>
+        <p>In addition to these technology-based purposes, data models differentiate viewpoints <a
+            href="#ref-dodaf-div"><code>[DoDAF Viewpoints and Models]</code></a>:</p>
         <ul>
           <li><em>Physical data models</em> represent data as persistent to a storage medium. Technical necessities like
             exact data formats, charsets, encryption, cardinality of relations and so on dominate here; technical
@@ -1062,8 +1241,8 @@
       <section id="semantic-models">
         <h3>Semantic models</h3>
         <p>Basic assumption for every semantic model is to have a single entity, naming and identifier for a certain
-          meaning. Inherit duplicates like “vendor” vs “supplier” need to be reduced. On the other hand, there must be a
-          separate entity if the meaning differs. Relationships explain whether in current context “charge” and “batch”
+          meaning. Inherit duplicates like "vendor" vs "supplier" need to be reduced. On the other hand, there must be a
+          separate entity if the meaning differs. Relationships explain whether in current context "charge" and "batch"
           are equal or how their relationship is. Building those semantic (or business or conceptual) models is mainly
           the
           effort to understand an area of interest to the extent that all business terms and their relations are
@@ -1071,14 +1250,15 @@
         <p>For an increasing number of general interest knowledge areas, public ontologies exist. Reuse to standardize
           and
           to minimize effort. (see References for selected ontology catalogs)</p>
-        <p>In practice, there is rarely “one” general ontology for e.g. electrical engineering. Instead, the common
+        <p>In practice, there is rarely "one" general ontology for e.g. electrical engineering. Instead, the common
           pattern is:</p>
         <ul>
-        <li>Upper Ontology (SUMO / BFO / gist)</li>
-        <li>Mid-level / Core Ontology (CCO, Engineering Ontologies)</li>
-        <li>Domain Ontology (Energy, Electronics, Power Systems, IoT, etc.)</li>
+          <li>Upper Ontology (SUMO / BFO / gist)</li>
+          <li>Mid-level / Core Ontology (CCO, Engineering Ontologies)</li>
+          <li>Domain Ontology (Energy, Electronics, Power Systems, IoT, etc.)</li>
         </ul>
-        <p>This Domain Ontology should be linked to data sources e.g. using RDF Mapping Language <a href="#ref-rml"><code>[RML; Dimou, 2024]</code></a> to
+        <p>This Domain Ontology should be linked to data sources e.g. using RDF Mapping Language <a
+            href="#ref-rml"><code>[RML; Dimou, 2024]</code></a> to
           enable assigning data to business terms, thus enabling us to create knowledge graphs containing semantified
           data.</p>
       </section>
@@ -1136,7 +1316,7 @@
           strict enumerations etc.). Do not mix up with <em>instantiation</em>, which is the definition
           of an individual object based on a class definition. An additional concept appearing here is
           <em>polymorphism</em>, which means a definition class in relation to another class definition not explicitly
-          defined while coding (“list” is polymorph and can be instantiated as list of string, list of Apple, list of
+          defined while coding ("list" is polymorph and can be instantiated as list of string, list of Apple, list of
           lists etc.). <em>Subordination</em>, defining a class being part of something, is no inheritance, like an
           apple
           inherits from fruit but does not inherit from fruit salad. Subordination is rarely defined as element in
@@ -1305,7 +1485,8 @@
           derives the relational model from there. The idea of object-oriented data modeling is to define a model
           upfront
           that is compatible with object-orientation and with relational databases (and hopefully with graphs, too).</p>
-        <p>Elements of Object-oriented data modeling <a href="#ref-object-oriented-data-modeling"><code>[see References]</code></a>:</p>
+        <p>Elements of Object-oriented data modeling <a
+            href="#ref-object-oriented-data-modeling"><code>[see References]</code></a>:</p>
         <ul>
           <li><em>Objects</em>: The real-world entities and situations are represented as objects in the object-oriented
             database model - and as rows in the relational data model.</li>
@@ -1347,7 +1528,7 @@
         <p>Typical transformations are:</p>
         <ul>
           <li><em>Renaming columns</em>: While names seem to be unimportant, they often bear meaning and are
-            needed for identification. If e.g. a column named “average mass in kg” is renamed to “weight”,
+            needed for identification. If e.g. a column named "average mass in kg" is renamed to "weight",
             misunderstandings happen, whenever semantics and metadata are not transported accordingly eventually leading
             to the assumption weight was measured in pounds or Newton.</li>
           <li><em>Moving column entries to metadata</em>: In above context a typical transformation is
@@ -1402,7 +1583,7 @@
             need for additional metadata and avoids misunderstandings.</li>
           <li><em>Natural, surrogate, multi-column or concatenated
               keys</em>: <em>Natural keys</em> are best, if they are unique, stable and short. Town's short names
-            as part of number plates are a good example - “en-us” as language code for English (United States) is a good
+            as part of number plates are a good example - "en-us" as language code for English (United States) is a good
             example. Using such keys makes referring tables readable while not making any compromises. Inventing such
             keys
             is only a good idea, if you're sure they will remain mostly stable - any change results in refactoring of
@@ -1427,7 +1608,7 @@
             data landscape. There is no simple answer on how to define keys.</li>
           <li><em>Slowly changing dimensions (SCD)</em>: Master data changes over time - it usually does not change
             often,
-            but it changes slowly. To enable historical accuracy and scenarios like “as-of today”, OLAP models
+            but it changes slowly. To enable historical accuracy and scenarios like "as-of today", OLAP models
             introduced
             the concept of slowly changing dimensions. Multiple types have been defined, but the basic element is to
             keep
@@ -1467,7 +1648,7 @@
       </section>
       <section id="data-access-models">
         <h3>Data access models</h3>
-        <p>If you ask upper management, you easily get phrased answers like “the data belongs to the company”. This is
+        <p>If you ask upper management, you easily get phrased answers like "the data belongs to the company". This is
           not
           true except from a legal perspective. You will not get accepted models for data access unless you clarify data
           ownership and business value (in loss and in usage) of data.</p>
@@ -1490,8 +1671,8 @@
           about data usage - and for any complaints.</p>
         <p>As part of this role, the data owner must define a data access model. The alternative would be an individual
           decision for any request, which is not suitable for AI models or mass data analyses, and which is not reliable
-          or reproducible at all. If data is defined as “internal”, it must be given access to all employees; if it is
-          defined as “confidential”, clear reasoning is relevant, why data must be kept from certain employees or why a
+          or reproducible at all. If data is defined as "internal", it must be given access to all employees; if it is
+          defined as "confidential", clear reasoning is relevant, why data must be kept from certain employees or why a
           thorough log of data access is needed (legal or contractual reasons, pending patents, high business value, …).
           Even for confidential data it is highly recommended to define <em>attribute-based access controls (ABAC)</em>,
           to enable a computer system to automatically grant access based on employee's master data. Only by doing so
@@ -1537,15 +1718,218 @@
 
     <article id="semantified-ai-ready-metadata">
       <hgroup>
-        <h2>Semantified AI-Ready Metadata</h2>
-        <p>Draft for an Open-Source project</p>
+        <h2>USAIR: Unified, Semantified, AI-Ready MCP Meta-Server</h2>
+
+        <p>Draft for an Open-Source project to unify and semantify metadata from various sources to a consistent domain model, making it accessible for AI and other applications.
+          Abbreviation's assocication to aviation is intentional to indicate lift-off of metadata management to a new level. The project consists of three main components:
+        </p>
+        <ul>
+          <li>Python library to import, integrate and export metadata in various formats including a silver layer
+            internal metadata model and methods to find, request and access data</li>
+          <li>MCP Server, REST API and Web UI based on lib to find, request and access data</li>
+          <li>Extensive documentation</li>
+        </ul>
+        <p>Purpose is to reuse existing metadata including existing proprietary MCP Servers and to slice, dice, reconfigure and extend them to a consistent (domain) model.</p>
+
+
+<!-- for README.md in later repo:
+ 
+# USAIR: Unified, Semantified, AI‑Ready MCP Meta‑Server
+
+**USAIR** is a draft concept for an open‑source project designed to unify, normalize, and semantify metadata from heterogeneous systems into a consistent, domain‑driven model — making enterprise data truly **AI‑ready**.
+
+The name intentionally echoes aviation:  
+**USAIR lifts metadata management to a new altitude**, enabling organizations to rise above fragmented proprietary models and expose clean, coherent semantics to AI systems and applications.
+
+---
+
+## Core Components
+
+### 1. Python Library for Metadata Integration
+A flexible library that provides:
+
+- Import of metadata from diverse sources (SAP, CRM, REST APIs, MCP servers, files, catalogs)
+- Integration and normalization into a **silver‑layer internal metadata model**
+- Mapping, slicing, and transformation of proprietary structures into domain‑consistent semantics
+- Export of metadata in multiple formats
+- A unified interface to discover, request, and access data across systems
+
+This library acts as the semantic engine of USAIR.
+
+### 2. MCP Server, REST API, and Web UI
+A service layer built on top of the library, offering:
+
+- An **MCP Server** exposing clean, domain‑scoped, AI‑friendly resources
+- A **REST API** for programmatic access
+- A **Web UI** for browsing metadata, exploring domains, and testing queries
+
+This layer becomes the enterprise’s semantic façade — the single, consistent interface for AI agents and applications.
+
+### 3. Extensive Documentation
+Documentation is a first‑class part of the project, covering:
+
+- The internal metadata model
+- Domain modeling guidelines
+- Mapping patterns for proprietary systems
+- Examples of integrating SAP, CRM, legacy systems, and custom sources
+- Best practices for building AI‑ready semantic layers
+
+---
+
+## Purpose and Vision
+
+USAIR’s purpose is to **reuse existing metadata**, not replace it.  
+Enterprises already operate with:
+
+- SAP data models  
+- CRM schemas  
+- legacy structures  
+- proprietary MCP servers  
+- inconsistent naming  
+- overlapping concepts  
+
+Instead of forcing a global canonical model, USAIR provides tools to:
+
+- **Slice** large proprietary models into domain‑bounded contexts  
+- **Dice** metadata into meaningful, AI‑interpretable structures  
+- **Reconfigure** relationships into clean semantic graphs  
+- **Extend** models with enterprise‑specific concepts  
+- **Expose** everything through a consistent, query‑friendly interface  
+
+The result is a **Unified, Semantified, AI‑Ready** metadata layer that:
+
+- Isolates domain semantics  
+- Prevents hallucination  
+- Hides proprietary complexity  
+- Enables efficient querying  
+- Supports LLM‑based reasoning  
+- Integrates seamlessly with MCP‑based tools  
+
+USAIR is not a warehouse.  
+It is not a canonical model.  
+It is a **semantic integration layer** — the missing link between raw enterprise systems and AI‑driven applications.
+
+---
+
+
+-->
       </hgroup>
-      <ul>
-        <li>Python library to import, integrate and export metadata in various formats including a silver layer internal
-          metadata model and methods to find, request and access data</li>
-        <li>MCP Server, REST API and Web UI based on lib to find, request and access data</li>
-        <li>Extensive documentation</li>
-      </ul>
+
+      <section id="mcp-requirements">
+        <h3>Model Context Protocol (MCP) Requirements</h3>
+        <p>As MCP is current state of the art in metadata management, it is used as a reference for requirements. Its resource definition includes:</p>
+        <ul>
+          <li><strong>uri:</strong> Unique identifier for the resource</li>
+          <li><strong>name:</strong> The name of the resource.</li>
+          <li><strong>title:</strong> Optional human-readable name of the resource for display purposes.</li>
+          <li><strong>description:</strong> Optional description</li>
+          <li><strong>icons:</strong> Optional array of icons for display in user interfaces</li>
+          <li><strong>mimeType:</strong> Optional MIME type</li>
+          <li><strong>size:</strong> Optional size in bytes</li>
+        </ul>
+        <p>For more see "Schema Reference" in <a href="#ref-mcp-spec"><code>[MCP Specification]</code></a>.</p>
+
+        <p>The "description" is key here. It provides the necessary context for clients to understand the resource's purpose and usage as prose but dense and structured.
+          It is impossible to interpret this description if integrating MCP Servers into a larger model. You can only prefix, postfix, replace or do some RegEx magic to adapt
+          existing texts to your needs, but you cannot semantically integrate them into a larger model. This is a problem, as the MCP Host assumes that multiple MCP Servers can be seamlessly integrated, but it does not provide any means to do so.
+        </p>
+        <p>In addition, MCP is not made for querying but only for calling methods. To enable querying instead of brute-force fetches, parameterized resources are needed, that allow
+          to filter. The filter properties themselves are defined technically sound by reusing JSON Schema as "schema" attribute. This allows to inject technical metadata for filter properties; as MCP matches by 
+          naming condition, the fuzzily defined response value of e.g. cost center gets a technical definition as a parameter for the cost centers resource. It is worth testing whether it is
+          suitable to generally add optional query parameters to every resource, thereby allowing to filter and defining technical metadata. Copying all fields as filter properties is not recommended, but following a pattern for standard implementation could balance effort.
+        </p>
+        <p>Conclusion: Expose resources with optional query parameters; identical naming steers MCP Host behavior; typed parameters allow efficient querying.</p>
+        </section>
+
+        <section>
+          <h3>Drafting an integration</h3>
+          <p>Starting from the result, how could a config file for integration look like:</p>
+          <pre><code>
+            server:
+              name: "Manufacturing data"
+              uri: "https://?"
+              description: "fdds"
+              domain: "manufacturing"
+            import:
+              - type: "mcp"
+                uri: "https://my-company.sap.com/mcp"
+                description: "fdds"
+                namespace: "sap"
+                export: "none"
+              - type: "json"
+                uri: "https://non-sap-dps.my-company.com/metadata.json"
+                description: "fdds"
+                namespace: "dps"
+                export: "all"
+            resources:
+              - name: "Functional locations"
+                uri: "https://?/functional-locations"
+                from: "sap.functional-locations"
+                descriptionAppend: "Functional locations are also called technical places"
+                filterRemove:
+                  - name: "cost center"
+                filtersAdd:
+                  - name: "functional location id"
+                    type: "string"
+                    descriptionPostfix: "fdds"
+                    required: false
+            </code></pre>
+          <p>"In this example, two sources are integrated: an MCP Server and a JSON file. The server is defined with its own metadata. The MCP Server is imported without any transformation, while the JSON file is imported with all resources being exported as they are. A new resource "Functional locations" is created based on the "functional-locations" resource from the MCP Server. The description of this resource is extended by appending additional information. The filter "cost center" is removed from the original resource, and a new filter "functional location id" is added with its own metadata." (automatically derived from GitHub Copilot, showing inherent understanding of metadata language used)</p>
+          <p>Same purpose can be derived from Python code (instead of yaml metadata), using the library. Ingesting metadata would be called related Python functions as a batch. How could this look like pythonic?</p>
+
+          <pre><code>
+            from usair import MCPIntegration, JSONIntegration, ServerDefinition, ResourceDefinition, FilterDefinition
+
+            # Define the server
+            server = ServerDefinition(
+                name="Manufacturing data",
+                uri="https://?",
+                description="fdds",
+                domain="manufacturing"
+            )
+
+            # Define integrations
+            mcp_integration = MCPIntegration(
+                uri="https://my-company.sap.com/mcp",
+                description="fdds",
+                namespace="sap",
+                export="none"
+            )
+
+            json_integration = JSONIntegration(
+                uri="https://non-sap-dps.my-company.com/metadata.json",
+                description="fdds",
+                namespace="dps",
+                export="all"
+            )
+
+            # Define resource transformation
+            functional_locations_resource = ResourceDefinition(
+                name="Functional locations",
+                uri="https://?/functional-locations",
+                from_resource="sap.functional-locations",
+                description_append="Functional locations are also called technical places",
+                filters_remove=["cost center"],
+                filters_add=[
+                    FilterDefinition(
+                        name="functional location id",
+                        type="string",
+                        description_postfix="fdds",
+                        required=False
+                    )
+                ]
+            )
+
+            # Create integration instance and execute
+            integration = MCPIntegration(server=server)
+            integration.add_source(mcp_integration)
+            integration.add_source(json_integration)
+            integration.add_resource(functional_locations_resource)
+            integration.execute()
+          </code></pre>
+          <p>In this Python example, we define the server and integrations using data classes. We then create an instance of the integration, add the sources and resource transformation, and execute the integration process. This approach allows for a more programmatic and flexible way to define and manage metadata integrations. (thanks to GitHub Copilot again)</p>
+        </section>
+
     </article>
     <article id="appendices">
       <hgroup>
@@ -1673,7 +2057,6 @@
               semantics, and AI access patterns required by this document.
             </small>
           </li>
-
 
           <h5>Metadata, Semantics &amp; Knowledge Representation</h5>
 
@@ -1851,6 +2234,19 @@
               MCP specification, not on announcements or blog posts.
             </small>
           </li>
+          <li id="ref-json-rpc">
+            JSON-RPC Working Group. (2013). <cite>JSON-RPC 2.0 specification</cite>.
+            <a href="https://www.jsonrpc.org/specification" target="_blank" rel="noopener">
+              https://www.jsonrpc.org/specification
+            </a>
+            <br />
+            <small>
+              MCP is designed to be transport-agnostic, but JSON-RPC is referenced as a common protocol for tool
+              invocation.
+              The specific choice of JSON-RPC is not normative; any protocol enabling the required interactions is
+              acceptable.
+            </small>
+          </li>
 
           <h5>Enterprise Architecture &amp; Viewpoints</h5>
 
@@ -1909,7 +2305,7 @@
             </a>
             <br />
             <small>
-              The “fitness-for-use” concept is acknowledged as influential.
+              The "fitness-for-use" concept is acknowledged as influential.
               This document adopts the idea but reframes it explicitly in terms of
               declared purpose, lifecycle stage, and AI consumption risk.
             </small>
@@ -1995,30 +2391,32 @@
         <dl>
           <dt><dfn>Data needs models</dfn></dt>
           <dd>
-            Information is complex and needs models for digitalization.<br/>
+            Information is complex and needs models for digitalization.<br />
             Models contain purpose-fit semantics and are not just technical representations.
           </dd>
 
           <dt><dfn>Semantics over platforms</dfn></dt>
           <dd>
-            Data semantics and meaning are treated as primary architectural concerns.<br/>
-            Platforms and technologies are considered replaceable implementation details.<br/>
-            Original data must be kept immutable; derivations may transform but not change it.<br/>
-            Original data needs backup of data and semantics; data pipelines need backup of derivation logic and business purpose.
+            Data semantics and meaning are treated as primary architectural concerns.<br />
+            Platforms and technologies are considered replaceable implementation details.<br />
+            Original data must be kept immutable; derivations may transform but not change it.<br />
+            Original data needs backup of data and semantics; data pipelines need backup of derivation logic and
+            business purpose.
           </dd>
 
           <dt><dfn>AI as a first-class data consumer</dfn></dt>
           <dd>
             AI systems are treated as consumers with specific requirements for context,
-            access control, and lifecycle awareness.<br/>
+            access control, and lifecycle awareness.<br />
             AI is already mature enough to co-operate, see it as partner and not as a tool.
           </dd>
 
           <dt><dfn>Selective adoption of standards</dfn></dt>
           <dd>
-            External standards are adopted selectively.<br/>
-            Compliance with a standard is not implied unless explicitly stated.<br/>
-            Standard business software makes businesses comparable; individual data architecture shows their competitive advantage.
+            External standards are adopted selectively.<br />
+            Compliance with a standard is not implied unless explicitly stated.<br />
+            Standard business software makes businesses comparable; individual data architecture shows their competitive
+            advantage.
           </dd>
         </dl>
       </section>
@@ -2229,6 +2627,11 @@
               <td>2026-03-25</td>
               <td>Refining Appendices</td>
               <td>Formatting, linking and structuring appendices</td>
+            </tr>
+            <tr>
+              <td>2026-03-25</td>
+              <td>More insights in MCP metadata</td>
+              <td>Understand fuzziness of MCP metadata description, derive better concept for USAIR library</td>
             </tr>
           </tbody>
         </table>
