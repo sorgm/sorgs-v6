@@ -12,7 +12,7 @@ body {
     font-size: 1rem;
     word-break: break-word;
 }
-a[name] {
+a[name], *[id] {
     scroll-margin-top: 4rem;
 }
 

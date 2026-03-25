@@ -157,7 +157,7 @@ function initHtmlStructure() {
     Array.from(document.querySelectorAll("a[href^='#']")).map(el => {
         var target_fragment = el.getAttribute('href');
         if (target_fragment!="#") {
-            console.assert(!!document.querySelector("a[name='"+target_fragment.slice(1)+"']"), `Fragment-only links must have a corresponding anchor element with the same name attribute: ${target_fragment}`);
+            console.assert(!!document.querySelector("a[name='"+target_fragment.slice(1)+"'], *[id='"+target_fragment.slice(1)+"']"), `Fragment-only links must have a corresponding anchor element with the same name or id attribute: ${target_fragment}`);
         }
         el.href = current_path_ex_base + target_fragment;
     });
