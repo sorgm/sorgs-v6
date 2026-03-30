@@ -671,224 +671,7 @@
           </li>
         </ul>
       </section>
-      <section id="semantifying-meta-mcp-server">
-        <h3>Semantifying Meta MCP Server</h3>
-        <p>Above mentioned <em>technical metadata crawler</em> is essential to reuse metadata already existing in the
-          organization, but it does not support interoperability across sources and reuse by semantification in general.
-          As this is essential to correct usage of data in AI models, the result of this integration effort is targeted
-          firstly to those models and therefore must follow the MCP methodology. An MCP Server is needed to
-          <em>integrate
-            and semantify</em> all major corporate data sources into one silver layer semantified data model including
-          data access to those resources. Reducing it to a single <em>MCP Server</em> allows a higher degree of
-          integration and performance optimization in comparison to adding multiple MCP Server to each MCP Host of used
-          AI
-          models. This MCP Server is responsibility of <em>Metadata and Semantics team</em> and should be extended by a
-          UI
-          for human testing and human data retrieval. Whether technical metadata crawler is just a component or a
-          separate
-          product is not relevant for the result - for explanatory reasons, I follow an integrative description here.
-        </p>
-        <p>"Meta" in this approach means to integrate multiple sources of metadata into one aligned model. Types of
-          metadata describing most existing sources are (exemplary, never complete):</p>
-        <ul>
-          <li><em>MCP</em>: In every case, where an MCP Server already exists, this should be the main source for
-            metadata
-            and to allow access to data and tools as defined there. Naming of resources and tools must be mapped to
-            corporate naming conventions, while models generally should stay untouched unless necessary. Changing models
-            would add a layer of metadata and eventually results in a custom MCP Server as transformation layer.</li>
-          <li><em>INFORMATION_SCHEMA</em>: All relational database servers provide an information schema that contains
-            the
-            basic metadata on tables and columns defined in the database. This standardized information forms the basis
-            needed to write SQL queries to underlying systems. Column and table descriptions are non-standard
-            proprietary
-            extensions.</li>
-          <li><em>OpenAPI</em>: This standard to describe APIs including endpoints and resulting data models is
-            essential
-            for understanding most REST APIs; including it into metadata forms the basis needed to access data from
-            APIs.
-          </li>
-          <li><em>RDF/OWL</em>: These formats describe semantics and hierarchies widely accepted as standard for
-            semantics
-            and ontologies as knowledge graph metadata.</li>
-          <li><em>RML/YARRRML</em>: One of the few standards to integrate relational data with semantics
-            described in ontologies; this is essential to integrate relational data across multiple data sources.</li>
-          <li><em>ODPS/OCS/ODCS</em>: Several standards describe data products, data contracts, data sharing agreements
-            and alike.</li>
-          <li>… additional standards appear daily</li>
-        </ul>
-        <p>There is no existing project in Open Source that fulfills all necessities to really integrate corporate data
-          resources into a joint data layer for MCP use. "metamcp" could lead here, but the integration of non-MCP
-          resources is not on their agenda, yet. A possible solution could be to auto-generate MCP servers per source
-          based on source's proprietary metadata converting it into MCP format, but this would not solve the issue of
-          semantified integration of MCP servers.</p>
-        <p>See Semantified AI-Ready Metadata</p>
-      </section>
 
-      <section id="mcp-semantics-and-enterprise-data-architecture">
-        <h3>MCP, Semantics, and Enterprise Data Architecture</h3>
-        <p>(by Microsoft Copilot)</p>
-
-        <h5>Why MCP responses contain reduced metadata — and why this is intentional</h5>
-        <p>
-          Model Context Protocol (MCP) takes a fundamentally different stance from classical API description languages
-          such as OpenAPI.
-          OpenAPI is designed for strict contract enforcement: every endpoint, parameter, and response must be described
-          in detail, often with extensive JSON Schema definitions.
-          This is ideal for code generation and validation — but not for LLMs.
-        </p>
-        <p>
-          MCP deliberately avoids this level of verbosity. The protocol defines <em>how</em> a client and server
-          communicate, not <em>what</em> the server returns.
-          Responses are intentionally lightweight: they contain the data, but not a formal schema describing that data.
-          This design choice reflects the assumption that an LLM can interpret JSON structures without requiring a rigid
-          schema, as long as the server provides clear, human-readable descriptions.
-        </p>
-        <p>
-          In other words:
-        <ul>
-          <li><strong>OpenAPI optimizes for machines that cannot infer meaning.</strong></li>
-          <li><strong>MCP optimizes for machines that can.</strong></li>
-        </ul>
-        This shifts metadata from rigid schemas into semantic descriptions that LLMs can interpret more flexibly and
-        contextually.
-        </p>
-
-        <h5>How MCP intends metadata and semantics to be provided</h5>
-        <p>
-          Because MCP responses do not carry formal schemas, the resource metadata becomes the primary carrier of
-          meaning.
-          This metadata is not meant to be exhaustive; it is meant to be understandable.
-        </p>
-        <p>A well-designed MCP resource includes:</p>
-        <ul>
-          <li>
-            <strong>A clear description of the response structure</strong> — not as a schema, but as a structured
-            explanation of fields, meaning, relationships, and invariants.
-          </li>
-          <li>
-            <strong>Examples</strong> — LLMs learn structure from examples more reliably than from schemas.
-          </li>
-          <li>
-            <strong>Explicit descriptions of relationships</strong> — enterprise data is relational, and MCP requires
-            these relationships to be described explicitly.
-          </li>
-          <li>
-            <strong>Stable naming conventions</strong> — consistency is more important than formal typing.
-          </li>
-          <li>
-            <strong>Domain qualifiers</strong> — each resource must declare its semantic scope to prevent the LLM from
-            merging unrelated concepts.
-          </li>
-        </ul>
-
-        <h5>Why enterprises need multiple domain-based MCP Servers</h5>
-        <p>
-          Enterprises rarely have a single, unified data model. They have bounded contexts — Finance, HR, Sales,
-          Projects, Manufacturing — each with its own semantics, rules, and vocabulary.
-        </p>
-        <p>
-          Trying to force all of this into one global MCP server would recreate the classic “enterprise data warehouse
-          as the single source of truth” problem: too large, too rigid, too political, too slow to evolve, and too
-          brittle to maintain.
-        </p>
-        <p>
-          MCP is designed for the opposite: small, domain-focused servers that expose data and actions relevant to their
-          domain.
-        </p>
-        <p>Examples include:</p>
-        <ul>
-          <li><code>finance-mcp</code> for cost centers, GL accounts, controlling areas</li>
-          <li><code>projects-mcp</code> for WBS elements, project structures</li>
-          <li><code>hr-mcp</code> for employees and organizational units</li>
-          <li><code>sales-mcp</code> for customers, orders, pricing</li>
-        </ul>
-        <p>
-          Each server becomes a semantic island with clear boundaries.
-        </p>
-
-        <h5>The real challenge: avoiding semantic drift and hallucination</h5>
-        <p>
-          If multiple MCP servers exist, and some are internal while others are external, vocabulary collisions are
-          inevitable:
-        </p>
-        <ul>
-          <li>“project” in Finance ≠ “project” in IT</li>
-          <li>“order” in SAP ≠ “order” in Jira</li>
-          <li>“customer” in CRM ≠ “customer” in e-commerce</li>
-        </ul>
-        <p>
-          LLMs merge concepts unless explicitly told not to. This mirrors the human problem of consultants
-          misunderstanding internal terminology.
-        </p>
-
-        <h5>Methodology: Domain Context Isolation</h5>
-        <p>
-          The solution is not a global silver model. The solution is explicit domain boundaries.
-        </p>
-        <ul>
-          <li>
-            <strong>Each MCP server declares its domain</strong> — acting as a semantic namespace.
-          </li>
-          <li>
-            <strong>Each resource description begins with a domain qualifier</strong> — e.g., “[FINANCE] Cost Elements”.
-          </li>
-          <li>
-            <strong>Cross-domain relationships must be explicit</strong> — e.g., “This resource references
-            FINANCE.CostElement.”
-          </li>
-          <li>
-            <strong>External MCP servers must be sandboxed</strong> — clearly labeled as EXTERNAL with disclaimers about
-            vocabulary differences.
-          </li>
-          <li>
-            <strong>Enterprise vocabulary must be consistent within a domain</strong> — but not universal across all
-            domains.
-          </li>
-        </ul>
-        <p>
-          This mirrors Domain-Driven Design: bounded contexts, not a universal model.
-        </p>
-
-        <h5>How this fits into enterprise data architecture</h5>
-        <p>
-          This approach gives enterprises a way to describe a consistent, AI-ready semantic layer without building a
-          monolithic enterprise data warehouse model.
-        </p>
-        <p>
-          It avoids the pitfalls of global canonical models, rigid ontologies, and centralized modeling bottlenecks.
-          Instead, it creates a federated semantic architecture:
-        </p>
-        <ul>
-          <li>Each domain owns its semantics.</li>
-          <li>MCP servers expose domain-specific data and actions.</li>
-          <li>A shared vocabulary exists only where concepts truly overlap.</li>
-          <li>Domain qualifiers prevent hallucination and semantic drift.</li>
-          <li>LLMs navigate the enterprise landscape safely and correctly.</li>
-        </ul>
-        <p>
-          This is a modern, AI-aligned interpretation of data architecture: semantics are explicit, contextual, and
-          domain-scoped — not globally enforced.
-        </p>
-
-        <h5>Clarity for data architects</h5>
-        <p>
-          MCP represents a shift from schema-driven integration to description-driven semantics.
-          The key insights:
-        </p>
-        <ul>
-          <li>You do not need a global enterprise data model.</li>
-          <li>You do not need OpenAPI-style schemas.</li>
-          <li>You do not need to unify all vocabulary.</li>
-          <li>You do need domain boundaries.</li>
-          <li>You do need consistent semantics within each domain.</li>
-          <li>You do need explicit descriptions of relationships and meaning.</li>
-          <li>You do need a methodology to prevent LLMs from merging unrelated concepts.</li>
-        </ul>
-        <p>
-          This creates a federated semantic mesh expressed through MCP — lighter, more flexible, more scalable, and
-          aligned with how LLMs reason.
-        </p>
-      </section>
 
       <section id="integrate-dominant-systems">
         <h3>Integrate dominant systems</h3>
@@ -904,12 +687,16 @@
           business case. Integrating SAP and alike means reducing the exposed model to the used portion and renaming and
           enriching what is misleading from a company perspective. The resulting set of resources need to be packaged by
           domain and semantically integrated to additional sources.</p>
-          <p>A problem is inherently defined in MCP Server metadata being describing and not being defined in a metadata model.
-            The large software vendors will provide MCP Servers fully describing their data model in their language.
-            Interpreting this prose description will not be possible. Nonetheless a selection, rewriting and integration step
-            is needed. A solution could be an enterprise semantic fa&ccedil;ade, treating the vendor's MCP Server as an external
-            provider, and keep original description if it can be left unchanged, extend it if possible and rewrite it if needed.
-            This is another reason for the semantifying layer, but still it is a lot of work to do.</p>
+        <p>A problem is inherently defined in MCP Server metadata being describing and not being defined in a metadata
+          model.
+          The large software vendors will provide MCP Servers fully describing their data model in their language.
+          Interpreting this prose description will not be possible. Nonetheless a selection, rewriting and integration
+          step
+          is needed. A solution could be an enterprise semantic fa&ccedil;ade, treating the vendor's MCP Server as an
+          external
+          provider, and keep original description if it can be left unchanged, extend it if possible and rewrite it if
+          needed.
+          This is another reason for the semantifying layer, but still it is a lot of work to do.</p>
       </section>
 
       <section id="agile-development-done-right">
@@ -1123,7 +910,7 @@
           durable
           data model that is consistent with data models already existing in the company. As a result, the application
           will fit better to the understanding of data entities in other applications.</p>
-        <p>This section intentionally does not converge on a ‘best model'. Architecture is the discipline of choosing
+        <p>This section intentionally does not converge on a 'best model'. Architecture is the discipline of choosing
           trade-offs consciously, not eliminating them.</p>
       </hgroup>
       <section id="why-model">
@@ -1716,12 +1503,594 @@
       </section>
     </article>
 
-    <article id="semantified-ai-ready-metadata">
+    <article id="deep-dive-mcp">
       <hgroup>
-        <h2>USAIR: Unified, Semantified, AI-Ready MCP Meta-Server</h2>
+        <h2>Deep Dive: Model Context Protocol (MCP)</h2>
+        <p>While generally avoiding technology here, MCP is a key framework worth taking a deep dive into.</p>
+      </hgroup>
 
-        <p>Draft for an Open-Source project to unify and semantify metadata from various sources to a consistent domain model, making it accessible for AI and other applications.
-          Abbreviation's assocication to aviation is intentional to indicate lift-off of metadata management to a new level. The project consists of three main components:
+
+      <section id="semantifying-meta-mcp-server">
+        <h3>Semantifying Meta MCP Server</h3>
+        <p>Above mentioned <em>technical metadata crawler</em> is essential to reuse metadata already existing in the
+          organization, but it does not support interoperability across sources and reuse by semantification in general.
+          As this is essential to ensure correct usage of data in AI models, the result of this integration effort is targeted
+          firstly to those models and therefore must follow the MCP methodology. An MCP Server is needed to
+          <em>integrate
+            and semantify</em> all major corporate data sources into one silver layer semantified data model including
+          data access to those resources. Reducing it to a single <em>MCP Server</em> would allow a higher degree of
+          integration and performance optimization in comparison to adding multiple MCP Server to each MCP Host of used
+          AI
+          models, but increases complexity beyond measure - domain-specific MCP Servers seem to be a compromise. These
+          MCP Servers are responsibility of <em>Metadata and Semantics team</em> and should be extended by a
+          UI
+          for human testing and human data retrieval. Whether technical metadata crawler is just a component or a
+          separate
+          product is not relevant for the result - for explanatory reasons, I follow an integrative description here.
+        </p>
+        <p>"Meta" in this approach means to integrate multiple sources of metadata into one aligned model. Types of
+          metadata describing most existing sources are (exemplary, never complete):</p>
+        <ul>
+          <li><em>MCP</em>: In every case, where an MCP Server already exists, this should be the main source for
+            metadata
+            and to allow access to data and tools as defined there. Naming of resources and tools must be mapped to
+            corporate naming conventions, while models generally should stay untouched unless necessary. Changing models
+            would add a layer of metadata and eventually results in a custom MCP Server as transformation layer.</li>
+          <li><em>INFORMATION_SCHEMA</em>: All relational database servers provide an information schema that contains
+            the
+            basic metadata on tables and columns defined in the database. This standardized information forms the basis
+            needed to write SQL queries to underlying systems. Column and table descriptions are non-standard
+            proprietary
+            extensions.</li>
+          <li><em>OpenAPI</em>: This standard to describe APIs including endpoints and resulting data models is
+            essential
+            for understanding most REST APIs; including it into metadata forms the basis needed to access data from
+            APIs.
+          </li>
+          <li><em>RDF/OWL</em>: These formats describe semantics and hierarchies widely accepted as standard for
+            semantics
+            and ontologies as knowledge graph metadata.</li>
+          <li><em>RML/YARRRML</em>: One of the few standards to integrate relational data with semantics
+            described in ontologies; this is essential to integrate relational data across multiple data sources.</li>
+          <li><em>ODPS/OCS/ODCS</em>: Several standards describe data products, data contracts, data sharing agreements
+            and alike.</li>
+          <li>… additional standards appear daily</li>
+        </ul>
+        <p>There is no existing project in Open Source that fulfills all necessities to really integrate corporate data
+          resources into a joint data layer for MCP use. "metamcp" could lead here, but the integration of non-MCP
+          resources is not on their agenda, yet. A possible solution could be to auto-generate MCP servers per source
+          based on source's proprietary metadata converting it into MCP format, but this would not solve the issue of
+          semantified integration of MCP servers. Authorization in complex enterprise setups add to this endeavour.</p>
+      </section>
+
+      <section id="mcp-semantics-and-enterprise-data-architecture">
+        <h3>MCP, Semantics, and Enterprise Data Architecture</h3>
+        <p>(by Microsoft Copilot)</p>
+
+        <h5>Why MCP responses contain reduced metadata — and why this is intentional</h5>
+        <p>
+          Model Context Protocol (MCP) takes a fundamentally different stance from classical API description languages
+          such as OpenAPI.
+          OpenAPI is designed for strict contract enforcement: every endpoint, parameter, and response must be described
+          in detail, often with extensive JSON Schema definitions.
+          This is ideal for code generation and validation — but not for LLMs.
+        </p>
+        <p>
+          MCP deliberately avoids this level of verbosity. The protocol defines <em>how</em> a client and server
+          communicate, not <em>what</em> the server returns.
+          Responses are intentionally lightweight: they contain the data, but not a formal schema describing that data.
+          This design choice reflects the assumption that an LLM can interpret JSON structures without requiring a rigid
+          schema, as long as the server provides clear, human-readable descriptions.
+        </p>
+        <p>
+          In other words:
+        <ul>
+          <li><strong>OpenAPI optimizes for machines that cannot infer meaning.</strong></li>
+          <li><strong>MCP optimizes for machines that can.</strong></li>
+        </ul>
+        This shifts metadata from rigid schemas into semantic descriptions that LLMs can interpret more flexibly and
+        contextually. Nonetheless, schemas can and should be defined for the technical interoperations.
+        </p>
+
+        <p>A well-designed MCP resource description includes:</p>
+        <ul>
+          <li>
+            <strong>A clear description of the response structure</strong> — not as a schema, but as a structured
+            explanation of fields, meaning, relationships, and invariants.
+          </li>
+          <li>
+            <strong>Examples</strong> — LLMs learn structure from examples more reliably than from schemas.
+          </li>
+          <li>
+            <strong>Explicit descriptions of relationships</strong> — enterprise data is relational, and MCP requires
+            these relationships to be described explicitly.
+          </li>
+          <li>
+            <strong>Stable naming conventions</strong> — consistency is more important than formal typing.
+          </li>
+          <li>
+            <strong>Domain qualifiers</strong> — each resource must declare its semantic scope to prevent the LLM from
+            merging unrelated concepts.
+          </li>
+        </ul>
+
+        <h5>Why enterprises need multiple domain-based MCP Servers</h5>
+        <p>
+          Enterprises rarely have a single, unified data model. They have bounded contexts — Finance, HR, Sales,
+          Projects, Manufacturing — each with its own semantics, rules, and vocabulary.
+        </p>
+        <p>
+          Trying to force all of this into one global MCP server would recreate the classic "enterprise data warehouse
+          as the single source of truth" problem: too large, too rigid, too political, too slow to evolve, and too
+          brittle to maintain.
+        </p>
+        <p>
+          MCP is designed for the opposite: small, domain-focused servers that expose data and actions relevant to their
+          domain.
+        </p>
+        <p>Examples include:</p>
+        <ul>
+          <li><code>finance-mcp</code> for cost centers, GL accounts, controlling areas</li>
+          <li><code>projects-mcp</code> for WBS elements, project structures</li>
+          <li><code>hr-mcp</code> for employees and organizational units</li>
+          <li><code>sales-mcp</code> for customers, orders, pricing</li>
+        </ul>
+        <p>
+          Each server becomes a semantic island with clear boundaries.
+        </p>
+
+        <h5>The real challenge: avoiding semantic drift and hallucination</h5>
+        <p>
+          If multiple MCP servers exist, and some are internal while others are external, vocabulary collisions are
+          inevitable:
+        </p>
+        <ul>
+          <li>"project" in Finance ≠ "project" in IT</li>
+          <li>"order" in SAP ≠ "order" in Jira</li>
+          <li>"customer" in CRM ≠ "customer" in e-commerce</li>
+        </ul>
+        <p>
+          LLMs merge concepts unless explicitly told not to. This mirrors the human problem of consultants
+          misunderstanding internal terminology.
+        </p>
+
+        <h5>Methodology: Domain Context Isolation</h5>
+        <p>
+          The solution is not a global silver model. The solution is explicit domain boundaries.
+        </p>
+        <ul>
+          <li>
+            <strong>Each MCP server declares its domain</strong> — acting as a semantic namespace.
+          </li>
+          <li>
+            <strong>Each resource description begins with a domain qualifier</strong> — e.g., "[FINANCE] Cost Elements".
+          </li>
+          <li>
+            <strong>Cross-domain relationships must be explicit</strong> — e.g., "This resource references
+            FINANCE.CostElement."
+          </li>
+          <li>
+            <strong>External MCP servers must be sandboxed</strong> — clearly labeled as EXTERNAL with disclaimers about
+            vocabulary differences.
+          </li>
+          <li>
+            <strong>Enterprise vocabulary must be consistent within a domain</strong> — but not universal across all
+            domains.
+          </li>
+        </ul>
+        <p>
+          This mirrors Domain-Driven Design: bounded contexts, not a universal model.
+        </p>
+
+        <h5>How this fits into enterprise data architecture</h5>
+        <p>
+          This approach gives enterprises a way to describe a consistent, AI-ready semantic layer without building a
+          monolithic enterprise data warehouse model.
+        </p>
+        <p>
+          It avoids the pitfalls of global canonical models, rigid ontologies, and centralized modeling bottlenecks.
+          Instead, it creates a federated semantic architecture:
+        </p>
+        <ul>
+          <li>Each domain owns its semantics.</li>
+          <li>MCP servers expose domain-specific data and actions.</li>
+          <li>A shared vocabulary exists only where concepts truly overlap.</li>
+          <li>Domain qualifiers prevent hallucination and semantic drift.</li>
+          <li>LLMs navigate the enterprise landscape safely and correctly.</li>
+        </ul>
+        <p>
+          This is a modern, AI-aligned interpretation of data architecture: semantics are explicit, contextual, and
+          domain-scoped — not globally enforced.
+        </p>
+
+        <h5>Clarity for data architects</h5>
+        <p>
+          MCP represents a shift from schema-driven integration to description-driven semantics.
+          The key insights:
+        </p>
+        <ul>
+          <li>You do not need a global enterprise data model.</li>
+          <li>You do not need OpenAPI-style schemas.</li>
+          <li>You do not need to unify all vocabulary.</li>
+          <li>You do need domain boundaries.</li>
+          <li>You do need consistent semantics within each domain.</li>
+          <li>You do need explicit descriptions of relationships and meaning.</li>
+          <li>You do need a methodology to prevent LLMs from merging unrelated concepts.</li>
+        </ul>
+        <p>
+          This creates a federated semantic mesh expressed through MCP — lighter, more flexible, more scalable, and
+          aligned with how LLMs reason.
+        </p>
+      </section>
+
+      <section>
+        <h3>Filter-ready data resources are tools</h3>
+
+        <p>Resources in MCP mainly have fixed content and are consumed at once. This is why an option exists to
+          "subscribe" to resources, triggering a notification on resource change. A remote data source that is queried
+          using filter parameters is a "tool" in MCP, being equivalent to a function call. Recommendation is to provide
+          remote data sources always as tool aiming for a consistent call methodology.</p>
+
+        <p>"tools/list" returns the tools metadata. Parameters are defined as type-safe, while results are described in
+          natural language only:</p>
+
+        <ul>
+          <li><strong>name</strong>: The identifier to be used for calling. Should be verb_resource, mainly "get" to
+            retrieve data e.g. "get_cost_centers" - is a programmatic identifier, is typically snake_cased.</li>
+          <li><strong>title</strong>: Human-readable name of tool for display purposes; is mainly the resource name in
+            proper case</li>
+          <li><strong>description</strong>: Full description of the data resource including data model, semantics,
+            relationship to other resources etc; natural language but structured and precise. Do not rely on AI models
+            interpreting outputSchema for data description.</li>
+          <li><strong>inputSchema</strong>: Full JSON Schema (typically of type object) definition of allowed
+            parameters; in a data context this allows filtering and should allow many optional filters fitting to
+            indexing strategy of data source.</li>
+          <li><strong>outputSchema</strong>: Optional but recommended for data sources; defines the JSON schema for
+            result (typically array of object).</li>
+        </ul>
+
+        <p>"tools/call" queries the data based on "name" of tool, giving "arguments" fitting to "inputSchema". It
+          results in "structuredContent" for results fitting an "outputSchema" - the latter being default for data
+          resources. Schemas and structured content are part of MCP since version "2025 06 18" - for elder MCP Clients,
+          return the serialized JSON in a text "content" block.</p>
+
+        <p>Do not provide data as resource. It would result in retrieving the full dataset at once and it does not allow
+          an outputSchema definition. Files are resources, blobs of raw data might be resources.
+          Like described in the authorization chapter, every data resource needs a resource policy describing how claims
+          are interpreted, effectively describing the data access model. Include RBAC/ABAC patterns here, too. If the
+          query intended by the parameters given may not be resolved based on claims stated in access token, do not
+          simply return an empty resultset but return an "insufficient_scope" error (see Authorization chapter in <a
+            href="#ref-mcp-specification"><code>[MCP Specification]</code></a>).</p>
+
+
+      </section>
+
+      <section id="mcp-technically">
+        <h3>Model Context Protocol (MCP) - technical considerations</h3>
+
+        <p>The Model Context Protocol consists of several key components that work together:</p>
+        <ul>
+          <li><strong>Base Protocol</strong>: Core JSON-RPC message types</li>
+          <li><strong>Lifecycle Management</strong>: Connection initialization, capability negotiation, and session
+            control</li>
+          <li><strong>Authorization</strong>: Authentication and authorization framework for HTTP-based transport</li>
+          <li><strong>Server Features</strong>: Resources, prompts, and tools exposed by servers</li>
+          <li><strong>Client Features</strong>: Sampling and root directory lists provided by clients</li>
+          <li><strong>Utilities</strong>: Cross-cutting concerns like logging and argument completion</li>
+        </ul>
+        <p><a href="#ref-mcp-specification"><code>[MCP Specification]</code></a></p>
+
+        <p>Model Context Protocol (MCP) is understood as the standard method for AI Tools to get access to current
+          information in addition to training data. To achieve this, AI Tools act as MCP Hosts, hosting multiple
+          connections (MCP Clients) to MCP Servers. With AI Tools (or more specific LLM models) in place, MCP is a
+          reduced standard and bases on hosts understanding natural language - information about context and content
+          (metadata) is mainly given unstructured, in natural language.</p>
+
+        <p><strong>Base protocol</strong> is <a href="ref-json-rpc"><code>[JSON-RPC]</code></a>, defining function call
+          with optional error result as standard. Serialization in use is JSON in UTF-8 encoding. Transport is done via
+          stdio (local, in-process) or Streamable HTTP (remote via HTTP POST/GET and Server-Side Events). Streaming
+          enables polling paginated results from requestor side after (first empty) response was returned. MCP mandates
+          HTTP authentication and OAuth authorization; this includes a methodology for authorization requests - with
+          Identity & entitlement management (IAM) needed for resource claims. Unfortunately, understanding MCP goes deep
+          into hardcore IT topics fast.</p>
+
+        <p><strong>Capabilities</strong> are negotiated during connection initialization. The common set of capabilities
+          is valid for the lifetime of a single connection. Standard capabilities are defined in chapter "Lifecycle" of
+          <a href="#ref-mcp-specification"><code>[MCP Specification]</code></a>. Communication is bidirectional, both
+          sides may use capabilities the other side claimed and both sides may send notifications they claimed. In a
+          Data Architecture context, MCP is mainly used for information retrieval, therefore "resources" and "tools" are
+          the only relevant (server) capability. "tools" are mainly parameterized resources, while "resources" only work
+          for small defined datasets. In both cases it is relevant to enable "listChanged" notifications to inform the
+          MCP Client whenever metadata changes.
+        </p>
+
+        <p>Following below argumentation, following statements emerge:</p>
+        <ul>
+          <li>MCP Servers are best per domain to manage complexity.</li>
+          <li>OAuth Authorization Server and IAM are enterprise wide.</li>
+          <li>Enterprise-wide claims must be defined for authorization; they are part of user's profile.</li>
+          <li>Data sources are "tools" in MCP that explicitly react to all claims and that allow filtering by arguments.
+          </li>
+          <li>Schemas are defined as JSON Schema; context, semantics and access models are described in natural
+            language.</li>
+        </ul>
+
+        <h5>Authentication, authorization and access requests</h5>
+
+        <p><strong>MCP does not include methods to request access because access requests are already handled by OAuth
+            workflows and IAM</strong>. The MCP Client authenticates to an MCP Server using HTTP authentication
+          mechanisms, thereby presenting known OAuth authorization tokens. If the presented tokens are not sufficient to
+          access the requested resource (or its queried portion), the MCP Server responds an error and includes the
+          resource policy and a list of trusted OAuth Authorization Servers (AS). The MCP Client then performs an OAuth
+          authorization flow with the AS by asking for a scope for an audience (the MCP Server acting as OAuth Resource
+          Server). Based on IAM, the AS returns the claims granted in a new token; the MCP Client presents that token to
+          the MCP Server to gain access to the protected resource. The MCP Server interprets scope and claims in
+          relation to the requested resource and returns data.</p>
+
+        <p>Structured approach:</p>
+        <ul>
+          <li>The <strong>MCP Server</strong> must be an OAuth Resource Server (RS). This includes validating presented
+            authentication and OAuth tokens (issuer, audience, lifetime, signature) and interpreting scope and claims
+            for granted access and row-level security. On illicit request it returns OAuth 2.0 Protected Resource
+            Metadata (PRM; RFC 9728) including information on AS and resource policy (descriptive). Thus, the AI chat
+            user can request and access restricted resources.</li>
+          <li>The <strong>MCP Host</strong> caches known tokens and requests access from AS based on PRM returned from
+            MCP Server. To enable this, the MCP Server must be configured including OAuth (Auth Code or OBO) when
+            connecting it to the MCP Host.</li>
+          <li>The <strong>OAuth Authorization Server</strong> (AS) needs to be configured for an audience (a URI
+            representing the MCP Server as RS) adding custom scopes (coarse permissions like 'data.read'; capabilities),
+            claims (attributes of row-level security; constraints) and authorization policies (define the authorization
+            workflow). OAuth only defines how scopes are requested and returned; it does not imply meaning. Claims are
+            not requested, AS requests them from IAM.</li>
+          <li><strong>Identity & entitlement management</strong> (IAM) manages which claims belong to which user thereby
+            forming the basis for OAuth. IAM needs an MCP Server, where entitlements are listed and can be requested.
+            This is where new access rights are granted effectively - possible via AI Chat.</li>
+          <li><strong>Scopes</strong> are requested per audience (RS). <strong>Claims</strong> live in IAM and returned
+            per user.</li>
+        </ul>
+
+        <p>In a non-governed environment this leads to claim explosion with claims per application and lowest level of
+          access granularity. To avoid this, we can start with following proposals:</p>
+
+        <ul>
+          <li>A Data MCP Server should share a <strong>consistent access model</strong> across all contained resources
+            and tools. This is due to requesting scopes per audience (the Data MCP Server). One result is to define a
+            <strong>server per data domain or function</strong> (e.g. Finance).
+          </li>
+          <li><strong>Scopes define roles</strong> and are necessary to restrict write access to certain resources. Read
+            access should stay a simple scope ("data.read" or "read confidential data") for analytical use cases.
+            Interactive tools might need more granular scopes. Exceptions are general interactions like "report data
+            quality issue".</li>
+          <li><strong>Claims define responsibilities</strong>. Thus, claim granularity needs to match responsibility
+            granularity. As responsibilities are hierarchical, claims need to be hierarchical. As claims match across
+            tokens, additive access rights can not be implemented with multiple tokens - claim need to be additive,
+            while intersecting rights need to result in more restrictive claims. For interpreting row-level security
+            this results in ignoring unknown claims and not considering claims not provided.</li>
+          <li><strong>AS policy defines applicability</strong> of claims to scopes and audience to e.g. avoid
+            restricting "read of public external data" to claims. AS policy interprets IAM result before implementing
+            them into a token. Use AS policy to reduce e.g. data domain hierarchy in IAM to data-domain-specific claims
+            in token.</li>
+          <li><strong>Ontologies</strong> are needed to support hierarchies of claims and scopes and to deduce the
+            claims relevant per audience.</li>
+        </ul>
+
+        <h5>Detailed OAuth example for clarity</h5>
+
+        <p>Scenario setup (shared understanding)</p>
+        <ul>
+          <li><strong>Client</strong>: finance-analytics-app</li>
+          <li><strong>Authorization Server (AS)</strong>: https://auth.company.internal</li>
+          <li><strong>Resource Server (RS / API)</strong>: finance-mcp.company.internal</li>
+          <li><strong>Protected data</strong>: internal cost accounting data</li>
+          <li><strong>Constraint</strong>: North America only</li>
+          <li><strong>User</strong>: Alice (Finance analyst)</li>
+        </ul>
+
+        <ol>
+          <li><strong>User -> Host: User expresses intent in natural language</strong><br />
+            "I'm now responsible for North America sales reporting."<br />
+            This is <strong>not</strong> an OAuth event, the AI interprets this as a request to change entitlements or a
+            request to initiate an approval workflow</li>
+          <li><strong>Host -> IAM: AI calls a domain service, not OAuth</strong><br />
+            The AI invokes HR system, IAM workflow, entitlement management API or approval system.<br />
+            Example (conceptual):<br />
+            <pre><code>
+POST /entitlements/request
+{
+  "user": "alice",
+  "role": "sales_analyst",
+  "region": "NA",
+  "reason": "new position"
+}
+</code></pre><br />
+            This is where <strong>rules are added</strong>, not in OAuth.<br />
+            This step may require manager approval, compliance checks, SoD validation, …
+          </li>
+          <li><strong>IAM: Authorization state is updated centrally</strong><br />
+            After approval user attributes change, roles are assigned and policies now evaluate differently.<br />
+            This state is <strong>durable and auditable</strong>.</li>
+          <li><strong>Client → Authorization Server: Authorization Request</strong><br />
+            "I want a token for the finance MCP API, with permission to read cost accounting data."<br />
+            <pre><code>
+GET /authorize HTTP/1.1
+Host: auth.company.internal
+
+response_type=code
+client_id=finance-analytics-app
+redirect_uri=https://app.company.internal/callback
+audience=https://finance-mcp.company.internal
+scope=costs.read
+state=abc123
+</code></pre><br />
+            What the client is asking for (important)<br />
+            <ul>
+              <li><strong>Audience</strong>: "This token is intended for finance-mcp.company.internal"</li>
+              <li><strong>Scope</strong>: "I want the permission costs.read" - No claims requested, No region specified
+                here</li>
+            </ul>
+          </li>
+          <li><strong>Authorization Server → User: Authentication + Consent</strong><br />
+            The AS authenticates Alice and evaluates policy using data queried from IAM:<br />
+            <ul>
+              <li>Alice works in <strong>Finance</strong></li>
+              <li>Alice is authorized for <strong>North America</strong></li>
+              <li>Alice is <strong>not</strong> authorized for EMEA/APAC</li>
+            </ul>
+            Consent screen (conceptually):<br />
+            <pre>
+finance-analytics-app wants to:
+•	Read cost accounting data
+•	From <strong>Finance MCP API</strong>
+</pre>
+            Alice approves.
+          </li>
+          <li><strong>Authorization Server → Client: Authorization Code Issued</strong><br />
+            <pre><code>
+HTTP/1.1 302 Found
+Location: https://app.company.internal/callback?code=SplxlOBeZQQ&amp;state=abc123
+7. Client → Authorization Server: Token Request
+POST /token HTTP/1.1
+Host: auth.company.internal
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code
+code=SplxlOBeZQQ
+client_id=finance-analytics-app
+client_secret=********
+redirect_uri=https://app.company.internal/callback
+</code></pre>
+          </li>
+          <li><strong>Authorization Server (with IAM) → Client: Access Token Issued</strong><br />
+            Now the important part: The AS decides <strong>which claims to include</strong>, based on:
+            <ul>
+              <li>scope = costs.read</li>
+              <li>audience = finance MCP</li>
+              <li>the updated user attributes</li>
+              <li>company authorization policy</li>
+            </ul>
+            Resulting access token (JWT, simplified) including updated claims:
+            <pre><code>
+{
+  "iss": "https://auth.company.internal",
+  "aud": "https://finance-mcp.company.internal",
+  "sub": "alice@company.internal",
+  "scp": ["costs.read"],
+  "region": "NA",
+  "department": "Finance",
+  "entitlements": ["cost-accounting"],
+  "exp": 1760000000
+}
+</code></pre>
+            Key observation
+            <ul>
+              <li>The client <strong>did not ask</strong> AS for region, department or entitlements</li>
+              <li>The Authorization Server added them because they are needed for policy enforcement at the resource
+                server.</li>
+            </ul>
+          </li>
+          <li><strong>Client → Resource Server: API Call</strong>
+            <pre><code>
+GET /costs/internal HTTP/1.1
+Host: finance-mcp.company.internal
+Authorization: Bearer eyJhbGciOi...
+</code></pre>
+          </li>
+          <li><strong>Resource Server (Finance MCP): Authorization Decision</strong><br />
+            The Finance MCP server evaluates the token:
+            <ul>
+              <li>audience == finance-mcp ✅</li>
+              <li>scope contains costs.read ✅</li>
+              <li>region == NA ✅</li>
+              <li>department == Finance ✅</li>
+              <li>✅ Access granted</li>
+              <li>✅ Only North America data returned</li>
+            </ul>
+          </li>
+        </ol>
+        <p>What this dialog demonstrates:</p>
+        <ul>
+          <li>The client asks for Audience (which resource server) and Scopes (what kind of access)</li>
+          <li>The client does NOT ask for Claims, Regions, Departments or Business attributes</li>
+          <li>The Authorization Server translates scopes + audience + policy → claims and issues a token that the RS can
+            enforce.</li>
+          <li>The Resource Server trusts the AS and enforces scopes AND claims. It does not participate in token
+            minting.</li>
+        </ul>
+
+        <p>The client requests a token for an audience with scopes; the Authorization Server issues a token containing
+          claims; the Resource Server enforces both scopes and claims. OAuth is for delegated authorization enforcement,
+          not for discovering or learning authorization rules. Rules and "profile changes" belong to identity &
+          entitlement management (IAM / IGA) or policy engines (runtime authorization inside MCP Server).</p>
+
+        <h5>The emerging standard model</h5>
+
+        <p>Modern systems are converging on this layered design:</p>
+
+        <pre>
+┌──────────────────────────────┐
+│ Natural language (AI chat)   │
+│   - intent                   │
+│   - reasoning                │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Domain / IAM / Policy APIs   │  ← rules are created here
+│   - approvals                │
+│   - governance               │
+│   - compliance               │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ OAuth / OIDC                 │  ← rules are enforced here
+│   - tokens                   │
+│   - claims                   │
+│   - delegation               │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Resource Servers             │
+│   - policy enforcement       │
+└──────────────────────────────┘
+</pre>
+
+        <h5>Pseudo-Python user request:</h5>
+        <pre><code>
+def user_request(
+	this: MCPServer, # the domain data server
+	authentication: User,
+	authorization: List[OAuthToken],
+	method: string
+	resource_or_tool: string,
+	arguments: Optional[InputSchema[resource_or_tool]]
+) -> OutputSchema[resource_or_tool] or Error
+
+	if not authentication.valid: return InvalidAuthenticationError
+	valid_tokens: List[OAuthToken] = []
+	for each token in authorization:
+		if not token.iss in credible_issuers: continue
+		if not token.aud == this.uri: continue
+		if not token.sub == authentication.user_id: continue
+		if not method in token.scp: continue # assumption scopes match methods
+		if token.exp < now: continue
+		if not claims_allow_arguments(token, resource_or_tool, arguments): continue
+		valid_tokens.append(token)
+	if not valid_tokens: return ProtectedResourceMetadata(resource_or_tool)
+
+	return get_data(resource_or_tool, arguments)
+</code></pre>
+      </section>
+
+      <section id="semantified-ai-ready-metadata">
+
+        <h3>USAIR: Unified, Semantified, AI-Ready MCP Meta-Server</h3>
+
+        <p>Draft for an Open-Source project to unify and semantify metadata from various sources to a consistent domain
+          model, making it accessible for AI and other applications.
+          Abbreviation's assocication to aviation is intentional to indicate lift-off of metadata management to a new
+          level. The project consists of three main components:
         </p>
         <ul>
           <li>Python library to import, integrate and export metadata in various formats including a silver layer
@@ -1729,10 +2098,11 @@
           <li>MCP Server, REST API and Web UI based on lib to find, request and access data</li>
           <li>Extensive documentation</li>
         </ul>
-        <p>Purpose is to reuse existing metadata including existing proprietary MCP Servers and to slice, dice, reconfigure and extend them to a consistent (domain) model.</p>
+        <p>Purpose is to reuse existing metadata including existing proprietary MCP Servers and to slice, dice,
+          reconfigure and extend them to a consistent (domain) model.</p>
 
 
-<!-- for README.md in later repo:
+        <!-- for README.md in later repo:
  
 # USAIR: Unified, Semantified, AI‑Ready MCP Meta‑Server
 
@@ -1763,7 +2133,7 @@ A service layer built on top of the library, offering:
 - A **REST API** for programmatic access
 - A **Web UI** for browsing metadata, exploring domains, and testing queries
 
-This layer becomes the enterprise’s semantic façade — the single, consistent interface for AI agents and applications.
+This layer becomes the enterprise's semantic façade — the single, consistent interface for AI agents and applications.
 
 ### 3. Extensive Documentation
 Documentation is a first‑class part of the project, covering:
@@ -1778,7 +2148,7 @@ Documentation is a first‑class part of the project, covering:
 
 ## Purpose and Vision
 
-USAIR’s purpose is to **reuse existing metadata**, not replace it.  
+USAIR's purpose is to **reuse existing metadata**, not replace it.  
 Enterprises already operate with:
 
 - SAP data models  
@@ -1813,38 +2183,47 @@ It is a **semantic integration layer** — the missing link between raw enterpri
 
 
 -->
-      </hgroup>
+      </section>
+    </article>
 
-      <section id="mcp-requirements">
-        <h3>Model Context Protocol (MCP) Requirements</h3>
-        <p>As MCP is current state of the art in metadata management, it is used as a reference for requirements. Its resource definition includes:</p>
-        <ul>
-          <li><strong>uri:</strong> Unique identifier for the resource</li>
-          <li><strong>name:</strong> The name of the resource.</li>
-          <li><strong>title:</strong> Optional human-readable name of the resource for display purposes.</li>
-          <li><strong>description:</strong> Optional description</li>
-          <li><strong>icons:</strong> Optional array of icons for display in user interfaces</li>
-          <li><strong>mimeType:</strong> Optional MIME type</li>
-          <li><strong>size:</strong> Optional size in bytes</li>
-        </ul>
-        <p>For more see "Schema Reference" in <a href="#ref-mcp-spec"><code>[MCP Specification]</code></a>.</p>
+      <h5>Model Context Protocol (MCP) Requirements</h5>
+      <p>As MCP is current state of the art in metadata management, it is used as a reference for requirements. Its
+        resource definition includes:</p>
+      <ul>
+        <li><strong>uri:</strong> Unique identifier for the resource</li>
+        <li><strong>name:</strong> The name of the resource.</li>
+        <li><strong>title:</strong> Optional human-readable name of the resource for display purposes.</li>
+        <li><strong>description:</strong> Optional description</li>
+        <li><strong>icons:</strong> Optional array of icons for display in user interfaces</li>
+        <li><strong>mimeType:</strong> Optional MIME type</li>
+        <li><strong>size:</strong> Optional size in bytes</li>
+      </ul>
+      <p>For more see "Schema Reference" in <a href="#ref-mcp-specification"><code>[MCP Specification]</code></a>.</p>
 
-        <p>The "description" is key here. It provides the necessary context for clients to understand the resource's purpose and usage as prose but dense and structured.
-          It is impossible to interpret this description if integrating MCP Servers into a larger model. You can only prefix, postfix, replace or do some RegEx magic to adapt
-          existing texts to your needs, but you cannot semantically integrate them into a larger model. This is a problem, as the MCP Host assumes that multiple MCP Servers can be seamlessly integrated, but it does not provide any means to do so.
-        </p>
-        <p>In addition, MCP is not made for querying but only for calling methods. To enable querying instead of brute-force fetches, parameterized resources are needed, that allow
-          to filter. The filter properties themselves are defined technically sound by reusing JSON Schema as "schema" attribute. This allows to inject technical metadata for filter properties; as MCP matches by 
-          naming condition, the fuzzily defined response value of e.g. cost center gets a technical definition as a parameter for the cost centers resource. It is worth testing whether it is
-          suitable to generally add optional query parameters to every resource, thereby allowing to filter and defining technical metadata. Copying all fields as filter properties is not recommended, but following a pattern for standard implementation could balance effort.
-        </p>
-        <p>Conclusion: Expose resources with optional query parameters; identical naming steers MCP Host behavior; typed parameters allow efficient querying.</p>
-        </section>
+      <p>The "description" is key here. It provides the necessary context for clients to understand the resource's
+        purpose and usage as prose but dense and structured.
+        It is impossible to interpret this description if integrating MCP Servers into a larger model. You can only
+        prefix, postfix, replace or do some RegEx magic to adapt
+        existing texts to your needs, but you cannot semantically integrate them into a larger model. This is a
+        problem, as the MCP Host assumes that multiple MCP Servers can be seamlessly integrated, but it does not
+        provide any means to do so.
+      </p>
+      <p>In addition, MCP is not made for querying but only for calling methods. To enable querying instead of
+        brute-force fetches, parameterized resources are needed, that allow
+        to filter. The filter properties themselves are defined technically sound by reusing JSON Schema as "schema"
+        attribute. This allows to inject technical metadata for filter properties; as MCP matches by
+        naming condition, the fuzzily defined response value of e.g. cost center gets a technical definition as a
+        parameter for the cost centers resource. It is worth testing whether it is
+        suitable to generally add optional query parameters to every resource, thereby allowing to filter and defining
+        technical metadata. Copying all fields as filter properties is not recommended, but following a pattern for
+        standard implementation could balance effort.
+      </p>
+      <p>Conclusion: Expose resources with optional query parameters; identical naming steers MCP Host behavior; typed
+        parameters allow efficient querying.</p>
 
-        <section>
-          <h3>Drafting an integration</h3>
-          <p>Starting from the result, how could a config file for integration look like:</p>
-          <pre><code>
+      <h5>Drafting an integration</h5>
+      <p>Starting from the result, how could a config file for integration look like:</p>
+      <pre><code>
             server:
               name: "Manufacturing data"
               uri: "https://?"
@@ -1874,10 +2253,17 @@ It is a **semantic integration layer** — the missing link between raw enterpri
                     descriptionPostfix: "fdds"
                     required: false
             </code></pre>
-          <p>"In this example, two sources are integrated: an MCP Server and a JSON file. The server is defined with its own metadata. The MCP Server is imported without any transformation, while the JSON file is imported with all resources being exported as they are. A new resource "Functional locations" is created based on the "functional-locations" resource from the MCP Server. The description of this resource is extended by appending additional information. The filter "cost center" is removed from the original resource, and a new filter "functional location id" is added with its own metadata." (automatically derived from GitHub Copilot, showing inherent understanding of metadata language used)</p>
-          <p>Same purpose can be derived from Python code (instead of yaml metadata), using the library. Ingesting metadata would be called related Python functions as a batch. How could this look like pythonic?</p>
+      <p>"In this example, two sources are integrated: an MCP Server and a JSON file. The server is defined with its
+        own metadata. The MCP Server is imported without any transformation, while the JSON file is imported with all
+        resources being exported as they are. A new resource "Functional locations" is created based on the
+        "functional-locations" resource from the MCP Server. The description of this resource is extended by appending
+        additional information. The filter "cost center" is removed from the original resource, and a new filter
+        "functional location id" is added with its own metadata." (automatically derived from GitHub Copilot, showing
+        inherent understanding of metadata language used)</p>
+      <p>Same purpose can be derived from Python code (instead of yaml metadata), using the library. Ingesting
+        metadata would be called related Python functions as a batch. How could this look like pythonic?</p>
 
-          <pre><code>
+      <pre><code>
             from usair import MCPIntegration, JSONIntegration, ServerDefinition, ResourceDefinition, FilterDefinition
 
             # Define the server
@@ -1927,661 +2313,663 @@ It is a **semantic integration layer** — the missing link between raw enterpri
             integration.add_resource(functional_locations_resource)
             integration.execute()
           </code></pre>
-          <p>In this Python example, we define the server and integrations using data classes. We then create an instance of the integration, add the sources and resource transformation, and execute the integration process. This approach allows for a more programmatic and flexible way to define and manage metadata integrations. (thanks to GitHub Copilot again)</p>
-        </section>
+      <p>In this Python example, we define the server and integrations using data classes. We then create an instance
+        of the integration, add the sources and resource transformation, and execute the integration process. This
+        approach allows for a more programmatic and flexible way to define and manage metadata integrations. (thanks
+        to GitHub Copilot again)</p>
+    </section>
 
-    </article>
-    <article id="appendices">
-      <hgroup>
-        <h2>Appendices</h2>
-      </hgroup>
+  </article>
+  <article id="appendices">
+    <hgroup>
+      <h2>Appendices</h2>
+    </hgroup>
 
-      <section id="appendix-a">
-        <h3>Appendix A - References and Referencing Conventions</h3>
+    <section id="appendix-a">
+      <h3>Appendix A - References and Referencing Conventions</h3>
 
-        <p>
-          This appendix defines how references are classified, interpreted,
-          and applied within this document. It follows common conventions used
-          in international standards and technical specifications.
-        </p>
+      <p>
+        This appendix defines how references are classified, interpreted,
+        and applied within this document. It follows common conventions used
+        in international standards and technical specifications.
+      </p>
 
-        <p>
-          Normative references (marked as <strong>strong</strong>) define concepts, abstractions, or constraints
-          that are adopted by this document. Where a normative reference is
-          cited, the referenced material is considered binding within the
-          explicitly stated scope.
-          Normative references in this document are <em>selectively adopted</em>.
-          Adoption does not imply full compliance with the referenced framework,
-          standard, or methodology unless explicitly stated.
-          Each normative reference is accompanied by a scope comment clarifying
-          which aspects are adopted,
-          which aspects are excluded, and
-          how the reference is interpreted in an enterprise and AI-enabled context.
-        </p>
+      <p>
+        Normative references (marked as <strong>strong</strong>) define concepts, abstractions, or constraints
+        that are adopted by this document. Where a normative reference is
+        cited, the referenced material is considered binding within the
+        explicitly stated scope.
+        Normative references in this document are <em>selectively adopted</em>.
+        Adoption does not imply full compliance with the referenced framework,
+        standard, or methodology unless explicitly stated.
+        Each normative reference is accompanied by a scope comment clarifying
+        which aspects are adopted,
+        which aspects are excluded, and
+        how the reference is interpreted in an enterprise and AI-enabled context.
+      </p>
 
-        <p>
-          Non-normative references are provided for context, contrast,
-          historical background, or discussion. They are explicitly
-          <strong>not binding</strong>.
-          A non-normative reference may present an alternative or competing viewpoint, use different terminology or
-          assumptions, be immature, exploratory, or market-driven, or focus on tools or platforms rather than data
-          semantics.
-          Inclusion of a non-normative reference does not imply endorsement.
-          Where relevant, comments explain why the source is cited and
-          how it deviates from the position taken in this document.
-        </p>
+      <p>
+        Non-normative references are provided for context, contrast,
+        historical background, or discussion. They are explicitly
+        <strong>not binding</strong>.
+        A non-normative reference may present an alternative or competing viewpoint, use different terminology or
+        assumptions, be immature, exploratory, or market-driven, or focus on tools or platforms rather than data
+        semantics.
+        Inclusion of a non-normative reference does not imply endorsement.
+        Where relevant, comments explain why the source is cited and
+        how it deviates from the position taken in this document.
+      </p>
 
-        <p>
-          References are cited inline using short identifiers enclosed in
-          square brackets, for example <code>[FAIR]</code> or <code>[MCP]</code>.
-          Inline references serve the following purposes:
-          <strong>Definition reference</strong> -
-          used when a term or concept is introduced or normatively constrained,
-          <strong>Rationale reference</strong> -
-          used to justify a design decision or architectural stance,
-          <strong>Contrast reference</strong> -
-          used to explicitly position this document against an alternative approach.
-          Inline references do not replace explanation in the text.
-          They indicate intellectual grounding, not delegation of responsibility
-          for understanding.
-        </p>
+      <p>
+        References are cited inline using short identifiers enclosed in
+        square brackets, for example <code>[FAIR]</code> or <code>[MCP]</code>.
+        Inline references serve the following purposes:
+        <strong>Definition reference</strong> -
+        used when a term or concept is introduced or normatively constrained,
+        <strong>Rationale reference</strong> -
+        used to justify a design decision or architectural stance,
+        <strong>Contrast reference</strong> -
+        used to explicitly position this document against an alternative approach.
+        Inline references do not replace explanation in the text.
+        They indicate intellectual grounding, not delegation of responsibility
+        for understanding.
+      </p>
 
-        <ol>
+      <ol>
 
-          <h5>Data Architecture &amp; Data Management</h5>
+        <h5>Data Architecture &amp; Data Management</h5>
 
-          <li id="ref-dama-dmbok"><strong>
-              DAMA International. (2017). <cite>DAMA-DMBOK: Data management body of knowledge</cite> (2nd ed.).
-              Technics Publications.
-              <a href="https://technicspub.com/dmbok/" target="_blank"
-                rel="noopener">https://technicspub.com/dmbok/</a></strong>
-            <br />
-            <small>
-              Used as a foundational reference for data management terminology and scope.
-              Conceptual definitions are adopted selectively; role- and process-centric governance
-              models are not assumed where they conflict with federated or AI-driven data usage.
-            </small>
-          </li>
-          <li id="ref-ibm-data-architecture">
-            Krantz, T., &amp; Jonker, A. (n.d.). <cite>What is a data architecture?</cite> IBM.
-            <a href="https://www.ibm.com/think/topics/data-architecture" target="_blank" rel="noopener">
-              https://www.ibm.com/think/topics/data-architecture
-            </a>
-          </li>
-          <li id="ref-gartner-data-architecture">
-            Gartner. (n.d.). <cite>Data architecture</cite>. Gartner Glossary.
-            <a href="https://www.gartner.com/en/data-analytics/topics/data-architecture" target="_blank" rel="noopener">
-              https://www.gartner.com/en/data-analytics/topics/data-architecture
-            </a>
-          </li>
-          <li id="ref-tool-centric-architectures">
-            <cite>Tool-centric data architecture frameworks</cite>.<br />
-            <a href="https://aws.amazon.com/what-is/data-architecture/" target="_blank" rel="noopener">
-              https://aws.amazon.com/what-is/data-architecture/
-            </a>
-            <br />
-            <small>
-              Referenced deliberately as a contrasting position.
-              This document explicitly rejects tool-first or vendor-defined
-              architecture approaches in favor of data semantics and purpose.
-            </small>
-          </li>
+        <li id="ref-dama-dmbok"><strong>
+            DAMA International. (2017). <cite>DAMA-DMBOK: Data management body of knowledge</cite> (2nd ed.).
+            Technics Publications.
+            <a href="https://technicspub.com/dmbok/" target="_blank"
+              rel="noopener">https://technicspub.com/dmbok/</a></strong>
+          <br />
+          <small>
+            Used as a foundational reference for data management terminology and scope.
+            Conceptual definitions are adopted selectively; role- and process-centric governance
+            models are not assumed where they conflict with federated or AI-driven data usage.
+          </small>
+        </li>
+        <li id="ref-ibm-data-architecture">
+          Krantz, T., &amp; Jonker, A. (n.d.). <cite>What is a data architecture?</cite> IBM.
+          <a href="https://www.ibm.com/think/topics/data-architecture" target="_blank" rel="noopener">
+            https://www.ibm.com/think/topics/data-architecture
+          </a>
+        </li>
+        <li id="ref-gartner-data-architecture">
+          Gartner. (n.d.). <cite>Data architecture</cite>. Gartner Glossary.
+          <a href="https://www.gartner.com/en/data-analytics/topics/data-architecture" target="_blank" rel="noopener">
+            https://www.gartner.com/en/data-analytics/topics/data-architecture
+          </a>
+        </li>
+        <li id="ref-tool-centric-architectures">
+          <cite>Tool-centric data architecture frameworks</cite>.<br />
+          <a href="https://aws.amazon.com/what-is/data-architecture/" target="_blank" rel="noopener">
+            https://aws.amazon.com/what-is/data-architecture/
+          </a>
+          <br />
+          <small>
+            Referenced deliberately as a contrasting position.
+            This document explicitly rejects tool-first or vendor-defined
+            architecture approaches in favor of data semantics and purpose.
+          </small>
+        </li>
 
-          <h5>Data Products, Access Models &amp; Data Mesh</h5>
+        <h5>Data Products, Access Models &amp; Data Mesh</h5>
 
-          <li id="ref-dehghani-book"><strong>
-              Dehghani, Z. (2022). <cite>Data mesh: Delivering data-driven value at scale</cite>.
-              O'Reilly Media.
-              <a href="https://www.oreilly.com/library/view/data-mesh/9781492092384/" target="_blank" rel="noopener">
-                https://www.oreilly.com/library/view/data-mesh/9781492092384/
-              </a></strong>
-          </li>
-          <li id="ref-dehghani-fowler">
-            Dehghani, Z. (2020). <cite>Data mesh principles and logical architecture</cite>. Martin Fowler.
-            <a href="https://martinfowler.com/articles/data-mesh-principles.html" target="_blank" rel="noopener">
-              https://martinfowler.com/articles/data-mesh-principles.html
-            </a><br />
-            <small>Data Mesh is referenced for domain ownership and data-as-a-product principles. This document
-              diverges from pure decentralization by requiring centralized semantic integration and metadata mediation
-              for AI usage.</small>
-          </li>
-          <li id="ref-odps">
-            <cite>ODPS / Data Product Specification Initiatives</cite>.
-            <a href="https://opendataproducts.org/" target="_blank" rel="noopener">
-              https://opendataproducts.org/
-            </a>
-            <br />
-            <small>
-              Referenced as an example of emerging data product specification efforts.
-              These initiatives are still evolving and currently lack coverage of lifecycle,
-              semantics, and AI access patterns required by this document.
-            </small>
-          </li>
+        <li id="ref-dehghani-book"><strong>
+            Dehghani, Z. (2022). <cite>Data mesh: Delivering data-driven value at scale</cite>.
+            O'Reilly Media.
+            <a href="https://www.oreilly.com/library/view/data-mesh/9781492092384/" target="_blank" rel="noopener">
+              https://www.oreilly.com/library/view/data-mesh/9781492092384/
+            </a></strong>
+        </li>
+        <li id="ref-dehghani-fowler">
+          Dehghani, Z. (2020). <cite>Data mesh principles and logical architecture</cite>. Martin Fowler.
+          <a href="https://martinfowler.com/articles/data-mesh-principles.html" target="_blank" rel="noopener">
+            https://martinfowler.com/articles/data-mesh-principles.html
+          </a><br />
+          <small>Data Mesh is referenced for domain ownership and data-as-a-product principles. This document
+            diverges from pure decentralization by requiring centralized semantic integration and metadata mediation
+            for AI usage.</small>
+        </li>
+        <li id="ref-odps">
+          <cite>ODPS / Data Product Specification Initiatives</cite>.
+          <a href="https://opendataproducts.org/" target="_blank" rel="noopener">
+            https://opendataproducts.org/
+          </a>
+          <br />
+          <small>
+            Referenced as an example of emerging data product specification efforts.
+            These initiatives are still evolving and currently lack coverage of lifecycle,
+            semantics, and AI access patterns required by this document.
+          </small>
+        </li>
 
-          <h5>Metadata, Semantics &amp; Knowledge Representation</h5>
+        <h5>Metadata, Semantics &amp; Knowledge Representation</h5>
 
-          <li id="ref-w3c-semantic-web"><strong>
-              World Wide Web Consortium. (2013). <cite>Publications of the W3C Semantic Web Activity</cite>.
-              <a href="https://www.w3.org/2001/sw/Specs.html" target="_blank" rel="noopener">
-                https://www.w3.org/2001/sw/Specs.html
-              </a></strong><br />
-            <small>W3C semantic web standards are used normatively for machine-interpretable meaning and
-              interoperability. Their use is restricted to semantics and metadata; RDF is not mandated as an
-              operational persistence model.</small>
-          </li>
-          <li id="ref-rdf">
-            World Wide Web Consortium. (2014). <cite>RDF 1.1 concepts and abstract syntax</cite>.
-            <a href="https://www.w3.org/TR/rdf11-concepts/" target="_blank" rel="noopener">
-              https://www.w3.org/TR/rdf11-concepts/
-            </a>
-          </li>
-          <li id="ref-owl">
-            World Wide Web Consortium. (2012). <cite>OWL 2 web ontology language overview</cite>.
-            <a href="https://www.w3.org/TR/owl2-overview/" target="_blank" rel="noopener">
-              https://www.w3.org/TR/owl2-overview/
-            </a>
-          </li>
-          <li id="ref-dcat">
-            World Wide Web Consortium. (2014). <cite>Data Catalog Vocabulary (DCAT)</cite>.
-            <a href="https://www.w3.org/TR/vocab-dcat/" target="_blank" rel="noopener">
-              https://www.w3.org/TR/vocab-dcat/
-            </a>
-          </li>
-          <li id="ref-rml"><strong>
-              Dimou, A., et&nbsp;al. (2024). <cite>RDF Mapping Language (RML) specification</cite>.
-              <a href="https://rml.io/specs/rml/" target="_blank" rel="noopener">
-                https://rml.io/specs/rml/
-              </a></strong><br />
-            <small>RML is referenced as a canonical example of declarative and reproducible mapping between relational
-              data and semantic models. The mapping principle is normative; the specific syntax is not.</small>
-          </li>
-          <li id="ref-yarrrml">
-            imec — Ghent University — IDLab. (2025). <cite>YARRRML</cite>. <a href="https://rml.io/yarrrml/"
-              target="_blank" rel="noopener">
-              https://rml.io/yarrrml/
-            </a><br />
-            <small>
-              YARRRML is cited as an example of a user-friendly YAML-based mapping language.
-            </small>
-          </li>
+        <li id="ref-w3c-semantic-web"><strong>
+            World Wide Web Consortium. (2013). <cite>Publications of the W3C Semantic Web Activity</cite>.
+            <a href="https://www.w3.org/2001/sw/Specs.html" target="_blank" rel="noopener">
+              https://www.w3.org/2001/sw/Specs.html
+            </a></strong><br />
+          <small>W3C semantic web standards are used normatively for machine-interpretable meaning and
+            interoperability. Their use is restricted to semantics and metadata; RDF is not mandated as an
+            operational persistence model.</small>
+        </li>
+        <li id="ref-rdf">
+          World Wide Web Consortium. (2014). <cite>RDF 1.1 concepts and abstract syntax</cite>.
+          <a href="https://www.w3.org/TR/rdf11-concepts/" target="_blank" rel="noopener">
+            https://www.w3.org/TR/rdf11-concepts/
+          </a>
+        </li>
+        <li id="ref-owl">
+          World Wide Web Consortium. (2012). <cite>OWL 2 web ontology language overview</cite>.
+          <a href="https://www.w3.org/TR/owl2-overview/" target="_blank" rel="noopener">
+            https://www.w3.org/TR/owl2-overview/
+          </a>
+        </li>
+        <li id="ref-dcat">
+          World Wide Web Consortium. (2014). <cite>Data Catalog Vocabulary (DCAT)</cite>.
+          <a href="https://www.w3.org/TR/vocab-dcat/" target="_blank" rel="noopener">
+            https://www.w3.org/TR/vocab-dcat/
+          </a>
+        </li>
+        <li id="ref-rml"><strong>
+            Dimou, A., et&nbsp;al. (2024). <cite>RDF Mapping Language (RML) specification</cite>.
+            <a href="https://rml.io/specs/rml/" target="_blank" rel="noopener">
+              https://rml.io/specs/rml/
+            </a></strong><br />
+          <small>RML is referenced as a canonical example of declarative and reproducible mapping between relational
+            data and semantic models. The mapping principle is normative; the specific syntax is not.</small>
+        </li>
+        <li id="ref-yarrrml">
+          imec — Ghent University — IDLab. (2025). <cite>YARRRML</cite>. <a href="https://rml.io/yarrrml/"
+            target="_blank" rel="noopener">
+            https://rml.io/yarrrml/
+          </a><br />
+          <small>
+            YARRRML is cited as an example of a user-friendly YAML-based mapping language.
+          </small>
+        </li>
 
-          <h5>Ontology Lists & Upper Ontologies</h5>
+        <h5>Ontology Lists & Upper Ontologies</h5>
 
-          <li id="ref-awesome-ontology"><strong>
-              Ozekik. (n.d.). <cite>Awesome ontology</cite> (GitHub repository).
-              <a href="https://github.com/Ozekik/awesome-ontology" target="_blank" rel="noopener">
-                https://github.com/Ozekik/awesome-ontology
-              </a></strong>
-          </li>
-          <li id="ref-w3c-ontology-repositories"><strong>
-              World Wide Web Consortium. (n.d.). <cite>Lists of ontologies</cite>. W3C Wiki.
-              <a href="https://www.w3.org/wiki/Ontology_repositories" target="_blank" rel="noopener">
-                https://www.w3.org/wiki/Ontology_repositories
-              </a></strong>
-          </li>
-          <li id="ref-sumo">
-            Pease, A. (Ed.). (n.d.). <cite>Suggested Upper Merged Ontology (SUMO)</cite>. Ontology Portal.
-            <a href="https://www.ontologyportal.org/" target="_blank" rel="noopener">
-              https://www.ontologyportal.org/
-            </a>
-          </li>
-          <li id="ref-cco">
-            Common Core Ontologies Working Group. (n.d.). <cite>Common Core Ontologies</cite> [Ontology suite]. GitHub.
-            <a href="https://github.com/CommonCoreOntology/CommonCoreOntologies" target="_blank" rel="noopener">
-              https://github.com/CommonCoreOntology/CommonCoreOntologies
-            </a>
-          </li>
-          <li id="ref-gist">
-            Semantic Arts. (n.d.). <cite>Gist: Upper ontology for the enterprise</cite>.
-            <a href="https://www.semanticarts.com/gist/" target="_blank" rel="noopener">
-              https://www.semanticarts.com/gist/
-            </a>
-          </li>
-          <li id="ref-opencyc">
-            Cycorp. (n.d.). <cite>OpenCyc ontology</cite>.
-            <a href="https://www.cyc.com/platform/opencyc/" target="_blank" rel="noopener">
-              https://www.cyc.com/platform/opencyc/
-            </a>
-          </li>
-          <li id="ref-engineering-ontologies">
-            Tudorache, T. (n.d.). <cite>Engineering ontologies</cite>. Protégé Wiki, Stanford University.
-            <a href="https://protegewiki.stanford.edu/wiki/Engineering_Ontologies" target="_blank" rel="noopener">
-              https://protegewiki.stanford.edu/wiki/Engineering_Ontologies
-            </a>
-          </li>
+        <li id="ref-awesome-ontology"><strong>
+            Ozekik. (n.d.). <cite>Awesome ontology</cite> (GitHub repository).
+            <a href="https://github.com/Ozekik/awesome-ontology" target="_blank" rel="noopener">
+              https://github.com/Ozekik/awesome-ontology
+            </a></strong>
+        </li>
+        <li id="ref-w3c-ontology-repositories"><strong>
+            World Wide Web Consortium. (n.d.). <cite>Lists of ontologies</cite>. W3C Wiki.
+            <a href="https://www.w3.org/wiki/Ontology_repositories" target="_blank" rel="noopener">
+              https://www.w3.org/wiki/Ontology_repositories
+            </a></strong>
+        </li>
+        <li id="ref-sumo">
+          Pease, A. (Ed.). (n.d.). <cite>Suggested Upper Merged Ontology (SUMO)</cite>. Ontology Portal.
+          <a href="https://www.ontologyportal.org/" target="_blank" rel="noopener">
+            https://www.ontologyportal.org/
+          </a>
+        </li>
+        <li id="ref-cco">
+          Common Core Ontologies Working Group. (n.d.). <cite>Common Core Ontologies</cite> [Ontology suite]. GitHub.
+          <a href="https://github.com/CommonCoreOntology/CommonCoreOntologies" target="_blank" rel="noopener">
+            https://github.com/CommonCoreOntology/CommonCoreOntologies
+          </a>
+        </li>
+        <li id="ref-gist">
+          Semantic Arts. (n.d.). <cite>Gist: Upper ontology for the enterprise</cite>.
+          <a href="https://www.semanticarts.com/gist/" target="_blank" rel="noopener">
+            https://www.semanticarts.com/gist/
+          </a>
+        </li>
+        <li id="ref-opencyc">
+          Cycorp. (n.d.). <cite>OpenCyc ontology</cite>.
+          <a href="https://www.cyc.com/platform/opencyc/" target="_blank" rel="noopener">
+            https://www.cyc.com/platform/opencyc/
+          </a>
+        </li>
+        <li id="ref-engineering-ontologies">
+          Tudorache, T. (n.d.). <cite>Engineering ontologies</cite>. Protégé Wiki, Stanford University.
+          <a href="https://protegewiki.stanford.edu/wiki/Engineering_Ontologies" target="_blank" rel="noopener">
+            https://protegewiki.stanford.edu/wiki/Engineering_Ontologies
+          </a>
+        </li>
 
-          <h5>Domain-Specific Ontologies & Datasets</h5>
+        <h5>Domain-Specific Ontologies & Datasets</h5>
 
-          <li id="ref-ontology-module-suite">
-            Wawrzik, F., Grimm, C., & Neumann, P. (2023). <cite>Ontology module suite for electronics and systems
-              engineering</cite> [Dataset]. IEEE DataPort.
-            <a href="https://ieee-dataport.org/documents/ontology-module-suite-electronics-and-systems-engineering"
-              target="_blank" rel="noopener">
-              https://ieee-dataport.org/documents/ontology-module-suite-electronics-and-systems-engineering
-            </a>
-          </li>
-          <li id="ref-oeo">
-            Open Energy Platform. (n.d.). <cite>Open Energy Ontology (OEO)</cite>.
-            <a href="https://openenergy-platform.org/ontology/oeo/" target="_blank" rel="noopener">
-              https://openenergy-platform.org/ontology/oeo/
-            </a>
-          </li>
+        <li id="ref-ontology-module-suite">
+          Wawrzik, F., Grimm, C., & Neumann, P. (2023). <cite>Ontology module suite for electronics and systems
+            engineering</cite> [Dataset]. IEEE DataPort.
+          <a href="https://ieee-dataport.org/documents/ontology-module-suite-electronics-and-systems-engineering"
+            target="_blank" rel="noopener">
+            https://ieee-dataport.org/documents/ontology-module-suite-electronics-and-systems-engineering
+          </a>
+        </li>
+        <li id="ref-oeo">
+          Open Energy Platform. (n.d.). <cite>Open Energy Ontology (OEO)</cite>.
+          <a href="https://openenergy-platform.org/ontology/oeo/" target="_blank" rel="noopener">
+            https://openenergy-platform.org/ontology/oeo/
+          </a>
+        </li>
 
-          <h5>FAIR, Lifecycle &amp; Data Quality</h5>
+        <h5>FAIR, Lifecycle &amp; Data Quality</h5>
 
-          <li id="ref-fair-principles"><strong>
-              Wilkinson, M. D., et&nbsp;al. (2016). <cite>The FAIR guiding principles</cite> for scientific data
-              management and stewardship.
-              Scientific Data, 3, 160018.
-              <a href="https://doi.org/10.1038/sdata.2016.18" target="_blank" rel="noopener">
-                https://doi.org/10.1038/sdata.2016.18
-              </a></strong><br />
-            <small>FAIR is adopted as a core quality objective for data and metadata. This document extends FAIR with
-              lifecycle awareness, access control, and AI consumption risks for enterprise environments.</small>
-          </li>
-          <li id="ref-go-fair">
-            GO FAIR Initiative. (n.d.). <cite>FAIR principles</cite>.
-            <a href="https://www.go-fair.org/fair-principles/" target="_blank" rel="noopener">
-              https://www.go-fair.org/fair-principles/
-            </a>
-          </li>
-          <li id="ref-roe-maturity">
-            Roe, C. (2011). <cite>Assessing data management maturity using the DAMA-DMBOK framework</cite>.
-            DATAVERSITY.
-            <a href="https://www.dataversity.net/assessing-data-management-maturity-using-the-dama-dmbok-framework-part-1/"
-              target="_blank" rel="noopener">
-              https://www.dataversity.net/assessing-data-management-maturity-using-the-dama-dmbok-framework-part-1/
-            </a>
-          </li>
+        <li id="ref-fair-principles"><strong>
+            Wilkinson, M. D., et&nbsp;al. (2016). <cite>The FAIR guiding principles</cite> for scientific data
+            management and stewardship.
+            Scientific Data, 3, 160018.
+            <a href="https://doi.org/10.1038/sdata.2016.18" target="_blank" rel="noopener">
+              https://doi.org/10.1038/sdata.2016.18
+            </a></strong><br />
+          <small>FAIR is adopted as a core quality objective for data and metadata. This document extends FAIR with
+            lifecycle awareness, access control, and AI consumption risks for enterprise environments.</small>
+        </li>
+        <li id="ref-go-fair">
+          GO FAIR Initiative. (n.d.). <cite>FAIR principles</cite>.
+          <a href="https://www.go-fair.org/fair-principles/" target="_blank" rel="noopener">
+            https://www.go-fair.org/fair-principles/
+          </a>
+        </li>
+        <li id="ref-roe-maturity">
+          Roe, C. (2011). <cite>Assessing data management maturity using the DAMA-DMBOK framework</cite>.
+          DATAVERSITY.
+          <a href="https://www.dataversity.net/assessing-data-management-maturity-using-the-dama-dmbok-framework-part-1/"
+            target="_blank" rel="noopener">
+            https://www.dataversity.net/assessing-data-management-maturity-using-the-dama-dmbok-framework-part-1/
+          </a>
+        </li>
 
-          <h5>AI Access, MCP &amp; AI-Ready Data Architecture</h5>
+        <h5>AI Access, MCP &amp; AI-Ready Data Architecture</h5>
 
-          <li id="ref-mcp-announcement">
-            Anthropic. (2024). <cite>Introducing the Model Context Protocol</cite>.
-            <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
-              https://www.anthropic.com/news/model-context-protocol
-            </a>
-          </li>
-          <li id="ref-mcp-spec"><strong>
-              Model Context Protocol Contributors. (2025). <cite>Model Context Protocol specification</cite>.
-              <a href="https://modelcontextprotocol.io/specification/2025-03-26" target="_blank" rel="noopener">
-                https://modelcontextprotocol.io/specification/2025-03-26</a></strong><br />
-            <small>MCP is treated as a reference architecture pattern for AI access to data and tools. The protocol
-              is considered replaceable as a technology, but normative as a design pattern for explicit context,
-              access control, and tool mediation.</small>
-          </li>
-          <li id="ref-ai-ready-discussions">
-            <cite>AI-ready data architecture discussions</cite>.<br />
-            <a href="https://www.gartner.com/en/data-analytics/topics/data-architecture" target="_blank" rel="noopener">
-              https://www.gartner.com/en/data-analytics/topics/data-architecture
-            </a>
-            <br />
-            <small>
-              Gartner material is referenced for market context and terminology.
-              It is intentionally not used normatively due to its platform-centric framing
-              and lack of formal semantic or lifecycle models.
-            </small>
-          </li>
-          <li id="ref-mcp-early">
-            <cite>Model Context Protocol (early discussions)</cite>.<br />
-            <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
-              https://www.anthropic.com/news/model-context-protocol
-            </a>
-            <br />
-            <small>
-              Early MCP discussions are cited to show conceptual intent.
-              Normative references in this document rely exclusively on the published
-              MCP specification, not on announcements or blog posts.
-            </small>
-          </li>
-          <li id="ref-json-rpc">
-            JSON-RPC Working Group. (2013). <cite>JSON-RPC 2.0 specification</cite>.
-            <a href="https://www.jsonrpc.org/specification" target="_blank" rel="noopener">
-              https://www.jsonrpc.org/specification
-            </a>
-            <br />
-            <small>
-              MCP is designed to be transport-agnostic, but JSON-RPC is referenced as a common protocol for tool
-              invocation.
-              The specific choice of JSON-RPC is not normative; any protocol enabling the required interactions is
-              acceptable.
-            </small>
-          </li>
+        <li id="ref-mcp-announcement">
+          Anthropic. (2024). <cite>Introducing the Model Context Protocol</cite>.
+          <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
+            https://www.anthropic.com/news/model-context-protocol
+          </a>
+        </li>
+        <li id="ref-mcp-specification"><strong>
+            Model Context Protocol Contributors. (2025). <cite>Model Context Protocol specification</cite>.
+            <a href="https://modelcontextprotocol.io/specification/2025-03-26" target="_blank" rel="noopener">
+              https://modelcontextprotocol.io/specification/2025-03-26</a></strong><br />
+          <small>MCP is treated as a reference architecture pattern for AI access to data and tools. The protocol
+            is considered replaceable as a technology, but normative as a design pattern for explicit context,
+            access control, and tool mediation.</small>
+        </li>
+        <li id="ref-ai-ready-discussions">
+          <cite>AI-ready data architecture discussions</cite>.<br />
+          <a href="https://www.gartner.com/en/data-analytics/topics/data-architecture" target="_blank" rel="noopener">
+            https://www.gartner.com/en/data-analytics/topics/data-architecture
+          </a>
+          <br />
+          <small>
+            Gartner material is referenced for market context and terminology.
+            It is intentionally not used normatively due to its platform-centric framing
+            and lack of formal semantic or lifecycle models.
+          </small>
+        </li>
+        <li id="ref-mcp-early">
+          <cite>Model Context Protocol (early discussions)</cite>.<br />
+          <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
+            https://www.anthropic.com/news/model-context-protocol
+          </a>
+          <br />
+          <small>
+            Early MCP discussions are cited to show conceptual intent.
+            Normative references in this document rely exclusively on the published
+            MCP specification, not on announcements or blog posts.
+          </small>
+        </li>
+        <li id="ref-json-rpc">
+          JSON-RPC Working Group. (2013). <cite>JSON-RPC 2.0 specification</cite>.
+          <a href="https://www.jsonrpc.org/specification" target="_blank" rel="noopener">
+            https://www.jsonrpc.org/specification
+          </a>
+          <br />
+          <small>
+            MCP is designed to be transport-agnostic, but JSON-RPC is referenced as a common protocol for tool
+            invocation.
+            The specific choice of JSON-RPC is not normative; any protocol enabling the required interactions is
+            acceptable.
+          </small>
+        </li>
 
-          <h5>Enterprise Architecture &amp; Viewpoints</h5>
+        <h5>Enterprise Architecture &amp; Viewpoints</h5>
 
-          <li id="ref-dodaf-div"><strong>
-              U.S. Department of Defense. (2010). <cite>DoDAF V2.0 - Data and Information Viewpoint (DIV)</cite>.
-              <a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_data/" target="_blank"
-                rel="noopener">
-                https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_data/
-              </a></strong><br />
-            <small>Referenced for its abstraction pattern separating conceptual, logical, and physical data models.
-              DoDAF compliance or defense-specific processes are not assumed.</small>
-          </li>
-
-          <h5 id="ref-object-oriented-data-modeling">Object-Oriented &amp; Multi-Paradigm Data Modeling</h5>
-
-          <li id="ref-zhao-roberts"><strong>
-              Zhao, L., &amp; Roberts, S. A. (1988). <cite>An object-oriented data model for database modelling</cite>.
-              The Computer Journal, 31(2), 116-124.
-              <a href="https://academic.oup.com/comjnl/article/31/2/116/406640" target="_blank" rel="noopener">
-                https://academic.oup.com/comjnl/article/31/2/116/406640
-              </a></strong>
-          </li>
-          <li id="ref-geeksforgeeks-oodm"><strong>
-              GeeksforGeeks. (2021). <cite>Basic object-oriented data model</cite>.
-              <a href="https://www.geeksforgeeks.org/basic-object-oriented-data-model/" target="_blank" rel="noopener">
-                https://www.geeksforgeeks.org/basic-object-oriented-data-model/
-              </a></strong>
-          </li>
-          <li id="ref-castro-tutorialspoint">
-            Castro, K. (2020, June 19). <cite>Object-oriented data model</cite>. TutorialsPoint.
-            <a href="https://www.tutorialspoint.com/object_oriented_data_model/index.htm" target="_blank"
+        <li id="ref-dodaf-div"><strong>
+            U.S. Department of Defense. (2010). <cite>DoDAF V2.0 - Data and Information Viewpoint (DIV)</cite>.
+            <a href="https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_data/" target="_blank"
               rel="noopener">
-              https://www.tutorialspoint.com/object_oriented_data_model/index.htm
-            </a>
-          </li>
-          <li id="ref-eagles-swlg">
-            EAGLES SWLG. (1997). <cite>Object-oriented data model</cite>. In Gibbon handbook (SoftEdition). University
-            of Bielefeld.
-            <a href="https://web.archive.org/web/20070609142712/http://www.let.uu.nl/~Martin.Gaustad/eagles/o-o.html"
-              target="_blank" rel="noopener">
-              Archived reference page
-            </a>
-          </li>
-          <li id="ref-myreadingroom-oo">
-            MyReadingRoom. (n.d.). <cite>The object oriented (OO) data model in DBMS</cite>. Internet Archive (Wayback
-            Machine).
-            <a href="https://web.archive.org/web/20200806163018/https://myreadingroom.co.in/dbms/notes/relational-model/336-object-oriented-oo-data-model-in-dbms.html"
-              target="_blank" rel="noopener">
-              Archived reference page
-            </a>
-          </li>
-          <li id="ref-fitness-for-use">
-            <cite>Fitness-for-use data quality models</cite>.<br />
-            <a href="https://www.dama.org/content/body-knowledge" target="_blank" rel="noopener">
-              https://www.dama.org/content/body-knowledge
-            </a>
-            <br />
-            <small>
-              The "fitness-for-use" concept is acknowledged as influential.
-              This document adopts the idea but reframes it explicitly in terms of
-              declared purpose, lifecycle stage, and AI consumption risk.
-            </small>
-          </li>
+              https://dodcio.defense.gov/Library/DoD-Architecture-Framework/dodaf20_data/
+            </a></strong><br />
+          <small>Referenced for its abstraction pattern separating conceptual, logical, and physical data models.
+            DoDAF compliance or defense-specific processes are not assumed.</small>
+        </li>
 
-          <h5>Data Lineage &amp; Provenance</h5>
+        <h5 id="ref-object-oriented-data-modeling">Object-Oriented &amp; Multi-Paradigm Data Modeling</h5>
 
-          <li id="ref-buneman-provenance"><strong>
-              Buneman, P., Khanna, S., &amp; Tan, W.-C. (2001). <cite>Why and where: A characterization of data
-                provenance</cite>.
-              ICDT.
-              <a href="https://www.cis.upenn.edu/~sanjeev/papers/icdt01.pdf" target="_blank" rel="noopener">
-                https://www.cis.upenn.edu/~sanjeev/papers/icdt01.pdf
-              </a></strong>
-          </li>
-          <li id="ref-prov-o"><strong>
-              World Wide Web Consortium. (2013). <cite>PROV-O: The provenance ontology</cite>.
-              <a href="https://www.w3.org/TR/prov-o/" target="_blank" rel="noopener">
-                https://www.w3.org/TR/prov-o/
-              </a></strong>
-          </li>
-          <li id="ref-provenance">
-            Buneman, P., Khanna, S., &amp; Tan, W.-C. (2001).
-            <cite>Why and where: A characterization of data provenance</cite>.
-            https://www.cis.upenn.edu/~sanjeev/papers/icdt01.pdf
-            <br />
-            <small>
-              Referenced as foundational academic work on provenance.
-              Practical enterprise lineage models are intentionally treated separately.
-            </small>
-          </li>
+        <li id="ref-zhao-roberts"><strong>
+            Zhao, L., &amp; Roberts, S. A. (1988). <cite>An object-oriented data model for database modelling</cite>.
+            The Computer Journal, 31(2), 116-124.
+            <a href="https://academic.oup.com/comjnl/article/31/2/116/406640" target="_blank" rel="noopener">
+              https://academic.oup.com/comjnl/article/31/2/116/406640
+            </a></strong>
+        </li>
+        <li id="ref-geeksforgeeks-oodm"><strong>
+            GeeksforGeeks. (2021). <cite>Basic object-oriented data model</cite>.
+            <a href="https://www.geeksforgeeks.org/basic-object-oriented-data-model/" target="_blank" rel="noopener">
+              https://www.geeksforgeeks.org/basic-object-oriented-data-model/
+            </a></strong>
+        </li>
+        <li id="ref-castro-tutorialspoint">
+          Castro, K. (2020, June 19). <cite>Object-oriented data model</cite>. TutorialsPoint.
+          <a href="https://www.tutorialspoint.com/object_oriented_data_model/index.htm" target="_blank" rel="noopener">
+            https://www.tutorialspoint.com/object_oriented_data_model/index.htm
+          </a>
+        </li>
+        <li id="ref-eagles-swlg">
+          EAGLES SWLG. (1997). <cite>Object-oriented data model</cite>. In Gibbon handbook (SoftEdition). University
+          of Bielefeld.
+          <a href="https://web.archive.org/web/20070609142712/http://www.let.uu.nl/~Martin.Gaustad/eagles/o-o.html"
+            target="_blank" rel="noopener">
+            Archived reference page
+          </a>
+        </li>
+        <li id="ref-myreadingroom-oo">
+          MyReadingRoom. (n.d.). <cite>The object oriented (OO) data model in DBMS</cite>. Internet Archive (Wayback
+          Machine).
+          <a href="https://web.archive.org/web/20200806163018/https://myreadingroom.co.in/dbms/notes/relational-model/336-object-oriented-oo-data-model-in-dbms.html"
+            target="_blank" rel="noopener">
+            Archived reference page
+          </a>
+        </li>
+        <li id="ref-fitness-for-use">
+          <cite>Fitness-for-use data quality models</cite>.<br />
+          <a href="https://www.dama.org/content/body-knowledge" target="_blank" rel="noopener">
+            https://www.dama.org/content/body-knowledge
+          </a>
+          <br />
+          <small>
+            The "fitness-for-use" concept is acknowledged as influential.
+            This document adopts the idea but reframes it explicitly in terms of
+            declared purpose, lifecycle stage, and AI consumption risk.
+          </small>
+        </li>
 
-          <h5>Attribute-Based Access Control (ABAC)</h5>
+        <h5>Data Lineage &amp; Provenance</h5>
 
-          <li id="ref-nist-abac"><strong>
-              Hu, V. C., et&nbsp;al. (2014). <cite>Guide to attribute based access control (ABAC)</cite>.
-              NIST SP 800-162.
-              <a href="https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf" target="_blank"
-                rel="noopener">
-                https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf
-              </a></strong>
-          </li>
-          <li id="ref-abac">
-            Hu, V. C., et&nbsp;al. (2014).
-            <cite>NIST SP 800-162: Guide to Attribute Based Access Control (ABAC)</cite>.
-            https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf
-            <br />
-            <small>
-              ABAC is referenced as an access control mechanism.
-              The document adopts the principle, not the full NIST implementation model.
-            </small>
-          </li>
+        <li id="ref-buneman-provenance"><strong>
+            Buneman, P., Khanna, S., &amp; Tan, W.-C. (2001). <cite>Why and where: A characterization of data
+              provenance</cite>.
+            ICDT.
+            <a href="https://www.cis.upenn.edu/~sanjeev/papers/icdt01.pdf" target="_blank" rel="noopener">
+              https://www.cis.upenn.edu/~sanjeev/papers/icdt01.pdf
+            </a></strong>
+        </li>
+        <li id="ref-prov-o"><strong>
+            World Wide Web Consortium. (2013). <cite>PROV-O: The provenance ontology</cite>.
+            <a href="https://www.w3.org/TR/prov-o/" target="_blank" rel="noopener">
+              https://www.w3.org/TR/prov-o/
+            </a></strong>
+        </li>
+        <li id="ref-provenance">
+          Buneman, P., Khanna, S., &amp; Tan, W.-C. (2001).
+          <cite>Why and where: A characterization of data provenance</cite>.
+          https://www.cis.upenn.edu/~sanjeev/papers/icdt01.pdf
+          <br />
+          <small>
+            Referenced as foundational academic work on provenance.
+            Practical enterprise lineage models are intentionally treated separately.
+          </small>
+        </li>
 
-          <h5>AI Governance &amp; AI Safety</h5>
+        <h5>Attribute-Based Access Control (ABAC)</h5>
 
-          <li id="ref-oecd-ai"><strong>
-              OECD. (2019). <cite>OECD principles on artificial intelligence</cite>.
-              <a href="https://oecd.ai/en/ai-principles" target="_blank" rel="noopener">
-                https://oecd.ai/en/ai-principles
-              </a></strong>
-          </li>
-          <li id="ref-iso-42001"><strong>
-              ISO/IEC. (2023). <cite>ISO/IEC 42001: Artificial intelligence management systems</cite>.
-              <a href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener">
-                https://www.iso.org/standard/81230.html
-              </a></strong>
-          </li>
-        </ol>
+        <li id="ref-nist-abac"><strong>
+            Hu, V. C., et&nbsp;al. (2014). <cite>Guide to attribute based access control (ABAC)</cite>.
+            NIST SP 800-162.
+            <a href="https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf" target="_blank"
+              rel="noopener">
+              https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf
+            </a></strong>
+        </li>
+        <li id="ref-abac">
+          Hu, V. C., et&nbsp;al. (2014).
+          <cite>NIST SP 800-162: Guide to Attribute Based Access Control (ABAC)</cite>.
+          https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf
+          <br />
+          <small>
+            ABAC is referenced as an access control mechanism.
+            The document adopts the principle, not the full NIST implementation model.
+          </small>
+        </li>
 
-      </section>
+        <h5>AI Governance &amp; AI Safety</h5>
 
+        <li id="ref-oecd-ai"><strong>
+            OECD. (2019). <cite>OECD principles on artificial intelligence</cite>.
+            <a href="https://oecd.ai/en/ai-principles" target="_blank" rel="noopener">
+              https://oecd.ai/en/ai-principles
+            </a></strong>
+        </li>
+        <li id="ref-iso-42001"><strong>
+            ISO/IEC. (2023). <cite>ISO/IEC 42001: Artificial intelligence management systems</cite>.
+            <a href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener">
+              https://www.iso.org/standard/81230.html
+            </a></strong>
+        </li>
+      </ol>
 
-
-      <section id="appendix-b">
-        <h3>Appendix B - Architectural Decisions and Rationale</h3>
-
-        <p>
-          This appendix documents selected architectural decisions taken in this document.
-          It serves to make implicit design choices explicit and to support future evolution
-          of the architecture.
-        </p>
-
-        <dl>
-          <dt><dfn>Data needs models</dfn></dt>
-          <dd>
-            Information is complex and needs models for digitalization.<br />
-            Models contain purpose-fit semantics and are not just technical representations.
-          </dd>
-
-          <dt><dfn>Semantics over platforms</dfn></dt>
-          <dd>
-            Data semantics and meaning are treated as primary architectural concerns.<br />
-            Platforms and technologies are considered replaceable implementation details.<br />
-            Original data must be kept immutable; derivations may transform but not change it.<br />
-            Original data needs backup of data and semantics; data pipelines need backup of derivation logic and
-            business purpose.
-          </dd>
-
-          <dt><dfn>AI as a first-class data consumer</dfn></dt>
-          <dd>
-            AI systems are treated as consumers with specific requirements for context,
-            access control, and lifecycle awareness.<br />
-            AI is already mature enough to co-operate, see it as partner and not as a tool.
-          </dd>
-
-          <dt><dfn>Selective adoption of standards</dfn></dt>
-          <dd>
-            External standards are adopted selectively.<br />
-            Compliance with a standard is not implied unless explicitly stated.<br />
-            Standard business software makes businesses comparable; individual data architecture shows their competitive
-            advantage.
-          </dd>
-        </dl>
-      </section>
-
-
-      <section id="appendix-c">
-        <h3>Appendix C - Terminology and Definitions</h3>
-
-        <p>
-          This appendix defines the terminology used in this document.
-          The definitions in this appendix are <strong>normative</strong> and
-          override external, vendor-specific, or colloquial usage.
-        </p>
-
-        <dl>
-
-          <dt id="term-data-architecture">
-            <dfn>Data Architecture</dfn>
-          </dt>
-          <dd>
-            The coherent set of principles, models, and structures governing how
-            data is represented, transformed, accessed, and used.
-            <br />
-            <small>In this document, data architecture explicitly prioritizes data semantics, lifecycle, and purpose-fit
-              over platform or vendor choices</small><br />
-            See:
-            <a href="#overview">Overview</a>,
-            <a href="#concepts-mental-model">Concepts &amp; Mental Model</a>,
-            <a href="#integrating-it-all">Integrating it all</a>
-          </dd>
-
-          <dt id="term-data-product">
-            <dfn>Data Product</dfn>
-          </dt>
-          <dd>
-            A purpose-driven, governed representation of data that declares meaning,
-            access, quality expectations, and lifecycle status.
-            <br /><small>A data product is not defined by its storage technology or application, but by its business
-              meaning, access model, and reusability.</small><br />
-            See:
-            <a href="#data-provisioning-data-products">Data Provisioning &amp; Data Products</a>,
-            <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>
-          </dd>
-
-          <dt id="term-semantics">
-            <dfn>Semantics</dfn>
-          </dt>
-          <dd>
-            Formalized, machine-interpretable meaning assigned to data entities
-            and relationships.
-            <br /><small>Semantics are machine-interpretable meaning (e.g. ontologies, mappings, controlled
-              vocabularies), not descriptive documentation text.</small><br />
-            See:
-            <a href="#data-modelling">Data Modelling</a>,
-            <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>
-          </dd>
-
-          <dt id="term-metadata"><dfn>Metadata</dfn></dt>
-          <dd>
-            Data describing data, including technical, business, semantic, and governance-related information necessary
-            for discovery, access, and correct usage.
-            <br /><small>Metadata is treated as first-class architectural data, not auxiliary
-              documentation.</small><br />
-
-            See:
-            <a href="#data-governance">Data Governance</a>,
-            <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>,
-            <a href="#integrating-it-all">Integrating it all</a>
-          </dd>
-
-          <dt id="term-lifecycle">
-            <dfn>Lifecycle</dfn>
-          </dt>
-          <dd>
-            The managed progression of data and data products from creation to
-            deprecation and deletion.
-            <br /><small>Lifecycle applies to data products, not just tables or files.</small><br />
-            See:
-            <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>
-          </dd>
-
-          <dt id="term-data-quality"><dfn>Data Quality</dfn></dt>
-          <dd>
-            The degree to which data is fit for a declared purpose, relative to its lifecycle stage and usage context.
-            <br /><small>Data quality is contextual and process-based, not an absolute or static property.</small><br />
-            See:
-            <a href="#lifecycle-quality">Lifecycle & Quality</a>,
-            <a href="#data-governance">Data Governance</a>,
-            <a href="#types-of-use-cases">Types of use cases</a>
-          </dd>
-
-          <dt id="term-data-governance"><dfn>Data Governance</dfn></dt>
-          <dd>
-            The set of organizational structures, processes, and rules ensuring that data is handled compliantly,
-            efficiently, and in alignment with business objectives.
-            <br /><small>This document distinguishes external (compliance-driven) and internal (efficiency-driven) data
-              governance.</small><br />
-            See:
-            <a href="#data-governance">Data Governance</a>,
-            <a href="#data-organization">Data organization</a>
-          </dd>
-
-          <dt id="term-data-ownership"><dfn>Data Ownership</dfn></dt>
-          <dd>
-            The explicit responsibility for deciding on data usage, access, quality handling, and deprecation within an
-            organizational context.
-            <br /><small>Ownership is an active role, not inferred from data creation or legal possession.</small><br />
-            See:
-            <a href="#data-access-models">Data access models</a>,
-            <a href="#data-governance">Data Governance</a>
-          </dd>
-
-
-          <dt id="term-mcp-server">
-            <dfn>MCP Server (Model Context Protocol Server)</dfn>
-          </dt>
-          <dd>
-            A standardized interface enabling AI systems to discover and access
-            data and tools with explicit context.
-            <br /><small>MCP is treated as an architectural access pattern, not a fixed technology.</small><br />
-            See:
-            <a href="#data-access-and-access-restrictions">Data Access and Access Restrictions</a>,
-            <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>
-          </dd>
-
-          <dt id="term-ai-readiness">AI-readiness</dt>
-          <dd>
-            The degree to which data, metadata, access models, and lifecycle
-            information are suitable for safe, correct, and automated consumption
-            by AI systems.
-            <br />
-            See:
-            <a href="#concepts-mental-model">Concepts &amp; Mental Model</a>,
-            <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>,
-            <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>
-          </dd>
-
-          <dt id="term-immutability">Immutability (of data)</dt>
-          <dd>
-            The principle that original data, once created, must not be changed;
-            only derived representations may evolve.
-            <br />
-            See:
-            <a href="#data-provisioning-data-products">Data provisioning &amp; Data Products</a>,
-            <a href="#data-modelling">Data modelling</a>,
-            <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>
-          </dd>
-
-          <dt id="term-fair">FAIR (+)</dt>
-          <dd>
-            A principle stating that data should be Findable, Accessible,
-            Interoperable, and Reusable, with additional emphasis on safety,
-            security, and trustworthiness.
-            <br />
-            See:
-            <a href="#data-access-and-access-restrictions">Data access and access restrictions</a>,
-            <a href="#data-governance">Data Governance</a>
-          </dd>
-
-        </dl>
-      </section>
+    </section>
 
 
 
-      <!--
+    <section id="appendix-b">
+      <h3>Appendix B - Architectural Decisions and Rationale</h3>
+
+      <p>
+        This appendix documents selected architectural decisions taken in this document.
+        It serves to make implicit design choices explicit and to support future evolution
+        of the architecture.
+      </p>
+
+      <dl>
+        <dt><dfn>Data needs models</dfn></dt>
+        <dd>
+          Information is complex and needs models for digitalization.<br />
+          Models contain purpose-fit semantics and are not just technical representations.
+        </dd>
+
+        <dt><dfn>Semantics over platforms</dfn></dt>
+        <dd>
+          Data semantics and meaning are treated as primary architectural concerns.<br />
+          Platforms and technologies are considered replaceable implementation details.<br />
+          Original data must be kept immutable; derivations may transform but not change it.<br />
+          Original data needs backup of data and semantics; data pipelines need backup of derivation logic and
+          business purpose.
+        </dd>
+
+        <dt><dfn>AI as a first-class data consumer</dfn></dt>
+        <dd>
+          AI systems are treated as consumers with specific requirements for context,
+          access control, and lifecycle awareness.<br />
+          AI is already mature enough to co-operate, see it as partner and not as a tool.
+        </dd>
+
+        <dt><dfn>Selective adoption of standards</dfn></dt>
+        <dd>
+          External standards are adopted selectively.<br />
+          Compliance with a standard is not implied unless explicitly stated.<br />
+          Standard business software makes businesses comparable; individual data architecture shows their competitive
+          advantage.
+        </dd>
+      </dl>
+    </section>
+
+
+    <section id="appendix-c">
+      <h3>Appendix C - Terminology and Definitions</h3>
+
+      <p>
+        This appendix defines the terminology used in this document.
+        The definitions in this appendix are <strong>normative</strong> and
+        override external, vendor-specific, or colloquial usage.
+      </p>
+
+      <dl>
+
+        <dt id="term-data-architecture">
+          <dfn>Data Architecture</dfn>
+        </dt>
+        <dd>
+          The coherent set of principles, models, and structures governing how
+          data is represented, transformed, accessed, and used.
+          <br />
+          <small>In this document, data architecture explicitly prioritizes data semantics, lifecycle, and purpose-fit
+            over platform or vendor choices</small><br />
+          See:
+          <a href="#overview">Overview</a>,
+          <a href="#concepts-mental-model">Concepts &amp; Mental Model</a>,
+          <a href="#integrating-it-all">Integrating it all</a>
+        </dd>
+
+        <dt id="term-data-product">
+          <dfn>Data Product</dfn>
+        </dt>
+        <dd>
+          A purpose-driven, governed representation of data that declares meaning,
+          access, quality expectations, and lifecycle status.
+          <br /><small>A data product is not defined by its storage technology or application, but by its business
+            meaning, access model, and reusability.</small><br />
+          See:
+          <a href="#data-provisioning-data-products">Data Provisioning &amp; Data Products</a>,
+          <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>
+        </dd>
+
+        <dt id="term-semantics">
+          <dfn>Semantics</dfn>
+        </dt>
+        <dd>
+          Formalized, machine-interpretable meaning assigned to data entities
+          and relationships.
+          <br /><small>Semantics are machine-interpretable meaning (e.g. ontologies, mappings, controlled
+            vocabularies), not descriptive documentation text.</small><br />
+          See:
+          <a href="#data-modelling">Data Modelling</a>,
+          <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>
+        </dd>
+
+        <dt id="term-metadata"><dfn>Metadata</dfn></dt>
+        <dd>
+          Data describing data, including technical, business, semantic, and governance-related information necessary
+          for discovery, access, and correct usage.
+          <br /><small>Metadata is treated as first-class architectural data, not auxiliary
+            documentation.</small><br />
+
+          See:
+          <a href="#data-governance">Data Governance</a>,
+          <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>,
+          <a href="#integrating-it-all">Integrating it all</a>
+        </dd>
+
+        <dt id="term-lifecycle">
+          <dfn>Lifecycle</dfn>
+        </dt>
+        <dd>
+          The managed progression of data and data products from creation to
+          deprecation and deletion.
+          <br /><small>Lifecycle applies to data products, not just tables or files.</small><br />
+          See:
+          <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>
+        </dd>
+
+        <dt id="term-data-quality"><dfn>Data Quality</dfn></dt>
+        <dd>
+          The degree to which data is fit for a declared purpose, relative to its lifecycle stage and usage context.
+          <br /><small>Data quality is contextual and process-based, not an absolute or static property.</small><br />
+          See:
+          <a href="#lifecycle-quality">Lifecycle & Quality</a>,
+          <a href="#data-governance">Data Governance</a>,
+          <a href="#types-of-use-cases">Types of use cases</a>
+        </dd>
+
+        <dt id="term-data-governance"><dfn>Data Governance</dfn></dt>
+        <dd>
+          The set of organizational structures, processes, and rules ensuring that data is handled compliantly,
+          efficiently, and in alignment with business objectives.
+          <br /><small>This document distinguishes external (compliance-driven) and internal (efficiency-driven) data
+            governance.</small><br />
+          See:
+          <a href="#data-governance">Data Governance</a>,
+          <a href="#data-organization">Data organization</a>
+        </dd>
+
+        <dt id="term-data-ownership"><dfn>Data Ownership</dfn></dt>
+        <dd>
+          The explicit responsibility for deciding on data usage, access, quality handling, and deprecation within an
+          organizational context.
+          <br /><small>Ownership is an active role, not inferred from data creation or legal possession.</small><br />
+          See:
+          <a href="#data-access-models">Data access models</a>,
+          <a href="#data-governance">Data Governance</a>
+        </dd>
+
+
+        <dt id="term-mcp-server">
+          <dfn>MCP Server (Model Context Protocol Server)</dfn>
+        </dt>
+        <dd>
+          A standardized interface enabling AI systems to discover and access
+          data and tools with explicit context.
+          <br /><small>MCP is treated as an architectural access pattern, not a fixed technology.</small><br />
+          See:
+          <a href="#data-access-and-access-restrictions">Data Access and Access Restrictions</a>,
+          <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>
+        </dd>
+
+        <dt id="term-ai-readiness">AI-readiness</dt>
+        <dd>
+          The degree to which data, metadata, access models, and lifecycle
+          information are suitable for safe, correct, and automated consumption
+          by AI systems.
+          <br />
+          See:
+          <a href="#concepts-mental-model">Concepts &amp; Mental Model</a>,
+          <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>,
+          <a href="#semantifying-meta-mcp-server">Semantifying Meta MCP Server</a>
+        </dd>
+
+        <dt id="term-immutability">Immutability (of data)</dt>
+        <dd>
+          The principle that original data, once created, must not be changed;
+          only derived representations may evolve.
+          <br />
+          See:
+          <a href="#data-provisioning-data-products">Data provisioning &amp; Data Products</a>,
+          <a href="#data-modelling">Data modelling</a>,
+          <a href="#lifecycle-quality">Lifecycle &amp; Quality</a>
+        </dd>
+
+        <dt id="term-fair">FAIR (+)</dt>
+        <dd>
+          A principle stating that data should be Findable, Accessible,
+          Interoperable, and Reusable, with additional emphasis on safety,
+          security, and trustworthiness.
+          <br />
+          See:
+          <a href="#data-access-and-access-restrictions">Data access and access restrictions</a>,
+          <a href="#data-governance">Data Governance</a>
+        </dd>
+
+      </dl>
+    </section>
+
+
+
+    <!--
         <section id="appendix-d">
           <h3>Appendix D - Non-Normative Examples and Illustrations</h3>
 
@@ -2606,38 +2994,38 @@ It is a **semantic integration layer** — the missing link between raw enterpri
 
 
 
-      <section id="appendix-d">
-        <h3>Appendix D - Change History</h3>
+    <section id="appendix-d">
+      <h3>Appendix D - Change History</h3>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Change</th>
-              <th>Rationale</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>2026-03-23</td>
-              <td>Initial public version</td>
-              <td>First consolidated perspective on data architecture</td>
-            </tr>
-            <tr>
-              <td>2026-03-25</td>
-              <td>Refining Appendices</td>
-              <td>Formatting, linking and structuring appendices</td>
-            </tr>
-            <tr>
-              <td>2026-03-25</td>
-              <td>More insights in MCP metadata</td>
-              <td>Understand fuzziness of MCP metadata description, derive better concept for USAIR library</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Change</th>
+            <th>Rationale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-03-23</td>
+            <td>Initial public version</td>
+            <td>First consolidated perspective on data architecture</td>
+          </tr>
+          <tr>
+            <td>2026-03-25</td>
+            <td>Refining Appendices</td>
+            <td>Formatting, linking and structuring appendices</td>
+          </tr>
+          <tr>
+            <td>2026-03-31</td>
+            <td>More insights in MCP metadata</td>
+            <td>Found clarity in OAuth concepts and MCP schema definition</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-    </article>
+  </article>
   </article>
 </body>
 
