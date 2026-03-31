@@ -493,9 +493,81 @@
       </hgroup>
       <section id="blueprint-of-data-organization">
         <h3>Blueprint of data organization</h3>
-        <p>An effective data organization needs following or similar positions regardless of numbers and disciplinary
-          arrangement; integration into existing business organization strongly depends on its inherent structure:</p>
+        <p><em>Data</em> is something between business and IT; it needs management and rules coming from internal
+          alignment
+          and from external regulations. Ownership is with the business side, while possession and control are with IT.
+          For explanation take the analogy to real estate management bridging from house owners to their tenants:</p>
 
+        <table>
+          <thead>
+            <tr>
+              <th>Real estate</th>
+              <th>Data world</th>
+              <th>Comments</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Real estate management</td>
+              <td>Data Governance organization</td>
+              <td>umbrella organization</td>
+            </tr>
+            <tr>
+              <td>Property management</td>
+              <td>Data Stewardship</td>
+              <td>
+                represents the owner-centric function;
+                represent owners' interests toward the data organization and
+                acts on behalf of the owner;
+                contracts, rules, value, compliance, tenant relations;
+                in return informs owners about their duties in terms of regulations and data quality
+              </td>
+            </tr>
+            <tr>
+              <td>Facility / building management</td>
+              <td>Data Platform / Data Operations / Data Management</td>
+              <td>
+                represents the object-centric function;
+                operates the physical object under governance constraints;
+                maintenance, safety, services for occupants
+              </td>
+            </tr>
+            <tr>
+              <td>Caretaker / janitor</td>
+              <td>Data Custodian</td>
+              <td>
+                works within facility management (data operations), not property management,
+                as local caretakers enforcing governance rules
+              </td>
+            </tr>
+            <tr>
+              <td>Property owner</td>
+              <td>Data Owner (business)</td>
+              <td>owns the data and is accountable for its quality and usage</td>
+            </tr>
+            <tr>
+              <td>Tenants</td>
+              <td>Data consumers / applications</td>
+              <td>use the data for various purposes, subject to governance rules</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>[\[getdbt.com\]](https://www.getdbt.com/blog/data-governance-key-roles),
+          [\[elevano.com\]](https://www.elevano.com/blog/data-quality-roles-and-responsibilities/),
+          [\[datamanagement.wiki\]](https://datamanagement.wiki/data_quality_management_system/roles_and_responsibilities)
+        </p>
+
+        <p>The Data Governance organization is tactically and operationally headed by the <em>Head of Data
+            Governance</em>,
+          who is reporting to the <em>Corporate Data Officer</em>.
+          While the latter should have a strategical direction those roles regularly collapse.</p>
+        <p>The analogy breaks, because the roles of facility management and data operations do not fully match;
+          facility management is a part of real estate management, while data operations is a part of IT organization -
+          a good role name for coordinating Data Custodians is missing; I'll continue with <em>Data Officer</em> here.
+        </p>
+
+        <p>Integration data organization into existing business organization strongly depends on its inherent structure,
+          but take this as a blueprint:</p>
 
         <figure>
           <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 800 400" role="img"
@@ -504,7 +576,7 @@
             <title id="org-title">Data Organization (Blueprint, Federated, Functionally Steered)</title>
             <desc id="org-desc">
               Federated data organization with functional steering across
-              business and product organizations as a blueprint.
+              business and IT organizations as a blueprint.
             </desc>
 
             <defs>
@@ -538,13 +610,13 @@
               </style>
             </defs>
 
-            <!-- Data organization, headed by Corporate Data Officer (CDO) -->
+            <!-- Data Governance organization, effectively headed by Corporate Data Officer (CDO) -->
             <ellipse class="node" cx="200" cy="50" rx="20" ry="20" />
             <text class="label" x="200" y="50">Corporate Data Officer</text>
 
-            <!-- Business liaison (staff to CDO)-->
+            <!-- Data Officer (staff to CDO)-->
             <ellipse class="node" cx="250" cy="100" rx="20" ry="20" />
-            <text class="label" x="250" y="100">Business liaison</text>
+            <text class="label" x="250" y="100">Data Officer</text>
 
             <path class="solid" d="M 200 70 V 90 H 235" />
 
@@ -592,14 +664,14 @@
 
             <path class="solid" d="M 300 220 V 340 H 385" />
 
-            <!-- Functional steering: Business liaison -> Data Officer in Product organizations -->
+            <!-- Functional steering: Data Officer -> Data Custodian in IT organizations -->
             <ellipse class="node" cx="600" cy="100" rx="20" ry="20" />
-            <text class="label" x="600" y="100">Product organization</text>
+            <text class="label" x="600" y="100">IT organization</text>
 
             <ellipse class="node" cx="550" cy="150" rx="20" ry="20" />
-            <text class="label" x="550" y="150">Data Officer</text>
+            <text class="label" x="550" y="150">Data Custodian</text>
 
-            <path class="solid" d="M 600 110 V 140 H 565" />
+            <path class="solid" d="M 600 120 V 140 H 565" />
             <line class="dotted" x1="265" y1="110" x2="535" y2="140" />
 
             <!-- Functional steering: Data Stewardship -> Data Owner in Business organizations -->
@@ -615,16 +687,16 @@
           </svg>
           <figcaption>
             Federated data organization with line hierarchy inside the data organization
-            and functional steering of data roles in business and product organizations as a blueprint.
+            and functional steering of data roles in business and IT organizations as a blueprint.
           </figcaption>
         </figure>
 
 
         <ul>
-          <li><em>Corporate Data Officer</em>: Head of data organization, represents "data" in C-level meetings.</li>
-          <li><em>Business liaison</em>: Assistant of Corporate Data Officer, acts as representative in business
-            meetings throughout the organization and keeps contact with product (IT solutions) organizations' data
-            officers.</li>
+          <li>Head of Data Governance and <em>Corporate Data Officer</em>:
+            Head of data organization, represents "data" in C-level meetings.</li>
+          <li><em>Data Officer</em>: Assistant of Corporate Data Officer, acts as representative in business
+            meetings throughout the organization and keeps contact with IT organizations' data custodians.</li>
           <li><em>External Data Governance</em>: cares for compliance.</li>
           <li><em>Lawyers</em> are essential to understand jargon of laws and contracts and to translate them to user
             stories for implementation in internal rulesets, processes and technology.</li>
@@ -634,38 +706,34 @@
           <li><em>Laws and contracts chatbot</em>: Keeping all related laws, external rules and expectations and all
             related contracts at hand is a task perfectly suited for an LLM being used as a tool for External Data
             Governance and for direct use by data teams throughout the organization. Adding rules defined by internal
-            data
-            governance completes the picture.</li>
+            data governance completes the picture.</li>
           <li><em>Internal Data Governance</em>: cares for efficiency and effectiveness.</li>
           <li><em>Metadata and Semantics team</em>: Balances effort and value of information about existing
             internal and external data sources and data products including information on integrating them; responsible
             for AI-friendly metadata and for human-friendly UI for data retrieval and request.</li>
           <li><em>Data Stewardship</em>: Manages the community of data owners located in business organizations, owns
-            the
-            process to report and fix data quality issues, acts on behalf of data owners in case of unavailability.</li>
+            the process to report and fix data quality issues, acts on behalf of data owners in case of unavailability.
+          </li>
           <li><em>Technical Metadata crawler</em>: All existing metadata must be reused to avoid duplicate work. This
-            task
-            is mainly technical and needs access to all relevant data sources throughout the company and can best be
-            performed by a classical crawler reading diverse data sources (databases, APIs, application-specific MCP
+            task is mainly technical and needs access to all relevant data sources throughout the company and can best
+            be performed by a classical crawler reading diverse data sources (databases, APIs, application-specific MCP
             servers, application-specific metadata and semantics) and providing it as an internal silver layer metadata
             repository e.g. following DCAT.</li>
-          <li>The <em>Data Officer,</em> as a role in every IT solution or product
+          <li>The <em>Data Custodian,</em> as a role in every IT solution or product
             organization, has a (partial) role to ensure compliance with internal and external data governance rules as
-            part of daily work. CDO's business liaison keeps the data officer updated and supports answering questions
-            by
-            forwarding them into data organization. Data Officers act as representatives of the corporate data office
-            inside product teams, having the mandate to enforce compliance.</li>
+            part of daily work. Data Officer keeps the data custodian updated and supports answering questions
+            by forwarding them into data organization. Data Custodians act as representatives of the corporate data
+            office inside IT teams, having the mandate to enforce compliance.</li>
           <li>The <em>Data Owner,</em> as a role in business organizations, has a (partial)
             role to ensure the business organization's data is represented in data architecture in a way enabling usage
             for humans and AI, and it ensures data quality issues being solved. The data owner as part of business
             organization clearly sets ownership of data and distinguishes own ownership from neighboring organizations'
             ownership in a way that no data is without owner and no data has unclear ownership. Data owners decide on
-            data
-            access models; Data Stewardship helps and coordinates the data owners and acts on their behalf if needed.
+            data access models; Data Stewardship helps and coordinates the data owners and acts on their behalf if
+            needed.
           </li>
         </ul>
       </section>
-
 
       <section id="integrate-dominant-systems">
         <h3>Integrate dominant systems</h3>
