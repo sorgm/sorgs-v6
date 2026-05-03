@@ -5,14 +5,13 @@
 -->
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="author" content="Manfred Sorg" />
-  <meta name="description" content="A conceptual, AI-ready perspective on data architecture." />
-  <title>My perspective on Data Architecture</title>
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="d7ufTXK2lwvT5S9JJmFloyXXNGC2GJOL6e9-Pq4DqI0">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://sorgs.de/coding/data-architecture.html">
+  <meta name="author" content="Manfred Sorg" />
+  <meta name="description" content="A conceptual, AI-ready perspective on data architecture." />
+  <title>My perspective on Data Architecture</title>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -46,7 +45,8 @@
   <article>
     <hgroup>
       <h1>Data Architecture</h1>
-      <p>A conceptual, AI-ready perspective based on my experience and expectations. - Manfred Sorg, March 2026.</p>
+      <p>A conceptual, AI-ready perspective based on my experience and expectations. - Manfred Sorg and Copilots, March
+        2026.</p>
 
       <nav id="toc"></nav>
     </hgroup>
@@ -56,90 +56,85 @@
       </hgroup>
       <section id="what-is-data-architecture">
         <h3>What is Data Architecture?</h3>
-        <p>Data Architecture refers to the comprehensive structure and design of an organization&#x27;s data assets and
+        <p>Data Architecture refers to the comprehensive structure and design of an organization's data assets and
           data management resources. It encompasses the models, policies, rules, and standards that govern how data is
           collected, stored, arranged, integrated, and utilized across the enterprise. The goal of data architecture is
-          to
-          ensure that data is organized in a way that supports business objectives, enables efficient access, and
-          maintains data quality and security <a href="#ref-dama-dmbok"><code>[DAMA-DMBOK]</code></a>.</p>
+          to ensure that data is organized in a way that supports business objectives, enables efficient access, and
+          maintains data quality and security.
+          <a href="#ref-dama-dmbok"><code>[DAMA-DMBOK]</code></a>
+        </p>
         <p>At its core, data architecture provides a blueprint for how data flows within an organization, connecting
           different systems, processes, and stakeholders. It defines relationships between data entities, specifies how
           data is transformed and moved, and sets guidelines for data governance and compliance. This structured
-          approach
-          helps teams make informed decisions, streamline operations, and unlock insights from data <a
-            href="#ref-ibm-data-architecture"><code>[IBM Cloud Education]</code></a>.</p>
+          approach helps teams make informed decisions, streamline operations, and unlock insights from data.
+          <a href="#ref-ibm-data-architecture"><code>[IBM Cloud Education]</code></a>
+        </p>
         <p>Effective data architecture is critical for scalability, adaptability, and innovation. It allows
-          organizations
-          to respond quickly to changing requirements, integrate new technologies, and support analytics and reporting
-          needs. By establishing clear frameworks for data management, data architecture lays the foundation for robust,
-          reliable, and actionable information throughout the business <a
-            href="#ref-gartner-data-architecture"><code>[Gartner Glossary: Data Architecture]</code></a>.</p>
-        <p>In my honest opinion, Data Architecture should <em>avoid focusing on technology</em>
-          too much. Focus should remain data, being the digital representation of information - the technology used to
-          implement and maintain the information is secondary. <em>Data contains business value</em>, technology is used
-          to persist, secure, transport and make it visible.</p>
+          organizations to respond quickly to changing requirements, integrate new technologies, and support
+          analytics and reporting needs. By establishing clear frameworks for data management, data architecture
+          lays the foundation for robust, reliable, and actionable information throughout the business.
+          <a href="#ref-gartner-data-architecture"><code>[Gartner Glossary: Data Architecture]</code></a>
+        </p>
+        <p>To me, Data Architecture should <em>avoid focusing on technology</em>.
+          Focus should remain data, being the digital representation of information - the technology used to
+          implement and maintain the information is secondary and apt to change.
+          <em>Data contains business value</em>, technology is used to persist, secure, transport and make it visible.
+        </p>
       </section>
       <section id="scope-stance-and-non-goals">
         <h3>Scope, stance, and non-goals</h3>
         <p>This documentation is mainly to clear up my mind on the many facets of Data Architecture. Experience helps to
-          get a deep understanding, but it blurs sight by giving too many variations in solving the same problem.</p>
-        <p>In addition, it is meant as an inspiration for you, the reader. Which questions are to be considered when it
-          comes to Data Architecture - and which possible solutions proofed good or not working. This document is not a
-          tool comparison, vendor architecture, or reference implementation. It describes one approach to tackle
-          <em>Data
-            Architecture as a mental model</em> based on principles and derived from enterprise
-          practice. It explicitly prioritizes data semantics, lifecycle, and AI-readiness over platform choices. A
-          proposal for implementation follows at the end.
-        </p>
-        <p><em>Target groups</em> are as diverse as topics, but target group here mainly are fellow data architects and
-          managers in data offices deciding on their data strategies. An additional target group is AI learning Data
-          Architecture. I therefore assume readers already understand extended data engineering concepts.</p>
+          get a deep understanding, but it blurs sight by giving too many variations in solving the same problem.
+          In addition, it is meant as an inspiration for you, the reader. Ideally, it starts a discussion.</p>
+        <p><em>Target groups</em> are fellow experienced data architects and
+          experts in data offices going deep into AI-readiness of data to decide on their data strategies.
+          An additional target group are the artificial intelligences (AI) themselves extending their knowledge on
+          Data Architecture - walking the talk to accept AI as colleagues.
+          I therefore assume readers already understand extended data engineering concepts and want to dive deep.</p>
         <p>This document reflects the personal professional perspective of the author. While it draws on experience
-          gained
-          in various roles and organizations, it does not represent the strategy, architecture, or implementation of any
+          gained in various roles and organizations, it does not represent the strategy, architecture, or implementation
+          of any
           specific company. Examples and patterns discussed are illustrative and derived from general enterprise
           experience; they do not describe the architecture, systems, or operating model of any specific organization.
+          It is explicitly not a tool comparison, vendor architecture, or reference implementation.
+          It describes one approach to tackle <em>Data Architecture as a mental model</em> based on principles and
+          derived from enterprise practice.
+          It explicitly prioritizes data semantics, lifecycle, and AI-readiness over platform choices.
+          A proposal for implementation follows at the end.
         </p>
-        <p>Made with some help from Microsoft Copilot. For me a modern LLM is like an assistant and not like a tool -
-          and
-          therefore deserves being mentioned.</p>
       </section>
     </article>
     <article id="concepts-mental-model">
       <hgroup>
         <h2>Concepts &amp; Mental Model</h2>
         <p>This chapter translates the definition of Data Architecture as seen above into a solution space where it can
-          guide implementation. Based on general thoughts on information, it develops a <em>generic architecture
-            recommendation</em>. Every individual implementation must deviate, but having a big picture helps drawing
-          the
-          details. I try to include all relevant aspects without losing focus, as always trying to keep the balance
-          between business and technology, preparation effort and benefit gain and clarity and completeness. Even if you
-          disagree with this model, later sections can be beneficial.
-          <a href="#appendix-b"><code>Appendix B - Architectural Decisions and Rationale</code></a>
+          guide implementation. Based on general thoughts on information, it develops a
+          <em>generic architecture recommendation</em>. Every individual implementation must deviate,
+          but having a big picture helps drawing the details. I try to include all relevant aspects without losing
+          focus,
+          as always trying to keep the balance between business and technology, preparation effort and benefit gain and
+          clarity and completeness. Even if you disagree with this model, later sections can be beneficial.
+          See also <a href="#appendix-b"><code>[Appendix B - Architectural Decisions and Rationale]</code></a>
         </p>
       </hgroup>
       <section id="foundational-mental-model">
         <h3>Foundational mental model</h3>
-        <p><em>Information</em> about the world in general and about a specific company or enterprise are distributed
+        <p><em>Information</em> about the world in general and about a specific company or enterprise is distributed
           across multiple representations. Starting with mental models, information is shared in documents as text and
           graphics, and it is digitalized into data models. Reading text and answering questions from it is a solved
-          problem since the advent of Large Language Model Artificial Intelligence (LLM-AI); supporting actions on
-          general
+          problem since the advent of Large Language Models (LLMs); supporting actions on general
           business tasks are solved by standard business applications. Company-specific analyses on standard data
-          extended
-          by specific data and metadata need a data architecture balancing effort and effect - integrated into reporting
+          extended by specific data and metadata need a data architecture balancing effort and effect - integrated into
+          reporting
           and into AI systems. Thus, the need-for-data could be solved for each specific context keeping data
-          confidential
-          but making it available, <em>data modelling</em> is needed here.</p>
+          confidential but making it available; <em>data modelling</em> is needed here.</p>
         <p>Data Architecture in its technological dimension ensures a working <em>data pipeline</em> from data sources
           down to the use cases, that need data. During this process, data needs to be transformed from externally
-          defined
-          source or raw data models to a business language representation of truth. Technology helps with transport and
-          is
-          needed to make data available; models and semantics help to shape data and make it understandable, but the
-          data
-          itself must be seen as immutable, being unchangeably true measurement of reality. Therefore, downstream
-          transformations and transport must be automated and reproducible.</p>
+          defined source or raw data models to a business language representation of truth. Technology helps with
+          transport and
+          is needed to make data available; models and semantics help to shape data and make it understandable, but the
+          data itself should conceptually be seen as immutable, being an unchangeably true measurement of reality.
+          Therefore, downstream transformations and transport should be automated and reproducible.</p>
         <p>Conceptually, this ends up in a layered approach like following as a possible reference architecture
           (technological perspective):</p>
 
@@ -162,7 +157,7 @@
               <td rowspan="6">Relational Databases,<br />NoSQL,<br />external data,<br />metadata,<br />semantics</td>
             </tr>
             <tr>
-              <td rowspan="3">&nbsp;<br />MCP Server<br />&nbsp;</td>
+              <td rowspan="3">&nbsp;<br />AI mediation<br />&nbsp;</td>
             </tr>
             <tr>
               <td>Generic AI</td>
@@ -182,60 +177,58 @@
 
           <figcaption>
             Conceptual data architecture blueprint with layered data provisioning,
-            centralized access via MCP, and consumption by use cases.
+            centralized access via AI mediation layer and medallion architecture, and consumption by use cases.
           </figcaption>
         </figure>
 
         <p>Simple cases might reduce complexity e.g. with just one financial system in place, all data product layers
-          might collapse and the application's MCP server might be used for AI-access directly. The larger the company
-          and
-          the more specific the type of business, the complex the architecture gets.</p>
+          might collapse and the application's AI mediation layer might be used for AI-access directly. The larger the
+          company
+          and the more specific the type of business, the complex the architecture gets.</p>
         <p>Data Architecture does not end with this technological dimension. To make data Findable, Accessible,
           Interoperable, Reusable (FAIR) and safe, secure and trustworthy, <em>people and processes</em> are needed to
-          integrate data into business, to foster data-driven management, and to make data to value.</p>
+          integrate data into business, to foster data-driven management, and to transform data to value.</p>
       </section>
       <section id="types-of-use-cases">
         <h3>Types of use cases</h3>
         <p>To foster data-driven management and decision making, the various types of use cases must be considered,
-          where
-          data can prove its value.</p>
-        <p><em>Data retrieval and reporting</em> - the analytical use case - was the major use case in the past. In
-          every
-          case a human wants to know about business to increase business value, information about the business and its
+          where data can prove its value.</p>
+        <p><em>Data retrieval and reporting</em> - the analytical use case - was the major use case in the past.
+          Whenever
+          a human wants to know about business to increase business value, information about the business and its
           external boundaries are needed. In pre-computing times, humans were asked to gather information via human
           networks. Existence of data should ease this task, but knowledge about existence of data is scarce. The
-          foremost
-          task to be solved for data retrieval therefore is <em>cataloguing</em>. This does not mean to report all known
-          data models in a long uncomprehensible list of applications, but it does mean a semantified source of
-          knowledge
-          about existing and available (known) data sources inside and outside the company including confidential and
+          foremost task to be solved for data retrieval therefore is <em>cataloguing</em>. This does not mean to report
+          all known data models in a long uncomprehensible list of applications, but it does mean a semantified source
+          of
+          knowledge about existing and available (known) data sources inside and outside the company including
+          confidential and
           licensed data. Thus, internal knowledge and licenses can be levered to provide business value in cases
           additional to the original ones (reusability). The technical details of data, including their accessibility
-          and
-          interoperability, are needed in a second step only. Findability is key for this type of use case, which is
+          and interoperability, are needed in a second step only. Findability is key for this type of use case, which is
           typically performed by humans with the use of search technology.</p>
-        <p>Generic AI can automate this research and include data access for ad hoc reporting. A question like "show me
+        <p><em>Generic AI</em> can automate this research and include data access for ad hoc reporting. A question like
+          "show me
           the regional distribution of sales of a certain product group in comparison to our competitors including the
           competitors' locations" was a typical task for a market intelligence group, but it can be solved by an LLM
           provided with suitable data. In this case the data is internal (sales and customer location) combined with
           external data (sales reports and competitor locations) and semantics (meaning of "this certain product group"
-          in
-          internal and external terms). The effort is moved from demand-oriented market intelligence group effort to
-          preparation effort performed by data teams upfront. This is the typical <em>trade-off curve
-            between data preparation effort and retrieval effort</em>, with an optimal sweet spot. Thus, ad hoc analysis
-          is restricted to a limited amount of data sources by conscious decision.</p>
+          in internal and external terms). The effort is moved from demand-oriented market intelligence group effort to
+          preparation effort performed by data teams upfront. This is the typical
+          <em>trade-off curve between data preparation effort and retrieval effort</em>, with an optimal sweet spot.
+          Thus, ad hoc analysis is restricted to a limited amount of data sources by conscious decision.
+        </p>
         <p><em>Data usage via applications</em> is still relevant. When it comes to repeated tasks in general business
           topics, chances are high that the needed analysis is already prepared by your software vendor. Questions like
           "how much of a certain product do we have in which warehouses" do not need individual reporting or generic AI
-          -
-          they are part of business applications' standard offerings. Providing information about those standard
-          offerings
-          to Generic AI could help to route individuals asking such questions to the right standardized application.</p>
-        <p>In addition to the above-mentioned use cases, raising <em>data quality</em> issues is an important use case
+          - they are part of business applications' standard offerings. Providing information about those standard
+          offerings to Generic AI could help to route individuals asking such questions to the right standardized
+          application.</p>
+        <p>In addition to the above-mentioned use cases, raising <em>Data Quality</em> issues is an important use case
           itself. It does not fit the stream metaphor used in above picture. Processes like hotlines, chatbots and more
           are needed to allow easy reporting of data quality issues. This is a problem not solved in most growing
           companies; the data user does not know, whom to report to, and the applications' users did no learn yet to
-          listen to data users' concerns - nor they are tasked to do so. <em>Data ownership</em> while not being a main
+          listen to data users' concerns - nor they are tasked to do so. <em>Data Ownership</em> while not being a main
           target of data architecture is a means to cope with this problem. Every set of data needs a channel to report
           data issues back to the original sources - the simplest solution is to mention a data owner for each data set,
           being a person who accepted their responsibility and who knows the processes needed to maintain the data.
@@ -246,36 +239,36 @@
         <h3>Data access and access restrictions</h3>
         <p>In times of data access via application, data access was mainly restricted to users of an application.
           Providing a license follows a business need, implicitly allowing access to related data. As soon as you access
-          the data for analysis, the question arises, who may access which type of data for which purpose. These
-          questions
-          rose to recognition when personal data got increased attendance; still other company data lives in the grey
-          area
-          of being confidential but relevant for multiple purposes. To solve this problem, defining data products is a
-          first step. A <em>data product</em> must follow a consistent methodology of giving access; defining this logic
-          explicitly and providing access per role immediately greatly reduces effort in giving access to data and
-          increases security. The latter seems counterintuitive, but if you as data owner get a data request, it is
-          nearly
-          impossible to grant or revoke it consistently unless you have an explicit logic - and if it exists, it can be
-          automated.</p>
+          the data for analysis, the question arises, who may access which type of data for which purpose - and whether
+          this
+          person needs a license for UI usage. These questions rose to recognition when personal data got increased
+          attendance;
+          still other company data lives in the grey area of being confidential but relevant for multiple purposes.
+          To solve this problem, defining data products is a first step. A <em>Data Product</em> must follow a
+          consistent
+          methodology of giving access; defining this logic explicitly and providing access per business role greatly
+          reduces effort in giving access to data immediately and increases security. The latter seems counterintuitive,
+          but if you as data owner get a data request, it is nearly impossible to grant or revoke it consistently
+          unless you have an explicit logic - and if it exists, it can be automated.</p>
         <p>Generic AI increases the <em>urgency</em> of this problem. The existing AI tools can query data on your
-          behalf,
-          but they will not request access and wait some days until a human answered the request; in this case the AI
-          tool
-          would refer to outdated textual information instead of querying the data needed. Having access to the data
-          needed to answer your questions is essential for data-driven answers given by humans or by AI; not having
-          access
-          leads to random answers depending on the analysts' preferences.</p>
+          behalf, but they will not request access by phone or app and then wait some days until a human answered the
+          request;
+          in these cases the AI tool would refer to outdated textual information instead of querying the data needed.
+          Having access to the data needed to answer your questions is essential for data-driven answers given by
+          humans or by AI; not having access leads to random answers depending on the analysts' preferences.</p>
         <p>Model Context Protocol (<em>MCP</em>) is the evolving standard to provide context to an AI model and to
-          enable
-          AI agents to perform actions. In the context of data architecture, MCP Servers serve as a standardized way, by
-          which AI models and especially LLMs can access data - including the question whether and which data to access.
+          enable AI agents to perform actions. In the context of data architecture, MCP Servers serve as a standardized
+          way
+          to provide AI mediation, enabling AI models and especially LLMs to access data -
+          including the question whether and which data to access.
           Providing data products well-semantified via MCP Servers is key here - providing existential value to
           applications beyond usage for humans via UI. While MCP is technology, it is a key technology like API or
-          database server in every future Data Architecture. But being a technology, we must be prepared to replace it
-          with its succeeding technology any day in the future without compromising data architecture then.</p>
+          SQL Server for every future Data Architecture. But being a technology, we must be prepared to replace it
+          with its succeeding technology any day in the future without compromising the whole data architecture then.
+        </p>
       </section>
       <section id="data-provisioning-data-products">
-        <h3>Data provisioning &amp; Data Products</h3>
+        <h3>Data provisioning and Data Products</h3>
         <p>Seeing <em>data as a product</em> enables thinking about coherent definitions and valuations of data,
           independent of technology and applications. Data itself provides the value, while its representation as data
           model, reporting, user interface or AI integration just exists to make it available to maintainers and
@@ -493,15 +486,88 @@
         <p>See more details on Deep dive: Lifecycle &amp; Quality later in this document.</p>
       </section>
     </article>
+
     <article id="practical-usage-detailing-the-picture">
       <hgroup>
         <h2>Practical usage, detailing the picture</h2>
       </hgroup>
       <section id="blueprint-of-data-organization">
         <h3>Blueprint of data organization</h3>
-        <p>An effective data organization needs following or similar positions regardless of numbers and disciplinary
-          arrangement; integration into existing business organization strongly depends on its inherent structure:</p>
+        <p><em>Data</em> is something between business and IT; it needs management and rules coming from internal
+          alignment
+          and from external regulations. Ownership is with the business side, while possession and control are with IT.
+          For explanation take the analogy to real estate management bridging from house owners to their tenants:</p>
 
+        <table>
+          <thead>
+            <tr>
+              <th>Real estate</th>
+              <th>Data world</th>
+              <th>Comments</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Real estate management</td>
+              <td>Data Governance organization</td>
+              <td>umbrella organization</td>
+            </tr>
+            <tr>
+              <td>Property management</td>
+              <td>Data Stewardship</td>
+              <td>
+                represents the owner-centric function;
+                represent owners' interests toward the data organization and
+                acts on behalf of the owner;
+                contracts, rules, value, compliance, tenant relations;
+                in return informs owners about their duties in terms of regulations and data quality
+              </td>
+            </tr>
+            <tr>
+              <td>Facility / building management</td>
+              <td>Data Platform / Data Operations / Data Management</td>
+              <td>
+                represents the object-centric function;
+                operates the physical object under governance constraints;
+                maintenance, safety, services for occupants
+              </td>
+            </tr>
+            <tr>
+              <td>Caretaker / janitor</td>
+              <td>Data Custodian</td>
+              <td>
+                works within facility management (data operations), not property management,
+                as local caretakers enforcing governance rules
+              </td>
+            </tr>
+            <tr>
+              <td>Property owner</td>
+              <td>Data Owner (business)</td>
+              <td>owns the data and is accountable for its quality and usage</td>
+            </tr>
+            <tr>
+              <td>Tenants</td>
+              <td>Data consumers / applications</td>
+              <td>use the data for various purposes, subject to governance rules</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>[\[getdbt.com\]](https://www.getdbt.com/blog/data-governance-key-roles),
+          [\[elevano.com\]](https://www.elevano.com/blog/data-quality-roles-and-responsibilities/),
+          [\[datamanagement.wiki\]](https://datamanagement.wiki/data_quality_management_system/roles_and_responsibilities)
+        </p>
+
+        <p>The Data Governance organization is tactically and operationally headed by the <em>Head of Data
+            Governance</em>,
+          who is reporting to the <em>Corporate Data Officer</em>.
+          While the latter should have a strategical direction those roles regularly collapse.</p>
+        <p>The analogy breaks, because the roles of facility management and data operations do not fully match;
+          facility management is a part of real estate management, while data operations is a part of IT organization -
+          a good role name for coordinating Data Custodians is missing; I'll continue with <em>Data Officer</em> here.
+        </p>
+
+        <p>Integration data organization into existing business organization strongly depends on its inherent structure,
+          but take this as a blueprint:</p>
 
         <figure>
           <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 800 400" role="img"
@@ -510,7 +576,7 @@
             <title id="org-title">Data Organization (Blueprint, Federated, Functionally Steered)</title>
             <desc id="org-desc">
               Federated data organization with functional steering across
-              business and product organizations as a blueprint.
+              business and IT organizations as a blueprint.
             </desc>
 
             <defs>
@@ -544,13 +610,13 @@
               </style>
             </defs>
 
-            <!-- Data organization, headed by Corporate Data Officer (CDO) -->
+            <!-- Data Governance organization, effectively headed by Corporate Data Officer (CDO) -->
             <ellipse class="node" cx="200" cy="50" rx="20" ry="20" />
             <text class="label" x="200" y="50">Corporate Data Officer</text>
 
-            <!-- Business liaison (staff to CDO)-->
+            <!-- Data Officer (staff to CDO)-->
             <ellipse class="node" cx="250" cy="100" rx="20" ry="20" />
-            <text class="label" x="250" y="100">Business liaison</text>
+            <text class="label" x="250" y="100">Data Officer</text>
 
             <path class="solid" d="M 200 70 V 90 H 235" />
 
@@ -598,14 +664,14 @@
 
             <path class="solid" d="M 300 220 V 340 H 385" />
 
-            <!-- Functional steering: Business liaison -> Data Officer in Product organizations -->
+            <!-- Functional steering: Data Officer -> Data Custodian in IT organizations -->
             <ellipse class="node" cx="600" cy="100" rx="20" ry="20" />
-            <text class="label" x="600" y="100">Product organization</text>
+            <text class="label" x="600" y="100">IT organization</text>
 
             <ellipse class="node" cx="550" cy="150" rx="20" ry="20" />
-            <text class="label" x="550" y="150">Data Officer</text>
+            <text class="label" x="550" y="150">Data Custodian</text>
 
-            <path class="solid" d="M 600 110 V 140 H 565" />
+            <path class="solid" d="M 600 120 V 140 H 565" />
             <line class="dotted" x1="265" y1="110" x2="535" y2="140" />
 
             <!-- Functional steering: Data Stewardship -> Data Owner in Business organizations -->
@@ -621,16 +687,16 @@
           </svg>
           <figcaption>
             Federated data organization with line hierarchy inside the data organization
-            and functional steering of data roles in business and product organizations as a blueprint.
+            and functional steering of data roles in business and IT organizations as a blueprint.
           </figcaption>
         </figure>
 
 
         <ul>
-          <li><em>Corporate Data Officer</em>: Head of data organization, represents "data" in C-level meetings.</li>
-          <li><em>Business liaison</em>: Assistant of Corporate Data Officer, acts as representative in business
-            meetings throughout the organization and keeps contact with product (IT solutions) organizations' data
-            officers.</li>
+          <li>Head of Data Governance and <em>Corporate Data Officer</em>:
+            Head of data organization, represents "data" in C-level meetings.</li>
+          <li><em>Data Officer</em>: Assistant of Corporate Data Officer, acts as representative in business
+            meetings throughout the organization and keeps contact with IT organizations' data custodians.</li>
           <li><em>External Data Governance</em>: cares for compliance.</li>
           <li><em>Lawyers</em> are essential to understand jargon of laws and contracts and to translate them to user
             stories for implementation in internal rulesets, processes and technology.</li>
@@ -640,38 +706,34 @@
           <li><em>Laws and contracts chatbot</em>: Keeping all related laws, external rules and expectations and all
             related contracts at hand is a task perfectly suited for an LLM being used as a tool for External Data
             Governance and for direct use by data teams throughout the organization. Adding rules defined by internal
-            data
-            governance completes the picture.</li>
+            data governance completes the picture.</li>
           <li><em>Internal Data Governance</em>: cares for efficiency and effectiveness.</li>
           <li><em>Metadata and Semantics team</em>: Balances effort and value of information about existing
             internal and external data sources and data products including information on integrating them; responsible
-            for AI-friendly MCP metadata and for human-friendly UI for data retrieval and request.</li>
+            for AI-friendly metadata and for human-friendly UI for data retrieval and request.</li>
           <li><em>Data Stewardship</em>: Manages the community of data owners located in business organizations, owns
-            the
-            process to report and fix data quality issues, acts on behalf of data owners in case of unavailability.</li>
+            the process to report and fix data quality issues, acts on behalf of data owners in case of unavailability.
+          </li>
           <li><em>Technical Metadata crawler</em>: All existing metadata must be reused to avoid duplicate work. This
-            task
-            is mainly technical and needs access to all relevant data sources throughout the company and can best be
-            performed by a classical crawler reading diverse data sources (databases, APIs, application-specific MCP
+            task is mainly technical and needs access to all relevant data sources throughout the company and can best
+            be performed by a classical crawler reading diverse data sources (databases, APIs, application-specific MCP
             servers, application-specific metadata and semantics) and providing it as an internal silver layer metadata
             repository e.g. following DCAT.</li>
-          <li>The <em>Data Officer,</em> as a role in every IT solution or product
+          <li>The <em>Data Custodian,</em> as a role in every IT solution or product
             organization, has a (partial) role to ensure compliance with internal and external data governance rules as
-            part of daily work. CDO's business liaison keeps the data officer updated and supports answering questions
-            by
-            forwarding them into data organization. Data Officers act as representatives of the corporate data office
-            inside product teams, having the mandate to enforce compliance.</li>
+            part of daily work. Data Officer keeps the data custodian updated and supports answering questions
+            by forwarding them into data organization. Data Custodians act as representatives of the corporate data
+            office inside IT teams, having the mandate to enforce compliance.</li>
           <li>The <em>Data Owner,</em> as a role in business organizations, has a (partial)
             role to ensure the business organization's data is represented in data architecture in a way enabling usage
             for humans and AI, and it ensures data quality issues being solved. The data owner as part of business
             organization clearly sets ownership of data and distinguishes own ownership from neighboring organizations'
             ownership in a way that no data is without owner and no data has unclear ownership. Data owners decide on
-            data
-            access models; Data Stewardship helps and coordinates the data owners and acts on their behalf if needed.
+            data access models; Data Stewardship helps and coordinates the data owners and acts on their behalf if
+            needed.
           </li>
         </ul>
       </section>
-
 
       <section id="integrate-dominant-systems">
         <h3>Integrate dominant systems</h3>
@@ -1513,20 +1575,18 @@
       <section id="semantifying-meta-mcp-server">
         <h3>Semantifying Meta MCP Server</h3>
         <p>Above mentioned <em>technical metadata crawler</em> is essential to reuse metadata already existing in the
-          organization, but it does not support interoperability across sources and reuse by semantification in general.
-          As this is essential to ensure correct usage of data in AI models, the result of this integration effort is targeted
+          organization, but it does not support interoperability across sources or reuse by semantification in general.
+          As this is essential to ensure correct usage of data in AI models, the result of this integration effort is
+          targeted
           firstly to those models and therefore must follow the MCP methodology. An MCP Server is needed to
-          <em>integrate
-            and semantify</em> all major corporate data sources into one silver layer semantified data model including
-          data access to those resources. Reducing it to a single <em>MCP Server</em> would allow a higher degree of
-          integration and performance optimization in comparison to adding multiple MCP Server to each MCP Host of used
-          AI
-          models, but increases complexity beyond measure - domain-specific MCP Servers seem to be a compromise. These
-          MCP Servers are responsibility of <em>Metadata and Semantics team</em> and should be extended by a
-          UI
-          for human testing and human data retrieval. Whether technical metadata crawler is just a component or a
-          separate
-          product is not relevant for the result - for explanatory reasons, I follow an integrative description here.
+          <em>integrate and semantify</em> all major corporate data sources into silver layer semantified data models
+          including
+          data access to those resources. Reducing it to few <em>MCP Servers</em> would allow a higher degree of
+          integration and performance optimization in comparison to adding many MCP Servers to each MCP Host of used
+          AI models. This MCP Server landscape is responsibility of <em>Metadata and Semantics team</em> and should be
+          extended by a UI for human testing and human data retrieval. Whether technical metadata crawler is just a
+          component or a separate product is not relevant for the result -
+          for explanatory reasons, I follow an integrative description here.
         </p>
         <p>"Meta" in this approach means to integrate multiple sources of metadata into one aligned model. Types of
           metadata describing most existing sources are (exemplary, never complete):</p>
@@ -2183,47 +2243,45 @@ It is a **semantic integration layer** — the missing link between raw enterpri
 
 
 -->
-      </section>
-    </article>
 
-      <h5>Model Context Protocol (MCP) Requirements</h5>
-      <p>As MCP is current state of the art in metadata management, it is used as a reference for requirements. Its
-        resource definition includes:</p>
-      <ul>
-        <li><strong>uri:</strong> Unique identifier for the resource</li>
-        <li><strong>name:</strong> The name of the resource.</li>
-        <li><strong>title:</strong> Optional human-readable name of the resource for display purposes.</li>
-        <li><strong>description:</strong> Optional description</li>
-        <li><strong>icons:</strong> Optional array of icons for display in user interfaces</li>
-        <li><strong>mimeType:</strong> Optional MIME type</li>
-        <li><strong>size:</strong> Optional size in bytes</li>
-      </ul>
-      <p>For more see "Schema Reference" in <a href="#ref-mcp-specification"><code>[MCP Specification]</code></a>.</p>
+        <h5>Model Context Protocol (MCP) Requirements</h5>
+        <p>As MCP is current state of the art in metadata management, it is used as a reference for requirements. Its
+          resource definition includes:</p>
+        <ul>
+          <li><strong>uri:</strong> Unique identifier for the resource</li>
+          <li><strong>name:</strong> The name of the resource.</li>
+          <li><strong>title:</strong> Optional human-readable name of the resource for display purposes.</li>
+          <li><strong>description:</strong> Optional description</li>
+          <li><strong>icons:</strong> Optional array of icons for display in user interfaces</li>
+          <li><strong>mimeType:</strong> Optional MIME type</li>
+          <li><strong>size:</strong> Optional size in bytes</li>
+        </ul>
+        <p>For more see "Schema Reference" in <a href="#ref-mcp-specification"><code>[MCP Specification]</code></a>.</p>
 
-      <p>The "description" is key here. It provides the necessary context for clients to understand the resource's
-        purpose and usage as prose but dense and structured.
-        It is impossible to interpret this description if integrating MCP Servers into a larger model. You can only
-        prefix, postfix, replace or do some RegEx magic to adapt
-        existing texts to your needs, but you cannot semantically integrate them into a larger model. This is a
-        problem, as the MCP Host assumes that multiple MCP Servers can be seamlessly integrated, but it does not
-        provide any means to do so.
-      </p>
-      <p>In addition, MCP is not made for querying but only for calling methods. To enable querying instead of
-        brute-force fetches, parameterized resources are needed, that allow
-        to filter. The filter properties themselves are defined technically sound by reusing JSON Schema as "schema"
-        attribute. This allows to inject technical metadata for filter properties; as MCP matches by
-        naming condition, the fuzzily defined response value of e.g. cost center gets a technical definition as a
-        parameter for the cost centers resource. It is worth testing whether it is
-        suitable to generally add optional query parameters to every resource, thereby allowing to filter and defining
-        technical metadata. Copying all fields as filter properties is not recommended, but following a pattern for
-        standard implementation could balance effort.
-      </p>
-      <p>Conclusion: Expose resources with optional query parameters; identical naming steers MCP Host behavior; typed
-        parameters allow efficient querying.</p>
+        <p>The "description" is key here. It provides the necessary context for clients to understand the resource's
+          purpose and usage as prose but dense and structured.
+          It is impossible to interpret this description if integrating MCP Servers into a larger model. You can only
+          prefix, postfix, replace or do some RegEx magic to adapt
+          existing texts to your needs, but you cannot semantically integrate them into a larger model. This is a
+          problem, as the MCP Host assumes that multiple MCP Servers can be seamlessly integrated, but it does not
+          provide any means to do so.
+        </p>
+        <p>In addition, MCP is not made for querying but only for calling methods. To enable querying instead of
+          brute-force fetches, parameterized resources are needed, that allow
+          to filter. The filter properties themselves are defined technically sound by reusing JSON Schema as "schema"
+          attribute. This allows to inject technical metadata for filter properties; as MCP matches by
+          naming condition, the fuzzily defined response value of e.g. cost center gets a technical definition as a
+          parameter for the cost centers resource. It is worth testing whether it is
+          suitable to generally add optional query parameters to every resource, thereby allowing to filter and defining
+          technical metadata. Copying all fields as filter properties is not recommended, but following a pattern for
+          standard implementation could balance effort.
+        </p>
+        <p>Conclusion: Expose resources with optional query parameters; identical naming steers MCP Host behavior; typed
+          parameters allow efficient querying.</p>
 
-      <h5>Drafting an integration</h5>
-      <p>Starting from the result, how could a config file for integration look like:</p>
-      <pre><code>
+        <h5>Drafting an integration</h5>
+        <p>Starting from the result, how could a config file for integration look like:</p>
+        <pre><code>
             server:
               name: "Manufacturing data"
               uri: "https://?"
@@ -2253,17 +2311,17 @@ It is a **semantic integration layer** — the missing link between raw enterpri
                     descriptionPostfix: "fdds"
                     required: false
             </code></pre>
-      <p>"In this example, two sources are integrated: an MCP Server and a JSON file. The server is defined with its
-        own metadata. The MCP Server is imported without any transformation, while the JSON file is imported with all
-        resources being exported as they are. A new resource "Functional locations" is created based on the
-        "functional-locations" resource from the MCP Server. The description of this resource is extended by appending
-        additional information. The filter "cost center" is removed from the original resource, and a new filter
-        "functional location id" is added with its own metadata." (automatically derived from GitHub Copilot, showing
-        inherent understanding of metadata language used)</p>
-      <p>Same purpose can be derived from Python code (instead of yaml metadata), using the library. Ingesting
-        metadata would be called related Python functions as a batch. How could this look like pythonic?</p>
+        <p>"In this example, two sources are integrated: an MCP Server and a JSON file. The server is defined with its
+          own metadata. The MCP Server is imported without any transformation, while the JSON file is imported with all
+          resources being exported as they are. A new resource "Functional locations" is created based on the
+          "functional-locations" resource from the MCP Server. The description of this resource is extended by appending
+          additional information. The filter "cost center" is removed from the original resource, and a new filter
+          "functional location id" is added with its own metadata." (automatically derived from GitHub Copilot, showing
+          inherent understanding of metadata language used)</p>
+        <p>Same purpose can be derived from Python code (instead of yaml metadata), using the library. Ingesting
+          metadata would be called related Python functions as a batch. How could this look like pythonic?</p>
 
-      <pre><code>
+        <pre><code>
             from usair import MCPIntegration, JSONIntegration, ServerDefinition, ResourceDefinition, FilterDefinition
 
             # Define the server
@@ -2313,17 +2371,17 @@ It is a **semantic integration layer** — the missing link between raw enterpri
             integration.add_resource(functional_locations_resource)
             integration.execute()
           </code></pre>
-      <p>In this Python example, we define the server and integrations using data classes. We then create an instance
-        of the integration, add the sources and resource transformation, and execute the integration process. This
-        approach allows for a more programmatic and flexible way to define and manage metadata integrations. (thanks
-        to GitHub Copilot again)</p>
-    </section>
+        <p>In this Python example, we define the server and integrations using data classes. We then create an instance
+          of the integration, add the sources and resource transformation, and execute the integration process. This
+          approach allows for a more programmatic and flexible way to define and manage metadata integrations. (thanks
+          to GitHub Copilot again)</p>
+      </section>
+    </article>
 
-  </article>
-  <article id="appendices">
-    <hgroup>
-      <h2>Appendices</h2>
-    </hgroup>
+    <article id="appendices">
+      <hgroup>
+        <h2>Appendices</h2>
+      </hgroup>
 
     <section id="appendix-a">
       <h3>Appendix A - References and Referencing Conventions</h3>
@@ -2585,57 +2643,57 @@ It is a **semantic integration layer** — the missing link between raw enterpri
 
         <h5>AI Access, MCP &amp; AI-Ready Data Architecture</h5>
 
-        <li id="ref-mcp-announcement">
-          Anthropic. (2024). <cite>Introducing the Model Context Protocol</cite>.
-          <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
-            https://www.anthropic.com/news/model-context-protocol
-          </a>
-        </li>
-        <li id="ref-mcp-specification"><strong>
-            Model Context Protocol Contributors. (2025). <cite>Model Context Protocol specification</cite>.
-            <a href="https://modelcontextprotocol.io/specification/2025-03-26" target="_blank" rel="noopener">
-              https://modelcontextprotocol.io/specification/2025-03-26</a></strong><br />
-          <small>MCP is treated as a reference architecture pattern for AI access to data and tools. The protocol
-            is considered replaceable as a technology, but normative as a design pattern for explicit context,
-            access control, and tool mediation.</small>
-        </li>
-        <li id="ref-ai-ready-discussions">
-          <cite>AI-ready data architecture discussions</cite>.<br />
-          <a href="https://www.gartner.com/en/data-analytics/topics/data-architecture" target="_blank" rel="noopener">
-            https://www.gartner.com/en/data-analytics/topics/data-architecture
-          </a>
-          <br />
-          <small>
-            Gartner material is referenced for market context and terminology.
-            It is intentionally not used normatively due to its platform-centric framing
-            and lack of formal semantic or lifecycle models.
-          </small>
-        </li>
-        <li id="ref-mcp-early">
-          <cite>Model Context Protocol (early discussions)</cite>.<br />
-          <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
-            https://www.anthropic.com/news/model-context-protocol
-          </a>
-          <br />
-          <small>
-            Early MCP discussions are cited to show conceptual intent.
-            Normative references in this document rely exclusively on the published
-            MCP specification, not on announcements or blog posts.
-          </small>
-        </li>
-        <li id="ref-json-rpc">
-          JSON-RPC Working Group. (2013). <cite>JSON-RPC 2.0 specification</cite>.
-          <a href="https://www.jsonrpc.org/specification" target="_blank" rel="noopener">
-            https://www.jsonrpc.org/specification
-          </a>
-          <br />
-          <small>
-            MCP is designed to be transport-agnostic, but JSON-RPC is referenced as a common protocol for tool
-            invocation.
-            The specific choice of JSON-RPC is not normative; any protocol enabling the required interactions is
-            acceptable.
-          </small>
-        </li>
+          <li id="ref-mcp-announcement">
+            Anthropic. (2024). <cite>Introducing the Model Context Protocol</cite>.
+            <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
+              https://www.anthropic.com/news/model-context-protocol
+            </a>
+          </li>
+          <li id="ref-mcp-specification"><strong>
+              Model Context Protocol Contributors. (2025). <cite>Model Context Protocol specification</cite>.
+              <a href="https://modelcontextprotocol.io/specification/2025-03-26" target="_blank" rel="noopener">
+                https://modelcontextprotocol.io/specification/2025-03-26</a></strong><br />
+            <small>MCP is treated as a reference architecture pattern for AI access to data and tools. The protocol
+              is considered replaceable as a technology, but normative as a design pattern for explicit context,
+              access control, and tool mediation.</small>
+          </li>
+          <li id="ref-ai-ready-discussions">
+            <cite>AI-ready data architecture discussions</cite>.<br />
+            <a href="https://www.gartner.com/en/data-analytics/topics/data-architecture" target="_blank" rel="noopener">
+              https://www.gartner.com/en/data-analytics/topics/data-architecture
+            </a>
+            <br />
+            <small>
+              Gartner material is referenced for market context and terminology.
+              It is intentionally not used normatively due to its platform-centric framing
+              and lack of formal semantic or lifecycle models.
+            </small>
+          </li>
+          <li id="ref-mcp-early">
+            <cite>Model Context Protocol (early discussions)</cite>.<br />
+            <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">
+              https://www.anthropic.com/news/model-context-protocol
+            </a>
+            <br />
+            <small>
+              Early MCP discussions are cited to show conceptual intent.
+              Normative references in this document rely exclusively on the published
+              MCP specification, not on announcements or blog posts.
+            </small>
+          </li>
+          <li id="ref-json-rpc">
+            JSON-RPC Working Group. (2013). <cite>JSON-RPC 2.0 specification</cite>.
+            <a href="https://www.jsonrpc.org/specification" target="_blank" rel="noopener">
+              https://www.jsonrpc.org/specification
+            </a>
+            <br />
+            <small>
+              MCP is designed to be transport-agnostic, but JSON-RPC is referenced as a common protocol for tool
+              invocation.
+              The specific choice of JSON-RPC is not normative; any protocol enabling the required interactions is
+              acceptable.
+            </small>
+          </li>
 
         <h5>Enterprise Architecture &amp; Viewpoints</h5>
 
@@ -2997,33 +3055,33 @@ It is a **semantic integration layer** — the missing link between raw enterpri
     <section id="appendix-d">
       <h3>Appendix D - Change History</h3>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Change</th>
-            <th>Rationale</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2026-03-23</td>
-            <td>Initial public version</td>
-            <td>First consolidated perspective on data architecture</td>
-          </tr>
-          <tr>
-            <td>2026-03-25</td>
-            <td>Refining Appendices</td>
-            <td>Formatting, linking and structuring appendices</td>
-          </tr>
-          <tr>
-            <td>2026-03-31</td>
-            <td>More insights in MCP metadata</td>
-            <td>Found clarity in OAuth concepts and MCP schema definition</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Change</th>
+              <th>Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2026-03-23</td>
+              <td>Initial public version</td>
+              <td>First consolidated perspective on data architecture</td>
+            </tr>
+            <tr>
+              <td>2026-03-25</td>
+              <td>Refining Appendices</td>
+              <td>Formatting, linking and structuring appendices</td>
+            </tr>
+            <tr>
+              <td>2026-03-31</td>
+              <td>More insights in MCP metadata</td>
+              <td>Found clarity in OAuth concepts and MCP schema definition</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
   </article>
   </article>
