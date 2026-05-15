@@ -8,7 +8,7 @@ This project is a self-contained static website built with vanilla HTML and mode
 
 - The site is a side project, not an app ecosystem. It is meant to work with old and new browsers, and stability matters more than following every modern library trend.
 - The framework exists to keep page files focused on content and function. Framework code is a supporting layer, not the main product.
-- Libraries age faster than this project, so the goal is to avoid chasing external dependency updates. Keep the framework working and stable unless a page breaks or a clear bug appears.
+- Libraries age faster than this project, so the goal is to avoid chasing external dependency updates. Keep the framework working and stable unless a page breaks or a a reproducible issue that prevents expected functionality.
 - When we work together, the ideal path is to respect your framework choice: fix individual pages first, and only change shared framework code when there is a real bug or missing capability.
 
 ## Key architectural patterns
