@@ -6,18 +6,25 @@
          xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
          xmlns:sgl="http://sorgs.de/sitemap.xsd">
     <url>
+        <loc>https://sorgs.de/logic/sudoku-solver.html</loc>
+        <sgl:title sgl:lang="de">Sudoku Solver (draft; en)</sgl:title>
+        <sgl:title sgl:lang="en">Sudoku Solver (draft)</sgl:title>
+        <lastmod>2026-05-31</lastmod>
+        <changefreq>weekly</changefreq>
+    </url>
+    <url>
         <loc>https://sorgs.de/logic/regeln_fuer_ein_miteinander.html</loc>
         <sgl:title sgl:lang="de">Regeln für ein Miteinander</sgl:title>
         <sgl:title sgl:lang="en">Rules for Coexistence [de]</sgl:title>
         <lastmod>2026-05-03</lastmod>
-        <changefreq>weekly</changefreq>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>https://sorgs.de/coding/data-architecture.html</loc>
         <sgl:title sgl:lang="de">Datenarchitektur (Englisch)</sgl:title>
         <sgl:title sgl:lang="en">Data Architecture</sgl:title>
         <lastmod>2026-03-31</lastmod>
-        <changefreq>weekly</changefreq>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>https://sorgs.de/coding/citing.html</loc>

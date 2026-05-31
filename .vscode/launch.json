@@ -1,39 +1,18 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "compounds": [
-        {
-            "name": "Run",
-            "configurations": [
-                "Python: Run http.server",
-                "Launch Edge and attach DevTools"
-            ],
-            "stopAll": true
-        }
-    ],
-    "configurations": [
-        {
-            "name": "Launch Edge and attach DevTools",
-            "type": "msedge",
-            "request": "launch",
-            "url": "http://localhost:8000/",
-            "webRoot": "${workspaceFolder}",
-            "presentation": {
-                "hidden": true
-            }
-        },
-        {
-            "name": "Python: Run http.server",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "http.server",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "presentation": {
-                "hidden": true
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "HTTP server + browser (simple)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "http.server",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "serverReadyAction": {
+        "pattern": "Serving HTTP on .* port ([0-9]+)",
+        "uriFormat": "http://localhost:%s",
+        "action": "debugWithEdge"
+      }
+    }
+  ]
 }

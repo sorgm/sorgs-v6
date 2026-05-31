@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="google-site-verification" content="d7ufTXK2lwvT5S9JJmFloyXXNGC2GJOL6e9-Pq4DqI0" />
+    <meta name="viewport" content="width=device-width">
+
+	<title>Sudoku Solver (draft)</title>
+<script src="../main.js" type="module"></script>
+
+<meta name="description" content="Sudoku Solver">
+<meta name="keywords" content="Sudoku, Solver, JavaScript">
+<meta name="date" content="2002-12-28">
+</head>
+<body>
+<h1>Sudoku Solver (draft)</h1>
+<p>just type 81 numbers and blanks</p>
+<textarea id="sudoku_input" columns="9" rows="9">
+ 317   9 
+67 92 1 4
+ 49  1375
+5  6  7 9
+  217953 
+ 8      1
+7543869  
+       5 
+1     6  </textarea>
+<button id="sudoku_solve">Solve</button>
+<button id="sudoku_clear">Clear</button>
+<div id="sudoku_output"></div>
+<table id="sudoku_log"></table>
+</body>
+</html>
+<style>
+#sudoku_input {
+    font-family: monospace;
+    font-size: 24px;
+    line-height: 2ch;
+    letter-spacing: 1ch;
+    padding: 1ch 0.5ch 0.5ch 1ch;
+    display: block;
+    resize: none;
+    aspect-ratio: 1 / 1;
+    width: 21ch;
+}
+#sudoku_output {
+    font-size: 24px;
+}
+#sudoku_log {
+    border-collapse: collapse;
+    position: absolute;
+    top: 0em;
+    left: 10em;
+}
+
+
+table.board {
+    font-family: monospace;
+    font-size: 1em; /* not rem like in main.css */
+    margin: 0.5ch;
+}
+table.board td {
+    width: 2ch;
+    height: 2ch;
+}
+table.board td small {
+    font-size: small;
+    width: 100%;
+}
+</style>
+<script>
+    sudoku_solve.onclick = function() {
+        //sudoku_output.innerText = board_to_text(solve(text_to_board(sudoku_input.value)));
+        sudoku_output.innerText = "... running"
+        result = solve(text_to_board(sudoku_input.value))
+        sudoku_output.innerText = ""
+        sudoku_output.appendChild(board_to_table(result));
+    };
+    sudoku_clear.onclick = function() {
+        sudoku_input.value = "";
+        sudoku_output.innerText = "";
+    };
+
+    function text_to_board(text) {
+        text = text
+            .replace("_"," ")
+            .split("\n")
+            .filter(row => row!="")
+            .map(row => row.padEnd(9, " "))
+            .join("")
+        /*
+            best internal format:
+            board[cellid=0..80] = {value: int|null, options: bool[1..9]|null}
+            cellid
+            = row*9+col
+            = ((blockno\3)*3 + blockpos\3 * 9 + (blockno%3)*3 + blockpos%3
+
+            pseudo code using backslash for integer division: Math.floor(a/b)
+        */
+        board = Array.from(text, val => ({
+            value: (val==0 ? null : Number(val)),
+            options: null
+        }))
+        return calc_options(board)
+    }
+    function board_to_text(board) {
+        const result = [];
+        text = board.map(val => (val.value==null ? "_" : val.value)).join("")
+        for (let i = 0; i < text.length; i += 9) {
+            result.push(text.slice(i, i + 9));
+        }
+        return result.join("\n")
+    }
+    function board_to_table(board) {
+        const table = document.createElement("TABLE");
+        table.classList.add("board");
+        for (let row = 0; row < 9; row += 1) {
+            let tr = document.createElement("TR");
+            for (let col = 0; col < 9; col += 1) {
+                let td = document.createElement("TD");
+                let val = board[row*9+col];
+                if (val.value!=null) {
+                    td.innerText = val.value;
+                }
+                else if (val.options==null) {
+                    td.innerText = "_";
+                }
+                else {
+                    small = document.createElement("SMALL");
+                    opttext = val.options.map((v,i) => (v ? i+1 : '\u00A0')).join("");
+                    small.appendChild(document.createTextNode(opttext.slice(0,3)))
+                    small.appendChild(document.createElement("BR"))
+                    small.appendChild(document.createTextNode(opttext.slice(3,6)))
+                    small.appendChild(document.createElement("BR"))
+                    small.appendChild(document.createTextNode(opttext.slice(6,9)))
+                    td.appendChild(small)
+                }
+                tr.appendChild(td);
+            }
+            table.appendChild(tr);
+        }
+        return table;
+    }
+    function get_row(board, row) {
+        result = [];
+        for(let i = 0; i<9; i+=1) {
+            result.push(board[row*9+i]);
+        }
+        return result;
+    }
+    function get_col(board, col) {
+        result = [];
+        for(let i = 0; i<9; i+=1) {
+            result.push(board[i*9+col]);
+        }
+        return result;
+    }
+    function get_block(board, block) {
+        result = [];
+        for(let i = 0; i<9; i+=1) {
+            result.push(board[(Math.floor(block/3)*3 + Math.floor(i/3)) * 9 + (block%3)*3 + i%3]);
+        }
+        return result;
+    }
+    function calc_options(board) {
+        // calc or recalc all options in the board and return board entity including options
+        const result = [];
+        for(let i = 0; i<81; i+=1) {
+            let val = board[i];            
+            if (val.value!=null) {
+                result[i] = {value: val.value, options: null};
+                continue
+            }
+            let row = get_row(board,Math.floor(i/9));
+            let col = get_col(board,i%9);
+            let block = get_block(board,Math.floor(Math.floor(i/9)/3)*3 + Math.floor((i%9)/3))
+            let options = []
+            for(let opt=0; opt<9; opt+=1) {
+                optval = opt+1;
+                options.push(!(
+                    row.some(item => item.value==optval) ||
+                    col.some(item => item.value==optval) ||
+                    block.some(item => item.value==optval)))
+            }
+            result[i] = {value: null, options: options};
+        }
+        return result;
+    }
+
+    function solve(input) {
+        // Placeholder for the actual solving logic
+        return input;
+    }
+</script>
