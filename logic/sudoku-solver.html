@@ -28,6 +28,7 @@
 <button id="sudoku_solve">Solve</button>
 <button id="sudoku_clear">Clear</button>
 <button id="sudoku_random">Random</button>
+<input type="checkbox" id="allow_brute_force" value="false" title="Allow brute force"/>
 <div id="sudoku_output"></div>
 <table id="sudoku_log"></table>
 </body>
@@ -47,8 +48,10 @@
 #sudoku_log {
     border-collapse: collapse;
     position: absolute;
-    top: 5em;
+    top: 0em;
     left: 20em;
+    border: 3em solid white;
+    background-color: white;
 }
 #sudoku_log>tr {
     border: 1px solid grey;
@@ -81,6 +84,9 @@ table.board td small {
     font-size: small;
     width: 100%;
     word-break: keep-all;
+    display: inline-block;
+    background-color: whitesmoke;
+    border: 1px solid cyan;
 }
 </style>
 <script>
@@ -208,10 +214,11 @@ table.board td small {
                     col.some(item => item.value==optval) ||
                     block.some(item => item.value==optval)))
             }
-            result[i] = {value: null, options: options};
+            result.push({value: null, options: options});
         }
         return result;
     }
+
     function log(input, comment, output) {
         let tr = document.createElement("TR");
         let td = document.createElement("TD");
@@ -231,31 +238,110 @@ table.board td small {
         let output = [];
         let has_changed = false;
         for (let item of input) {
-            if (item.value != null) {
+            if (!!item.value || has_changed) {
                 output.push(item);
+                continue;
             }
-            else {
-                only_value = item.options.reduce((p,cv,ci) => cv ? (p==null ? ci+1 : NaN) : p, null);
-                if (!isNaN(only_value)) {
-                    output.push({value: only_value, options: null});
-                    has_changed = true;
-                }
-                else {
-                    output.push(item);
-                }
+
+            only_value = item.options.reduce((p,cv,ci) => cv ? (p==null ? ci+1 : NaN) : p, null);
+            if (isNaN(only_value)) {
+                output.push(item);
+                continue;
             }
+
+            output.push({value: only_value, options: null});
+            has_changed = true;
         }
         if (has_changed) {
             output = calc_options(output);
-            log(input, "Only one option in cell.", output);
+            if (log) log(input, "Only one option in cell.", output);
             return output;
         }
         else return null;
     }
 
-    const solution_functions = [only_one_option_in_cell];
+    function option_is_unique_for_rcb(input) {
+        let output = [];
+        let has_changed = false;
+        for(let i = 0; i<81; i+=1) {
+            let val = input[i];
+            if (!!val.value || has_changed) {
+                output.push(val);
+                continue
+            }
 
-    function solve(input) {
+            let row = get_row(input,rowno(i));
+            let col = get_col(input,colno(i));
+            let block = get_block(input,blockno(i))
+            let result_value = null;
+            for(let opt=0; opt<9; opt+=1) {
+                if (!val.options[opt]) continue;
+
+                optval = opt+1;
+
+                let count_in_row = row.filter(item => (!!item.options && item.options[opt])).length;
+                let count_in_col = col.filter(item => (!!item.options && item.options[opt])).length;
+                let count_in_block = block.filter(item => (!!item.options && item.options[opt])).length
+
+                if (count_in_row==1 || count_in_col==1 || count_in_block==1) {
+                    // option is unique for row, col or block
+                    result_value = optval;
+                    break;
+                }
+            }
+
+            if (result_value==null) {
+                output.push(val);
+                continue
+            }
+
+            output.push({value: result_value, options: null});
+            has_changed = true;
+        }
+        if (has_changed) {
+            output = calc_options(output);
+            if (log) log(input, "Option is unique for row, col or block.", output);
+            return output;
+        }
+        else return null;
+    }
+
+    const solution_functions = [only_one_option_in_cell,option_is_unique_for_rcb];
+
+    function next_in_scenario(scenario) {
+        input = scenario.scenario_input;
+        if (scenario.i>=81) return null;
+
+        let output = [];
+        for(let i=0; i<scenario.i; i+=1) {
+            output.push(input[i]);
+        }
+        if (!!input[scenario.i].value || scenario.opt>=9) {
+            scenario.i += 1;
+            scenario.opt = 0;
+            return next_in_scenario(scenario);
+        }
+        if (!input[scenario.i].options[scenario.opt]) {
+            scenario.opt += 1;
+            return next_in_scenario(scenario);
+        }
+        output.push({value: scenario.opt+1, options: null});
+        scenario.opt += 1;
+        for(let i=scenario.i+1; i<81; i+=1) {
+            output.push(input[i]);
+        }
+        return calc_options(output);
+    }
+    function scenario_to_text(scenario) {
+        if (!scenario) {
+            return "";
+        }
+        else {
+            return `(${rowno(scenario.i)+1}|${colno(scenario.i)+1}) ::= ${scenario.opt}\n${scenario_to_text(scenario.previous_scenario)}`
+        }
+    }
+
+    function solve(input, scenario = null) {
         // Asynchronous iterative solution approach
 
         let output = null;
@@ -264,22 +350,53 @@ table.board td small {
             if (output!=null) break;
         }
         if (output==null) {
-            log(input, "No solution found!")
-            output = input;
+            // no solution found, use brute force?
+            if (allow_brute_force.checked) {
+                scenario = {
+                    scenario_input: input,
+                    log_start: sudoku_log.rows.length,
+                    i: (!!scenario ? scenario.i+1 : 0),
+                    opt: 0,
+                    previous_scenario: scenario
+                }
+                output = next_in_scenario(scenario);
+                log(input, "Guess.", output)
+            }
+            if (!output) {
+                log(input, "No solution found!", output)
+            }
         }
-        else if (output.some(item => item.value == null && item.options.every(opt => !opt))) {
-            log(output, "Contradictory!")
-            output = input;
+        if (output.some(item => !item.value && item.options.every(opt => !opt))) {
+            // contradictory, no option left
+            output = null;
+            while (!!scenario && !output) {
+                // rollback scenario and guess next if in a brute force scenario
+                while (scenario.log_start < sudoku_log.rows.length) {
+                    sudoku_log.deleteRow(-1)
+                }
+                input = scenario.scenario_input;
+                output = next_in_scenario(scenario);
+                if (output==null) {
+                    log(input, "Contradiction. Back to previous scenario.")
+                    scenario = scenario.previous_scenario;
+                } else {
+                    log(input, "Guess.", output)
+                }
+            }
+            if (!output) {
+                log(input, "Contradictory!", output)
+            }
         }
-        else if (output.every(item => item.value != null)) {
-            // solved
-            sudoku_output.innerText = ""
-            sudoku_output.appendChild(board_to_table(output));
-        }
-        else {
+
+        sudoku_output.innerText = ""
+        sudoku_output.appendChild(board_to_table(output));
+        pre = document.createElement("PRE");
+        pre.appendChild(document.createTextNode(scenario_to_text(scenario)));
+        sudoku_output.appendChild(pre);
+        if (!output.every(item => item.value != null)) {
             window.setTimeout(() => {
-                solve(output);
-            }, 100);
+                solve(output, scenario);
+            }, 10);
         }
     }
 </script>
