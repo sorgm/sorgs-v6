@@ -1,111 +1,132 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="google-site-verification" content="d7ufTXK2lwvT5S9JJmFloyXXNGC2GJOL6e9-Pq4DqI0" />
     <meta name="viewport" content="width=device-width">
 
-	<title>Sudoku Solver (draft)</title>
-<script src="../main.js" type="module"></script>
+    <title>Sudoku Solver (draft)</title>
+    <script src="../main.js" type="module"></script>
 
-<meta name="description" content="Sudoku Solver">
-<meta name="keywords" content="Sudoku, Solver, JavaScript">
-<meta name="date" content="2002-12-28">
+    <meta name="description" content="Sudoku Solver">
+    <meta name="keywords" content="Sudoku, Solver, JavaScript">
+    <meta name="date" content="2002-12-28">
 </head>
+
 <body>
-<h1>Sudoku Solver (draft)</h1>
-<p>just type 81 numbers and blanks</p>
-<textarea id="sudoku_input" columns="9" rows="9">
- 317   9 
-67 92 1 4
- 49  1375
-5  6  7 9
-  217953 
- 8      1
-7543869  
-       5 
-1     6  </textarea>
-<button id="sudoku_solve">Solve</button>
-<button id="sudoku_clear">Clear</button>
-<button id="sudoku_random">Random</button>
-<input type="checkbox" id="allow_brute_force" value="false" title="Allow brute force"/>
-<div id="sudoku_output"></div>
-<table id="sudoku_log"></table>
+    <h1>Sudoku Solver (draft)</h1>
+    <p>just type 81 digits and blanks</p>
+    <textarea id="sudoku_input" columns="9" rows="9"></textarea>
+    <button id="sudoku_solve">Solve</button>
+    <input type="checkbox" id="allow_brute_force" value="false" title="Allow brute force" />
+    <button id="sudoku_clear">Clear</button>
+    <button id="sudoku_random">Random</button>
+    <select id="sudoku_examples">
+        <option value="">Examples</option>
+        <hr />
+        <option value="_317___9_67_92_1_4_49__13755__6__7_9__217953__8______17543869_________5_1_____6__">very simple
+        </option>
+        <option value="_____4__5_39_8_1__8___9_23__7___5__9___9_8___2__7___8__85_7___6__2_6_95_6__4_____">harder
+        </option>
+        <option value="______57___1____647___53____3________7___94__51__68_____5_____92___________7___38">difficult but
+            without guessing</option>
+    </select>
+    <div id="sudoku_output"></div>
+    <table id="sudoku_log"></table>
 </body>
+
 </html>
 <style>
-#sudoku_input {
-    font-family: monospace;
-    font-size: 24px;
-    line-height: 2ch;
-    letter-spacing: 1ch;
-    padding: 1ch 0.5ch 0.5ch 1ch;
-    display: block;
-    resize: none;
-    aspect-ratio: 1 / 1;
-    width: 21ch;
-}
-#sudoku_log {
-    border-collapse: collapse;
-    position: absolute;
-    top: 0em;
-    left: 20em;
-    border: 3em solid white;
-    background-color: white;
-}
-#sudoku_log>tr {
-    border: 1px solid grey;
-}
-#sudoku_log table.board {
-    zoom: 50%;
-}
+    #sudoku_input {
+        font-family: monospace;
+        font-size: 24px;
+        line-height: 2ch;
+        letter-spacing: 1ch;
+        padding: 1ch 0.5ch 0.5ch 1ch;
+        display: block;
+        resize: none;
+        aspect-ratio: 1 / 1;
+        width: 21ch;
+    }
 
-table.board {
-    font-family: monospace;
-    font-size: 24px;
-    margin: 0.5ch;
-    border-collapse: collapse;
-    border-top: 1px solid gray;
-    border-left: 1px solid gray;
-    text-align: center;
-}
-table.board>:nth-child(3n) {
-    border-bottom: 1px solid gray;
-}
-table.board>tr>:nth-child(3n) {
-    border-right: 1px solid gray;
-}
-table.board td {
-    width: 2ch;
-    height: 2ch;
-    padding: 0;
-}
-table.board td small {
-    font-size: small;
-    width: 100%;
-    word-break: keep-all;
-    display: inline-block;
-    background-color: whitesmoke;
-    border: 1px solid cyan;
-}
+    #sudoku_examples {
+        width: 12ch;
+    }
+
+    #sudoku_log {
+        border-collapse: collapse;
+        position: absolute;
+        top: 0em;
+        left: 20em;
+        border: 3em solid white;
+        background-color: white;
+    }
+
+    #sudoku_log>tr {
+        border: 1px solid grey;
+    }
+
+    #sudoku_log table.board {
+        zoom: 50%;
+    }
+
+    table.board {
+        font-family: monospace;
+        font-size: 24px;
+        margin: 0.5ch;
+        border-collapse: collapse;
+        border-top: 1px solid gray;
+        border-left: 1px solid gray;
+        text-align: center;
+    }
+
+    table.board>:nth-child(3n) {
+        border-bottom: 1px solid gray;
+    }
+
+    table.board>tr>:nth-child(3n) {
+        border-right: 1px solid gray;
+    }
+
+    table.board td {
+        width: 2ch;
+        height: 2ch;
+        padding: 0;
+    }
+
+    table.board td small {
+        font-size: small;
+        width: 100%;
+        word-break: keep-all;
+        display: inline-block;
+        background-color: whitesmoke;
+        border: 1px solid cyan;
+    }
 </style>
 <script>
-    sudoku_solve.onclick = function() {
+    sudoku_solve.onclick = function () {
         let board = text_to_board(sudoku_input.value)
         sudoku_input.value = board_to_text(board);
         sudoku_output.innerText = "";
         sudoku_log.innerHTML = "";
         solve(board);
     };
-    sudoku_clear.onclick = function() {
+    sudoku_clear.onclick = function () {
         sudoku_input.value = "";
+        sudoku_examples.value = "";
         sudoku_output.innerText = "";
         sudoku_log.innerHTML = "";
     };
-    sudoku_random.onclick = function() {
-        sudoku_input.value = " 317   9 67 92 1 4 49  13755  6  7 9  217953  8      17543869         5 1     6  "; // very simple
-        sudoku_input.value = "      57   1    647   53    3        7   94  51  68     5     92           7   38" // difficult but without guessing
+    sudoku_random.onclick = function () {
         //sudoku_input.value = board_to_text(random_board());
+        sudoku_input.value = sudoku_examples.options[Math.floor(Math.random() * (sudoku_examples.options.length - 1)) + 1].value;
+        sudoku_examples.value = "";
+        sudoku_output.innerText = "";
+        sudoku_log.innerHTML = "";
+    };
+    sudoku_examples.onchange = function () {
+        sudoku_input.value = sudoku_examples.value;
         sudoku_output.innerText = "";
         sudoku_log.innerHTML = "";
     };
@@ -113,10 +134,10 @@ table.board td small {
     function text_to_board(text) {
         text = text
             .split("\n")
-            .filter(row => row!="")
+            .filter(row => row != "")
             .map(row => row.padEnd(9, " "))
             .join("")
-            .replaceAll(/[^ 1-9]/g," ")
+            .replaceAll(/[^ 1-9]/g, " ")
         /*
             best internal format:
             board[cellid=0..80] = {value: int|null, options: bool[1..9]|null}
@@ -127,41 +148,42 @@ table.board td small {
             pseudo code using backslash for integer division: Math.floor(a/b)
         */
         board = Array.from(text, val => ({
-            value: (val==0 ? null : Number(val)),
+            value: (val == 0 ? null : Number(val)),
             options: null
         }))
         return calc_options(board)
     }
     function board_to_text(board) {
         const result = [];
-        text = board.map(val => (val.value==null ? "_" : val.value)).join("")
+        text = board.map(val => (val.value == null ? "_" : val.value)).join("")
         for (let i = 0; i < text.length; i += 9) {
             result.push(text.slice(i, i + 9));
         }
         return result.join("\n")
     }
     function board_to_table(board) {
+        if (!board) return document.createTextNode("#N/A");
         const table = document.createElement("TABLE");
         table.classList.add("board");
         for (let row = 0; row < 9; row += 1) {
             let tr = document.createElement("TR");
             for (let col = 0; col < 9; col += 1) {
                 let td = document.createElement("TD");
-                let val = board[row*9+col];
-                if (val.value!=null) {
+                let val = board[row * 9 + col];
+                if (val.value != null) {
                     td.innerText = val.value;
                 }
-                else if (val.options==null) {
+                else if (val.options == null) {
                     td.innerText = "_";
                 }
                 else {
                     small = document.createElement("SMALL");
-                    opttext = val.options.map((v,i) => (v ? i+1 : '\u00A0')).join("");
-                    small.appendChild(document.createTextNode(opttext.slice(0,3)))
+                    opttext = val.options.map((v, i) => (v ? i + 1 : '\u00A0')).join("");
+                    small.appendChild(document.createTextNode(opttext.slice(0, 3)))
                     small.appendChild(document.createElement("BR"))
-                    small.appendChild(document.createTextNode(opttext.slice(3,6)))
+                    small.appendChild(document.createTextNode(opttext.slice(3, 6)))
                     small.appendChild(document.createElement("BR"))
-                    small.appendChild(document.createTextNode(opttext.slice(6,9)))
+                    small.appendChild(document.createTextNode(opttext.slice(6, 9)))
                     td.appendChild(small)
                 }
                 tr.appendChild(td);
@@ -170,51 +192,51 @@ table.board td small {
         }
         return table;
     }
-    const rowno = i => Math.floor(i/9);
-    const colno = i => i%9;
-    const blockno = i => Math.floor(Math.floor(i/9)/3)*3 + Math.floor((i%9)/3);
+    const rowno = i => Math.floor(i / 9);
+    const colno = i => i % 9;
+    const blockno = i => Math.floor(Math.floor(i / 9) / 3) * 3 + Math.floor((i % 9) / 3);
     function get_row(board, row) {
         result = [];
-        for(let i = 0; i<9; i+=1) {
-            result.push(board[row*9+i]);
+        for (let i = 0; i < 9; i += 1) {
+            result.push(board[row * 9 + i]);
         }
         return result;
     }
     function get_col(board, col) {
         result = [];
-        for(let i = 0; i<9; i+=1) {
-            result.push(board[i*9+col]);
+        for (let i = 0; i < 9; i += 1) {
+            result.push(board[i * 9 + col]);
         }
         return result;
     }
     function get_block(board, block) {
         result = [];
-        for(let i = 0; i<9; i+=1) {
-            result.push(board[(Math.floor(block/3)*3 + Math.floor(i/3)) * 9 + (block%3)*3 + i%3]);
+        for (let i = 0; i < 9; i += 1) {
+            result.push(board[(Math.floor(block / 3) * 3 + Math.floor(i / 3)) * 9 + (block % 3) * 3 + i % 3]);
         }
         return result;
     }
     function calc_options(board) {
         // calc or recalc all options in the board and return board entity including options
         const result = [];
-        for(let i = 0; i<81; i+=1) {
-            let val = board[i];            
-            if (val.value!=null) {
-                result[i] = {value: val.value, options: null};
+        for (let i = 0; i < 81; i += 1) {
+            let val = board[i];
+            if (val.value != null) {
+                result[i] = { value: val.value, options: null };
                 continue
             }
-            let row = get_row(board,rowno(i));
-            let col = get_col(board,colno(i));
-            let block = get_block(board,blockno(i))
+            let row = get_row(board, rowno(i));
+            let col = get_col(board, colno(i));
+            let block = get_block(board, blockno(i))
             let options = []
-            for(let opt=0; opt<9; opt+=1) {
-                optval = opt+1;
+            for (let opt = 0; opt < 9; opt += 1) {
+                optval = opt + 1;
                 options.push(!(
-                    row.some(item => item.value==optval) ||
-                    col.some(item => item.value==optval) ||
-                    block.some(item => item.value==optval)))
+                    row.some(item => item.value == optval) ||
+                    col.some(item => item.value == optval) ||
+                    block.some(item => item.value == optval)))
             }
-            result.push({value: null, options: options});
+            result.push({ value: null, options: options });
         }
         return result;
     }
@@ -228,7 +250,7 @@ table.board td small {
         td.appendChild(document.createTextNode(comment));
         tr.appendChild(td);
         td = document.createElement("TD");
-        if (output!=null) td.appendChild(board_to_table(output));
+        if (output != null) td.appendChild(board_to_table(output));
         tr.appendChild(td);
         sudoku_log.appendChild(tr);
     }
@@ -243,13 +265,13 @@ table.board td small {
                 continue;
             }
 
-            only_value = item.options.reduce((p,cv,ci) => cv ? (p==null ? ci+1 : NaN) : p, null);
+            only_value = item.options.reduce((p, cv, ci) => cv ? (p == null ? ci + 1 : NaN) : p, null);
             if (isNaN(only_value)) {
                 output.push(item);
                 continue;
             }
 
-            output.push({value: only_value, options: null});
+            output.push({ value: only_value, options: null });
             has_changed = true;
         }
         if (has_changed) {
@@ -263,39 +285,39 @@ table.board td small {
     function option_is_unique_for_rcb(input) {
         let output = [];
         let has_changed = false;
-        for(let i = 0; i<81; i+=1) {
+        for (let i = 0; i < 81; i += 1) {
             let val = input[i];
             if (!!val.value || has_changed) {
                 output.push(val);
                 continue
             }
 
-            let row = get_row(input,rowno(i));
-            let col = get_col(input,colno(i));
-            let block = get_block(input,blockno(i))
+            let row = get_row(input, rowno(i));
+            let col = get_col(input, colno(i));
+            let block = get_block(input, blockno(i))
             let result_value = null;
-            for(let opt=0; opt<9; opt+=1) {
+            for (let opt = 0; opt < 9; opt += 1) {
                 if (!val.options[opt]) continue;
 
-                optval = opt+1;
+                optval = opt + 1;
 
                 let count_in_row = row.filter(item => (!!item.options && item.options[opt])).length;
                 let count_in_col = col.filter(item => (!!item.options && item.options[opt])).length;
                 let count_in_block = block.filter(item => (!!item.options && item.options[opt])).length
 
-                if (count_in_row==1 || count_in_col==1 || count_in_block==1) {
+                if (count_in_row == 1 || count_in_col == 1 || count_in_block == 1) {
                     // option is unique for row, col or block
                     result_value = optval;
                     break;
                 }
             }
 
-            if (result_value==null) {
+            if (result_value == null) {
                 output.push(val);
                 continue
             }
 
-            output.push({value: result_value, options: null});
+            output.push({ value: result_value, options: null });
             has_changed = true;
         }
         if (has_changed) {
@@ -306,17 +328,17 @@ table.board td small {
         else return null;
     }
 
-    const solution_functions = [only_one_option_in_cell,option_is_unique_for_rcb];
+    const solution_functions = [only_one_option_in_cell, option_is_unique_for_rcb];
 
     function next_in_scenario(scenario) {
         input = scenario.scenario_input;
-        if (scenario.i>=81) return null;
+        if (scenario.i >= 81) return null;
 
         let output = [];
-        for(let i=0; i<scenario.i; i+=1) {
+        for (let i = 0; i < scenario.i; i += 1) {
             output.push(input[i]);
         }
-        if (!!input[scenario.i].value || scenario.opt>=9) {
+        if (!!input[scenario.i].value || scenario.opt >= 9) {
             scenario.i += 1;
             scenario.opt = 0;
             return next_in_scenario(scenario);
@@ -325,9 +347,9 @@ table.board td small {
             scenario.opt += 1;
             return next_in_scenario(scenario);
         }
-        output.push({value: scenario.opt+1, options: null});
+        output.push({ value: scenario.opt + 1, options: null });
         scenario.opt += 1;
-        for(let i=scenario.i+1; i<81; i+=1) {
+        for (let i = scenario.i + 1; i < 81; i += 1) {
             output.push(input[i]);
         }
         return calc_options(output);
@@ -337,7 +359,7 @@ table.board td small {
             return "";
         }
         else {
-            return `(${rowno(scenario.i)+1}|${colno(scenario.i)+1}) ::= ${scenario.opt}\n${scenario_to_text(scenario.previous_scenario)}`
+            return `(${rowno(scenario.i) + 1}|${colno(scenario.i) + 1}) ::= ${scenario.opt}\n${scenario_to_text(scenario.previous_scenario)}`
         }
     }
 
@@ -347,15 +369,15 @@ table.board td small {
         let output = null;
         for (let f of solution_functions) {
             output = f(input);
-            if (output!=null) break;
+            if (output != null) break;
         }
-        if (output==null) {
+        if (output == null) {
             // no solution found, use brute force?
             if (allow_brute_force.checked) {
                 scenario = {
                     scenario_input: input,
                     log_start: sudoku_log.rows.length,
-                    i: (!!scenario ? scenario.i+1 : 0),
+                    i: (!!scenario ? scenario.i + 1 : 0),
                     opt: 0,
                     previous_scenario: scenario
                 }
@@ -366,7 +388,7 @@ table.board td small {
                 log(input, "No solution found!", output)
             }
         }
-        if (output.some(item => !item.value && item.options.every(opt => !opt))) {
+        if (!!output && output.some(item => !item.value && item.options.every(opt => !opt))) {
             // contradictory, no option left
             output = null;
             while (!!scenario && !output) {
@@ -376,7 +398,7 @@ table.board td small {
                 }
                 input = scenario.scenario_input;
                 output = next_in_scenario(scenario);
-                if (output==null) {
+                if (output == null) {
                     log(input, "Contradiction. Back to previous scenario.")
                     scenario = scenario.previous_scenario;
                 } else {
@@ -384,16 +406,16 @@ table.board td small {
                 }
             }
             if (!output) {
-                log(input, "Contradictory!", output)
+                log(input, "Contradictory!", output);
             }
         }
 
         sudoku_output.innerText = ""
-        sudoku_output.appendChild(board_to_table(output));
+        sudoku_output.appendChild(board_to_table(output??input));
         pre = document.createElement("PRE");
         pre.appendChild(document.createTextNode(scenario_to_text(scenario)));
         sudoku_output.appendChild(pre);
-        if (!output.every(item => item.value != null)) {
+        if (!!output && !output.every(item => item.value != null)) {
             window.setTimeout(() => {
                 solve(output, scenario);
             }, 10);
