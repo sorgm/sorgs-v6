@@ -27,6 +27,7 @@
 1     6  </textarea>
 <button id="sudoku_solve">Solve</button>
 <button id="sudoku_clear">Clear</button>
+<button id="sudoku_random">Random</button>
 <div id="sudoku_output"></div>
 <table id="sudoku_log"></table>
 </body>
@@ -43,51 +44,73 @@
     aspect-ratio: 1 / 1;
     width: 21ch;
 }
-#sudoku_output {
-    font-size: 24px;
-}
 #sudoku_log {
     border-collapse: collapse;
     position: absolute;
-    top: 0em;
-    left: 10em;
+    top: 5em;
+    left: 20em;
 }
-
+#sudoku_log>tr {
+    border: 1px solid grey;
+}
+#sudoku_log table.board {
+    zoom: 50%;
+}
 
 table.board {
     font-family: monospace;
-    font-size: 1em; /* not rem like in main.css */
+    font-size: 24px;
     margin: 0.5ch;
+    border-collapse: collapse;
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+    text-align: center;
+}
+table.board>:nth-child(3n) {
+    border-bottom: 1px solid gray;
+}
+table.board>tr>:nth-child(3n) {
+    border-right: 1px solid gray;
 }
 table.board td {
     width: 2ch;
     height: 2ch;
+    padding: 0;
 }
 table.board td small {
     font-size: small;
     width: 100%;
+    word-break: keep-all;
 }
 </style>
 <script>
     sudoku_solve.onclick = function() {
-        //sudoku_output.innerText = board_to_text(solve(text_to_board(sudoku_input.value)));
-        sudoku_output.innerText = "... running"
-        result = solve(text_to_board(sudoku_input.value))
-        sudoku_output.innerText = ""
-        sudoku_output.appendChild(board_to_table(result));
+        let board = text_to_board(sudoku_input.value)
+        sudoku_input.value = board_to_text(board);
+        sudoku_output.innerText = "";
+        sudoku_log.innerHTML = "";
+        solve(board);
     };
     sudoku_clear.onclick = function() {
         sudoku_input.value = "";
         sudoku_output.innerText = "";
+        sudoku_log.innerHTML = "";
+    };
+    sudoku_random.onclick = function() {
+        sudoku_input.value = " 317   9 67 92 1 4 49  13755  6  7 9  217953  8      17543869         5 1     6  "; // very simple
+        sudoku_input.value = "      57   1    647   53    3        7   94  51  68     5     92           7   38" // difficult but without guessing
+        //sudoku_input.value = board_to_text(random_board());
+        sudoku_output.innerText = "";
+        sudoku_log.innerHTML = "";
     };
 
     function text_to_board(text) {
         text = text
-            .replace("_"," ")
             .split("\n")
             .filter(row => row!="")
             .map(row => row.padEnd(9, " "))
             .join("")
+            .replaceAll(/[^ 1-9]/g," ")
         /*
             best internal format:
             board[cellid=0..80] = {value: int|null, options: bool[1..9]|null}
@@ -141,6 +164,9 @@ table.board td small {
         }
         return table;
     }
+    const rowno = i => Math.floor(i/9);
+    const colno = i => i%9;
+    const blockno = i => Math.floor(Math.floor(i/9)/3)*3 + Math.floor((i%9)/3);
     function get_row(board, row) {
         result = [];
         for(let i = 0; i<9; i+=1) {
@@ -171,9 +197,9 @@ table.board td small {
                 result[i] = {value: val.value, options: null};
                 continue
             }
-            let row = get_row(board,Math.floor(i/9));
-            let col = get_col(board,i%9);
-            let block = get_block(board,Math.floor(Math.floor(i/9)/3)*3 + Math.floor((i%9)/3))
+            let row = get_row(board,rowno(i));
+            let col = get_col(board,colno(i));
+            let block = get_block(board,blockno(i))
             let options = []
             for(let opt=0; opt<9; opt+=1) {
                 optval = opt+1;
@@ -186,9 +212,74 @@ table.board td small {
         }
         return result;
     }
+    function log(input, comment, output) {
+        let tr = document.createElement("TR");
+        let td = document.createElement("TD");
+        td.appendChild(board_to_table(input));
+        tr.appendChild(td);
+        td = document.createElement("TD");
+        td.appendChild(document.createTextNode(comment));
+        tr.appendChild(td);
+        td = document.createElement("TD");
+        if (output!=null) td.appendChild(board_to_table(output));
+        tr.appendChild(td);
+        sudoku_log.appendChild(tr);
+    }
+
+
+    function only_one_option_in_cell(input) {
+        let output = [];
+        let has_changed = false;
+        for (let item of input) {
+            if (item.value != null) {
+                output.push(item);
+            }
+            else {
+                only_value = item.options.reduce((p,cv,ci) => cv ? (p==null ? ci+1 : NaN) : p, null);
+                if (!isNaN(only_value)) {
+                    output.push({value: only_value, options: null});
+                    has_changed = true;
+                }
+                else {
+                    output.push(item);
+                }
+            }
+        }
+        if (has_changed) {
+            output = calc_options(output);
+            log(input, "Only one option in cell.", output);
+            return output;
+        }
+        else return null;
+    }
+
+    const solution_functions = [only_one_option_in_cell];
 
     function solve(input) {
-        // Placeholder for the actual solving logic
-        return input;
+        // Asynchronous iterative solution approach
+
+        let output = null;
+        for (let f of solution_functions) {
+            output = f(input);
+            if (output!=null) break;
+        }
+        if (output==null) {
+            log(input, "No solution found!")
+            output = input;
+        }
+        else if (output.some(item => item.value == null && item.options.every(opt => !opt))) {
+            log(output, "Contradictory!")
+            output = input;
+        }
+        else if (output.every(item => item.value != null)) {
+            // solved
+            sudoku_output.innerText = ""
+            sudoku_output.appendChild(board_to_table(output));
+        }
+        else {
+            window.setTimeout(() => {
+                solve(output);
+            }, 100);
+        }
     }
 </script>
