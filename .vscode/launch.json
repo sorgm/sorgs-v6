@@ -9,9 +9,11 @@
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "serverReadyAction": {
-        "pattern": "Serving HTTP on .* port ([0-9]+)",
+        "pattern": "port ([0-9]+)",
         "uriFormat": "http://localhost:%s",
+        "killOnServerStop": true,
         "action": "debugWithEdge"
+        //run as first action after restart - don't start edge manually
       }
     }
   ]

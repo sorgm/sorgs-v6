@@ -31,6 +31,7 @@
         </option>
         <option value="______57___1____647___53____3________7___94__51__68_____5_____92___________7___38">difficult but
             without guessing</option>
+        <option value="_18____57_7___3__2____9________5__1_8_74_6_____6_____________7932___8__________4_">same</option>
     </select>
     <div id="sudoku_output"></div>
     <table id="sudoku_log"></table>
@@ -103,14 +104,21 @@
         background-color: whitesmoke;
         border: 1px solid cyan;
     }
+
+    .highlight, table.board td.highlight small {
+        background-color: yellow;
+    }
 </style>
-<script>
+<script type="module">
+    import {Sudoku} from './sudoku.js'
+
     sudoku_solve.onclick = function () {
-        let board = text_to_board(sudoku_input.value)
-        sudoku_input.value = board_to_text(board);
-        sudoku_output.innerText = "";
-        sudoku_log.innerHTML = "";
-        solve(board);
+        const s = new Sudoku(sudoku_input.value);
+        s.constructor.config.allow_brute_force = allow_brute_force.checked;
+        sudoku_input.value = s.toString();
+        s.callback.step_performed.push(step_performed);
+        step_performed(s);
+        s.solve();
     };
     sudoku_clear.onclick = function () {
         sudoku_input.value = "";
@@ -131,54 +139,43 @@
         sudoku_log.innerHTML = "";
     };
 
-    function text_to_board(text) {
-        text = text
-            .split("\n")
-            .filter(row => row != "")
-            .map(row => row.padEnd(9, " "))
-            .join("")
-            .replaceAll(/[^ 1-9]/g, " ")
-        /*
-            best internal format:
-            board[cellid=0..80] = {value: int|null, options: bool[1..9]|null}
-            cellid
-            = row*9+col
-            = ((blockno\3)*3 + blockpos\3 * 9 + (blockno%3)*3 + blockpos%3
+    function step_performed(s) {
+        sudoku_output.innerText = ""
+        sudoku_output.appendChild(board_to_table(s, s.cells));
 
-            pseudo code using backslash for integer division: Math.floor(a/b)
-        */
-        board = Array.from(text, val => ({
-            value: (val == 0 ? null : Number(val)),
-            options: null
-        }))
-        return calc_options(board)
+        log(s, -1)
     }
-    function board_to_text(board) {
-        const result = [];
-        text = board.map(val => (val.value == null ? "_" : val.value)).join("")
-        for (let i = 0; i < text.length; i += 9) {
-            result.push(text.slice(i, i + 9));
-        }
-        return result.join("\n")
-    }
-    function board_to_table(board) {
-        if (!board) return document.createTextNode("#N/A");
+
+    function board_to_table(s, cells, highlightcellids) {
+        if (!cells) return document.createTextNode("#N/A");
         const table = document.createElement("TABLE");
         table.classList.add("board");
         for (let row = 0; row < 9; row += 1) {
             let tr = document.createElement("TR");
             for (let col = 0; col < 9; col += 1) {
                 let td = document.createElement("TD");
-                let val = board[row * 9 + col];
-                if (val.value != null) {
-                    td.innerText = val.value;
+                let cellid = row * 9 + col;
+                if (!!highlightcellids && highlightcellids.includes(cellid)) {
+                    td.classList.add("highlight");
                 }
-                else if (val.options == null) {
+                let cell = cells[row * 9 + col];
+                if (cell.value != null) {
+                    td.innerText = s.constructor.setup.digits[cell.value];
+                }
+                else if (cell.options == null) {
                     td.innerText = "_";
                 }
                 else {
-                    small = document.createElement("SMALL");
-                    opttext = val.options.map((v, i) => (v ? i + 1 : '\u00A0')).join("");
+                    let small = document.createElement("SMALL");
+                    let opttext = '';
+                    for(let option=0; option<9; option+=1) {
+                        if (cell.options.includes(option)) {
+                            opttext += s.constructor.setup.digits[option]
+                        }
+                        else {
+                            opttext += '\u00A0'; // &nbsp;
+                        }
+                    }
                     small.appendChild(document.createTextNode(opttext.slice(0, 3)))
                     small.appendChild(document.createElement("BR"))
                     small.appendChild(document.createTextNode(opttext.slice(3, 6)))
@@ -192,233 +189,18 @@
         }
         return table;
     }
-    const rowno = i => Math.floor(i / 9);
-    const colno = i => i % 9;
-    const blockno = i => Math.floor(Math.floor(i / 9) / 3) * 3 + Math.floor((i % 9) / 3);
-    function get_row(board, row) {
-        result = [];
-        for (let i = 0; i < 9; i += 1) {
-            result.push(board[row * 9 + i]);
-        }
-        return result;
-    }
-    function get_col(board, col) {
-        result = [];
-        for (let i = 0; i < 9; i += 1) {
-            result.push(board[i * 9 + col]);
-        }
-        return result;
-    }
-    function get_block(board, block) {
-        result = [];
-        for (let i = 0; i < 9; i += 1) {
-            result.push(board[(Math.floor(block / 3) * 3 + Math.floor(i / 3)) * 9 + (block % 3) * 3 + i % 3]);
-        }
-        return result;
-    }
-    function calc_options(board) {
-        // calc or recalc all options in the board and return board entity including options
-        const result = [];
-        for (let i = 0; i < 81; i += 1) {
-            let val = board[i];
-            if (val.value != null) {
-                result[i] = { value: val.value, options: null };
-                continue
-            }
-            let row = get_row(board, rowno(i));
-            let col = get_col(board, colno(i));
-            let block = get_block(board, blockno(i))
-            let options = []
-            for (let opt = 0; opt < 9; opt += 1) {
-                optval = opt + 1;
-                options.push(!(
-                    row.some(item => item.value == optval) ||
-                    col.some(item => item.value == optval) ||
-                    block.some(item => item.value == optval)))
-            }
-            result.push({ value: null, options: options });
-        }
-        return result;
-    }
 
-    function log(input, comment, output) {
+    function log(s, at) {
+        let logentry = s.log.at(at);
         let tr = document.createElement("TR");
         let td = document.createElement("TD");
-        td.appendChild(board_to_table(input));
+        let logtext = `${logentry.reason??logentry.type} (${logentry.relatedDimension??''} ${logentry.relatedIds?.map(i=>i+1).join(',')??''})`
+        td.appendChild(document.createTextNode(logtext));
         tr.appendChild(td);
         td = document.createElement("TD");
-        td.appendChild(document.createTextNode(comment));
-        tr.appendChild(td);
-        td = document.createElement("TD");
-        if (output != null) td.appendChild(board_to_table(output));
+        td.appendChild(board_to_table(s, logentry.resultingCells, logentry.cellids));
         tr.appendChild(td);
         sudoku_log.appendChild(tr);
     }
 
-
-    function only_one_option_in_cell(input) {
-        let output = [];
-        let has_changed = false;
-        for (let item of input) {
-            if (!!item.value || has_changed) {
-                output.push(item);
-                continue;
-            }
-
-            only_value = item.options.reduce((p, cv, ci) => cv ? (p == null ? ci + 1 : NaN) : p, null);
-            if (isNaN(only_value)) {
-                output.push(item);
-                continue;
-            }
-
-            output.push({ value: only_value, options: null });
-            has_changed = true;
-        }
-        if (has_changed) {
-            output = calc_options(output);
-            if (log) log(input, "Only one option in cell.", output);
-            return output;
-        }
-        else return null;
-    }
-
-    function option_is_unique_for_rcb(input) {
-        let output = [];
-        let has_changed = false;
-        for (let i = 0; i < 81; i += 1) {
-            let val = input[i];
-            if (!!val.value || has_changed) {
-                output.push(val);
-                continue
-            }
-
-            let row = get_row(input, rowno(i));
-            let col = get_col(input, colno(i));
-            let block = get_block(input, blockno(i))
-            let result_value = null;
-            for (let opt = 0; opt < 9; opt += 1) {
-                if (!val.options[opt]) continue;
-
-                optval = opt + 1;
-
-                let count_in_row = row.filter(item => (!!item.options && item.options[opt])).length;
-                let count_in_col = col.filter(item => (!!item.options && item.options[opt])).length;
-                let count_in_block = block.filter(item => (!!item.options && item.options[opt])).length
-
-                if (count_in_row == 1 || count_in_col == 1 || count_in_block == 1) {
-                    // option is unique for row, col or block
-                    result_value = optval;
-                    break;
-                }
-            }
-
-            if (result_value == null) {
-                output.push(val);
-                continue
-            }
-
-            output.push({ value: result_value, options: null });
-            has_changed = true;
-        }
-        if (has_changed) {
-            output = calc_options(output);
-            if (log) log(input, "Option is unique for row, col or block.", output);
-            return output;
-        }
-        else return null;
-    }
-
-    const solution_functions = [only_one_option_in_cell, option_is_unique_for_rcb];
-
-    function next_in_scenario(scenario) {
-        input = scenario.scenario_input;
-        if (scenario.i >= 81) return null;
-
-        let output = [];
-        for (let i = 0; i < scenario.i; i += 1) {
-            output.push(input[i]);
-        }
-        if (!!input[scenario.i].value || scenario.opt >= 9) {
-            scenario.i += 1;
-            scenario.opt = 0;
-            return next_in_scenario(scenario);
-        }
-        if (!input[scenario.i].options[scenario.opt]) {
-            scenario.opt += 1;
-            return next_in_scenario(scenario);
-        }
-        output.push({ value: scenario.opt + 1, options: null });
-        scenario.opt += 1;
-        for (let i = scenario.i + 1; i < 81; i += 1) {
-            output.push(input[i]);
-        }
-        return calc_options(output);
-    }
-    function scenario_to_text(scenario) {
-        if (!scenario) {
-            return "";
-        }
-        else {
-            return `(${rowno(scenario.i) + 1}|${colno(scenario.i) + 1}) ::= ${scenario.opt}\n${scenario_to_text(scenario.previous_scenario)}`
-        }
-    }
-
-    function solve(input, scenario = null) {
-        // Asynchronous iterative solution approach
-
-        let output = null;
-        for (let f of solution_functions) {
-            output = f(input);
-            if (output != null) break;
-        }
-        if (output == null) {
-            // no solution found, use brute force?
-            if (allow_brute_force.checked) {
-                scenario = {
-                    scenario_input: input,
-                    log_start: sudoku_log.rows.length,
-                    i: (!!scenario ? scenario.i + 1 : 0),
-                    opt: 0,
-                    previous_scenario: scenario
-                }
-                output = next_in_scenario(scenario);
-                log(input, "Guess.", output)
-            }
-            if (!output) {
-                log(input, "No solution found!", output)
-            }
-        }
-        if (!!output && output.some(item => !item.value && item.options.every(opt => !opt))) {
-            // contradictory, no option left
-            output = null;
-            while (!!scenario && !output) {
-                // rollback scenario and guess next if in a brute force scenario
-                while (scenario.log_start < sudoku_log.rows.length) {
-                    sudoku_log.deleteRow(-1)
-                }
-                input = scenario.scenario_input;
-                output = next_in_scenario(scenario);
-                if (output == null) {
-                    log(input, "Contradiction. Back to previous scenario.")
-                    scenario = scenario.previous_scenario;
-                } else {
-                    log(input, "Guess.", output)
-                }
-            }
-            if (!output) {
-                log(input, "Contradictory!", output);
-            }
-        }
-
-        sudoku_output.innerText = ""
-        sudoku_output.appendChild(board_to_table(output??input));
-        pre = document.createElement("PRE");
-        pre.appendChild(document.createTextNode(scenario_to_text(scenario)));
-        sudoku_output.appendChild(pre);
-        if (!!output && !output.every(item => item.value != null)) {
-            window.setTimeout(() => {
-                solve(output, scenario);
-            }, 10);
-        }
-    }
 </script>
