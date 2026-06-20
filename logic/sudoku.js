@@ -527,7 +527,7 @@ export class Sudoku {
         const try_option = try_cell.options.toSorted((a,b) => Math.random()-.5)[0];
 
         try {
-            await new Sudoku(this)
+            await new this.constructor(this)
                 .performStep('set', [try_cell.cellid], try_option, 'try')
                 .solve();
             
