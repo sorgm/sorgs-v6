@@ -19,29 +19,61 @@ export class Sudoku {
         size: 9,
         dimensions: ["row", "col", "block"]
     })
-    // config may be preset differently on extend but may be changed during runtime
+    // config and callback may be preset differently on extend
+    // but may be changed during runtime therefore they are copied into this on init
     static config = {
         autoinit_options: false,
-        allow_brute_force: false
+        allow_brute_force: false,
+        dont_cache_dimensions: false
     }
-
-    // non-static implementation is generic
-    cells = []; // internal Array of Objects returned by #createCell
-    log = []; // log of transformation steps already performed, see logStep
-    options_ready = false;
-    callback = {
+    static callback = {
         step_performed: [] // Parameter is this, last step is this.log.at(-1)
     }
 
     /**
+     * Static function to generate a random preset
+     * 
+     * @param {number} difficulty - value defining how empty the board is (0..1)
+     * @returns {string} To be used as preset for initBoard
+     */
+    static async randomPreset(difficulty) {
+        // start empty and generate a random solution using brute force
+        // this is the class (not an instance) in a static method
+        const s = new this("_".repeat(this.setup.size**2));
+        s.config.allow_brute_force = true;
+        await s.solve();
+        for(let cell of s.cells.filter(cell => Math.random()<=difficulty)) {
+            cell.value = null;
+        }
+        // CAVE! This does not ensure constant difficulty nor unique solutions!
+        return s.toString();
+    }
+    
+
+    // non-static implementation is generic
+    cells = []; // internal Array of Objects returned by #createCell
+    #dimcells_cache = null; // internal cross-reference to cells by dimension
+    log = []; // log of transformation steps already performed, see logStep
+    options_ready = false;
+
+    /**
      * Creates a new Sudoku board
      *
-     * @param {string|Array|Function|Sudoku} preset - List of digits and blanks to initalize
+     * @param {any} preset - List of digits and blanks to initalize (optional)
      * @returns {Sudoku} The newly created board (default)
      * @throws {Error} if preset is wrong type or not matching size squared
      */
     constructor(preset) {
-        this.performStep('init', [preset]);
+        this.config = structuredClone(this.constructor.config);
+
+        this.callback = Object.fromEntries(
+        Object.entries(this.constructor.callback).map(([key, arr]) => [
+            key,
+            [...arr] // clone array, keep same function refs
+        ])
+        );
+
+        if (preset) this.performStep('init', [preset]);
     }
 
     /**
@@ -63,6 +95,7 @@ export class Sudoku {
      */
     #initBoard(preset) {
         this.cells = [];
+        this.#dimcells_cache = null;
         this.options_ready = false;
 
         if (preset instanceof Sudoku) preset = preset.toString();
@@ -78,7 +111,7 @@ export class Sudoku {
             this.cells.push(this.constructor.#createCell(cellid, value==-1?null:value));
         }
 
-        if (this.constructor.config.autoinit_options) this.#initOptions();
+        if (this.config.autoinit_options) this.#initOptions();
         return this;
     }
 
@@ -253,6 +286,37 @@ export class Sudoku {
     }
 
     /**
+     * Returns a dimension e.g. a row of cells
+     *
+     * @param {string} dimension - Queried dimension (or "cell")
+     * @param {Array|number} dimid - Queried ids of dimension or cell
+     * @returns {Array} array of cell references
+     * @throws {Error} if type is unknown
+     */
+    get_dimension(dimension, dimid) {
+        if (dimension == 'cell') return [this.cells[dimid]]; // for completeness
+        if (this.config.dont_cache_dimensions) {
+            return this.cells.filter(cell =>
+                        cell.dimensions[dimension] == dimid
+                    );
+                }
+
+        // prepare cache
+        if (!this.#dimcells_cache) {
+            this.#dimcells_cache = {};
+            for(let cell of this.cells) {
+                for(let dim in cell.dimensions) {
+                    if (!this.#dimcells_cache[dim]) this.#dimcells_cache[dim] = [];
+                    if (!this.#dimcells_cache[dim][cell.dimensions[dim]]) this.#dimcells_cache[dim][cell.dimensions[dim]] = [];
+                    this.#dimcells_cache[dim][cell.dimensions[dim]].push(cell);
+                }
+            }
+        }
+
+        return this.#dimcells_cache[dimension][dimid];
+    }
+
+    /**
      * Calculates the next transformation step
      *
      * @returns {Object|null} for calling performStep or null for not found
@@ -328,9 +392,7 @@ export class Sudoku {
         if (!this.options_ready) this.#initOptions();
         for(let dimension of this.constructor.setup.dimensions) {
             for(let dimid=0; dimid<this.constructor.setup.size; dimid+=1) {
-                let dimcells = this.cells.filter(cell =>
-                    cell.dimensions[dimension] == dimid
-                );
+                let dimcells = this.get_dimension(dimension, dimid);
                 for(let option=0; option<this.constructor.setup.size; option+=1) {
                     if (dimcells.some(cell => cell.value == option)) continue;
                     let foundCells = dimcells.filter(cell => cell.options != null && cell.options.includes(option));
@@ -356,37 +418,37 @@ export class Sudoku {
      * @returns {Object|null} for calling performStep or null for not found
      */
     async #nextStepWithBruteForce() {
-        if (!this.constructor.config.allow_brute_force) return null;
+        if (!this.config.allow_brute_force) return null;
         if (!this.options_ready) this.#initOptions();
 
-        for (let cell of this.cells.toSorted((a,b) => a.options?.length-b.options?.length)) {
-            if (cell.value != null) continue;
+        const cells_by_options_length = this.cells
+        .filter(a => a.options?.length)
+        .toSorted((a,b) => a.options.length-b.options.length || Math.random()-.5);
+        if (cells_by_options_length.length == 0) return null;
 
-            for (let option of cell.options) {
-                try {
-                    await new Sudoku(this)
-                        .performStep('set', [cell.cellid], option, 'try')
-                        .solve();
-                    
-                    return {
-                        type: 'set',
-                        cellids: [cell.cellid],
-                        option: option,
-                        reason: 'Tried with brute force'
-                    };
-                }
-                catch (e) {
-                    return {
-                        type: 'remove',
-                        cellids: [cell.cellid],
-                        option: option,
-                        reason: `Tried with brute force: ${e.message}`
-                    };
-                }
-            }
+        const try_cell = cells_by_options_length[0];
+        const try_option = try_cell.options.toSorted((a,b) => Math.random()-.5)[0];
+
+        try {
+            await new Sudoku(this)
+                .performStep('set', [try_cell.cellid], try_option, 'try')
+                .solve();
+            
+            return {
+                type: 'set',
+                cellids: [try_cell.cellid],
+                option: try_option,
+                reason: 'Tried with brute force'
+            };
         }
-
-        throw new Error(`Solution not even found with brute force.`);
+        catch (e) {
+            return {
+                type: 'remove',
+                cellids: [try_cell.cellid],
+                option: try_option,
+                reason: `Tried with brute force: ${e.message}`
+            };
+        }
     }
 
     /**
@@ -402,6 +464,7 @@ export class Sudoku {
             if (!nextStep) throw new Error(`no solution found`);
             this.performStep(...Object.values(nextStep));
         }
+        this.#logStep("solution");
         return this;
     }
 }
