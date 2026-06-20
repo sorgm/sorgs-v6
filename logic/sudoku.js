@@ -1,8 +1,10 @@
 import typing from '../modules/typing.js'
+import jsext from '../modules/jsext.js'
 
 export class Sudoku {
     // static functions and constants to overwrite for non-standard sudoku classes extending this one
-    static #createCell(cellid, value) {
+    // functions are not true private (#-prefix) but only protected (_-prefix) to enable inheritance
+    static _createCell(cellid, value) {
         return {
             cellid: cellid,
             value: value,
@@ -23,8 +25,10 @@ export class Sudoku {
     // but may be changed during runtime therefore they are copied into this on init
     static config = {
         autoinit_options: false,
+        allow_options: true,
+        allow_long_running_steps: true,
         allow_brute_force: false,
-        dont_cache_dimensions: false
+        brute_force_recursion_limit: 3
     }
     static callback = {
         step_performed: [] // Parameter is this, last step is this.log.at(-1)
@@ -40,8 +44,11 @@ export class Sudoku {
         // start empty and generate a random solution using brute force
         // this is the class (not an instance) in a static method
         const s = new this("_".repeat(this.setup.size**2));
+        s.config.allow_options = true;
+        s.config.allow_long_running_steps = false;
         s.config.allow_brute_force = true;
-        await s.solve();
+        s.config.brute_force_recursion_limit = 0;
+        await s.solve(); // CAVE! sometime runs into error
         for(let cell of s.cells.filter(cell => Math.random()<=difficulty)) {
             cell.value = null;
         }
@@ -51,8 +58,8 @@ export class Sudoku {
     
 
     // non-static implementation is generic
-    cells = []; // internal Array of Objects returned by #createCell
-    #dimcells_cache = null; // internal cross-reference to cells by dimension
+    cells = []; // Array of Objects returned by _createCell
+    dimcells = {}; // cross-reference to cells by dimension and dimid
     log = []; // log of transformation steps already performed, see logStep
     options_ready = false;
 
@@ -64,7 +71,16 @@ export class Sudoku {
      * @throws {Error} if preset is wrong type or not matching size squared
      */
     constructor(preset) {
-        this.config = structuredClone(this.constructor.config);
+        if (preset instanceof Sudoku) {
+            this.config = structuredClone(preset.config);
+            this.config.brute_force_recursion_limit -= 1;
+            if (this.config.brute_force_recursion_limit < 0) {
+                this.config.allow_brute_force = false;
+            }
+        }
+        else {
+            this.config = structuredClone(this.constructor.config);
+        }
 
         this.callback = Object.fromEntries(
         Object.entries(this.constructor.callback).map(([key, arr]) => [
@@ -93,11 +109,7 @@ export class Sudoku {
      * @returns {Sudoku} this for chaining.
      * @throws {Error} if preset is wrong type or not matching size squared
      */
-    #initBoard(preset) {
-        this.cells = [];
-        this.#dimcells_cache = null;
-        this.options_ready = false;
-
+    _initBoard(preset) {
         if (preset instanceof Sudoku) preset = preset.toString();
         if (typeof preset === 'function') preset = preset();
         if ((typeof preset === 'string') && preset.includes("\n")) preset = preset.split("\n");
@@ -106,12 +118,24 @@ export class Sudoku {
         if (preset.length!=this.constructor.setup.size**2) throw new Error(`Number of elements is not size squared: ${preset.length} != ${this.size}²`);
         // preset is string of length size²
 
+        this.cells = [];
+        this.dimcells = Object.fromEntries(
+            this.constructor.setup.dimensions.map(dim => 
+                [dim,Array.from({ length: this.constructor.setup.size }, _ => [])]));
+        this.options_ready = false;
+
         for (let cellid=0; cellid<preset.length; cellid+=1) {
             const value = this.constructor.setup.digits.indexOf(preset[cellid]);
-            this.cells.push(this.constructor.#createCell(cellid, value==-1?null:value));
+            const cell = this.constructor._createCell(cellid, value==-1?null:value);
+
+            this.cells.push(cell);
+
+            for(let [dim,dimid] of Object.entries(cell.dimensions)) {
+                this.dimcells[dim][dimid].push(cell);
+            }
         }
 
-        if (this.config.autoinit_options) this.#initOptions();
+        if (this.config.autoinit_options) this._initOptions();
         return this;
     }
 
@@ -119,8 +143,8 @@ export class Sudoku {
      * Initializes all options (internal, no log)
      * @returns (Sudoku) this for chaining
      */
-    #initOptions() {
-        this.cells.forEach(cell => cell.options = this.#calcOptions(cell.cellid));
+    _initOptions() {
+        this.cells.forEach(cell => cell.options = this._calcOptions(cell.cellid));
         this.options_ready = true;
         return this;
     }
@@ -132,9 +156,9 @@ export class Sudoku {
      * @param {number} value - Number of option to set as value
      * @returns {Sudoku} this for chaining
      */
-    #setValue(cellid, value) {
+    _setValue(cellid, value) {
         const cell = this.cells[cellid];
-        if (cell.value != null) this.#removeValue(cellid);
+        if (cell.value != null) this._removeValue(cellid);
         cell.value = value;
         cell.options = null;
         if (!this.options_ready) return this;
@@ -147,7 +171,7 @@ export class Sudoku {
                 neighbor.cellid != cellid && 
                 neighbor.value == null)
             .forEach(neighbor => 
-                this.#removeOption(neighbor.cellid, value));
+                this._removeOption(neighbor.cellid, value));
         }
         return this;
     }
@@ -158,7 +182,7 @@ export class Sudoku {
      * @param {number} cellid - Number of cell to update
      * @returns {Sudoku} this for chaining
      */
-    #removeValue(cellid) {
+    _removeValue(cellid) {
         const cell = cells[cellid];
         if (cell.value == null) return this;
         cell.value = null;
@@ -172,9 +196,9 @@ export class Sudoku {
                 neighbor.cellid != cellid && 
                 neighbor.options != null)
             .forEach(neighbor => 
-                this.#addOption(neighbor.cellid, value));
+                this._addOption(neighbor.cellid, value));
         }
-        cell.options = this.#calcOptions(cellid);
+        cell.options = this._calcOptions(cellid);
         return this;
     }
 
@@ -185,7 +209,7 @@ export class Sudoku {
      * @param {number} cellid - Number of cell to update
      * @returns {Array} options allowed
      */
-    #calcOptions(cellid) {
+    _calcOptions(cellid) {
         const cell = this.cells[cellid];
         if (cell.value != null) return null;
 
@@ -206,16 +230,20 @@ export class Sudoku {
      * Removes an option from a cell (internal, no log)
      *
      * @param {number} cellid - Number of cell to update
-     * @param {number} option - Number of option to remove
+     * @param {number|Array} options - Number of option to remove
      * @returns {Sudoku} this for chaining
      * @throws {Error} if board is contradictory
      */
-    #removeOption(cellid, option) {
+    _removeOption(cellid, options) {
         const cell = this.cells[cellid];
         if (cell.options == null) return this;
-        const index = cell.options.indexOf(option);
-        if (index != -1) cell.options.splice(index, 1);
+        if (!Array.isArray(options)) options = [options];
 
+        for (let option of options) {
+            const index = cell.options.indexOf(option);
+            if (index != -1) cell.options.splice(index, 1);
+        }
+        
         if (cell.options.length==0) throw new Error(`Board is contradictory`);
 
         return this;
@@ -228,7 +256,7 @@ export class Sudoku {
      * @param {number} option - Number of option to add
      * @returns {Sudoku} this for chaining
      */
-    #addOption(cellid, option) {
+    _addOption(cellid, option) {
         const cell = this.cells[cellid];
         if (cell.options == null) return this;
         const index = cell.options.indexOf(option);
@@ -247,7 +275,7 @@ export class Sudoku {
      * @param {number} relatedId - Related id of dimension or cell for reason
      * @returns {Sudoku} this for chaining
      */
-    #logStep(type, cellids, option, reason, relatedDimension, relatedIds) {
+    _logStep(type, cellids, option, reason, relatedDimension, relatedIds) {
         this.log.push({
             type, cellids, option, reason, relatedDimension, relatedIds,
             resultingCells: structuredClone(this.cells)
@@ -260,7 +288,7 @@ export class Sudoku {
      *
      * @param {string} type - Type of transformation: init, options, set, remove
      * @param {Array|number} cellids - Array of Number of cell to update
-     * @param {number} option - Number of option to remove or value to set
+     * @param {number|Array} option - Number of option to remove or value to set
      * @param {string} reason - Reason why this is correct
      * @param {string} relatedDimension - Related dimension for reason (or "cell")
      * @param {Array|number} relatedIds - Related ids of dimension or cell for reason.
@@ -269,10 +297,10 @@ export class Sudoku {
      */
     performStep(type, cellids, option, reason, relatedDimension, relatedIds) {
         const typecalls = {
-            init: (preset) => this.#initBoard(preset),
-            options: () => this.#initOptions(),
-            set: (cellid, value) => this.#setValue(cellid, value),
-            remove: (cellid, option) => this.#removeOption(cellid, option)
+            init: (preset) => this._initBoard(preset),
+            options: () => this._initOptions(),
+            set: (cellid, value) => this._setValue(cellid, value),
+            remove: (cellid, option) => this._removeOption(cellid, option)
         }
         if (!(type in typecalls)) throw new Error(`unknown type '${type}'`);
         if (cellids && !Array.isArray(cellids)) cellids = [cellids]
@@ -280,40 +308,9 @@ export class Sudoku {
 
         if (cellids) cellids.forEach(cellid => typecalls[type](cellid, option));
         if (!cellids) typecalls[type](option);
-        this.#logStep(type, cellids, option, reason, relatedDimension, relatedIds);
+        this._logStep(type, cellids, option, reason, relatedDimension, relatedIds);
         this.callback.step_performed.forEach(f => f(this))
         return this;
-    }
-
-    /**
-     * Returns a dimension e.g. a row of cells
-     *
-     * @param {string} dimension - Queried dimension (or "cell")
-     * @param {Array|number} dimid - Queried ids of dimension or cell
-     * @returns {Array} array of cell references
-     * @throws {Error} if type is unknown
-     */
-    get_dimension(dimension, dimid) {
-        if (dimension == 'cell') return [this.cells[dimid]]; // for completeness
-        if (this.config.dont_cache_dimensions) {
-            return this.cells.filter(cell =>
-                        cell.dimensions[dimension] == dimid
-                    );
-                }
-
-        // prepare cache
-        if (!this.#dimcells_cache) {
-            this.#dimcells_cache = {};
-            for(let cell of this.cells) {
-                for(let dim in cell.dimensions) {
-                    if (!this.#dimcells_cache[dim]) this.#dimcells_cache[dim] = [];
-                    if (!this.#dimcells_cache[dim][cell.dimensions[dim]]) this.#dimcells_cache[dim][cell.dimensions[dim]] = [];
-                    this.#dimcells_cache[dim][cell.dimensions[dim]].push(cell);
-                }
-            }
-        }
-
-        return this.#dimcells_cache[dimension][dimid];
     }
 
     /**
@@ -323,10 +320,13 @@ export class Sudoku {
      */
     async nextStep() {
         const nextStepFunctions = [
-            () => this.#nextStepCellWithOneOption(),
-            () => this.#nextStepConfirmOptionsReady(),
-            () => this.#nextStepDimensionWithOneOption(),
-            () => this.#nextStepWithBruteForce()
+            () => this._nextStepSingleEmptyCellInDimension(),
+            () => this._nextStepCellWithOneOptionBeforeOptions(),
+            () => this._nextStepConfirmOptionsReady(),
+            () => this._nextStepCellWithOneOption(),
+            () => this._nextStepDimensionWithOneOption(),
+            () => this._nextStepRemoveOptionsForPairOfPairs(),
+            () => this._nextStepWithBruteForce()
         ]
         let result = null;
         for (let f of nextStepFunctions) {
@@ -338,12 +338,75 @@ export class Sudoku {
     }
 
     /**
+     * Retrieves next dimension with only one cell for an option
+     * before calculation of options
+     *
+     * @returns {Object|null} for calling performStep or null for not found
+     */
+    _nextStepSingleEmptyCellInDimension() {
+        if (this.options_ready) return null;
+
+        for(let dimension in this.dimcells) {
+            for(let dimid=0; dimid<this.constructor.setup.size; dimid+=1) {
+                const dimcells = this.dimcells[dimension][dimid];
+                const emptycells = dimcells.filter(cell => cell.value == null);
+                if (emptycells.length != 1) continue;
+                const values = dimcells.map(cell => cell.value);
+                for(let option=0; option<this.constructor.setup.size; option+=1) {
+                    if (!values.includes(option)) {
+                        return {
+                            type: 'set',
+                            cellids: [emptycells[0].cellid],
+                            option: option,
+                            reason: 'Single empty cell in dimension',
+                            relatedDimension: dimension,
+                            relatedIds: [dimid]
+                        };
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves next cell with only one option before calculation of options
+     *
+     * @returns {Object|null} for calling performStep or null for not found
+     */
+    _nextStepCellWithOneOptionBeforeOptions() {
+        if (this.options_ready) return null;
+
+        let foundCell = null;
+        let option = null;
+
+        for(let cellid=0; cellid<this.cells.length; cellid+=1) {
+            let options = this._calcOptions(cellid);
+            if (options != null && options.length == 1) {
+                foundCell = this.cells[cellid];
+                option = options[0];
+                break;
+            }
+        }
+
+        if (!foundCell) return null;
+        return {
+            type: 'set',
+            cellids: [foundCell.cellid],
+            option: option,
+            reason: 'Cell has only one option left'
+        };
+    }
+
+    /**
      * Confirm that options are ready
      *
      * @returns {Object|null} for calling performStep or null for not found
      */
-    #nextStepConfirmOptionsReady() {
+    _nextStepConfirmOptionsReady() {
         if (this.options_ready) return null;
+        if (!this.config.allow_options) return null;
         return {
             type: 'options'
         };
@@ -354,25 +417,15 @@ export class Sudoku {
      *
      * @returns {Object|null} for calling performStep or null for not found
      */
-    #nextStepCellWithOneOption() {
+    _nextStepCellWithOneOption() {
+        if (!this.options_ready) return null;
         let foundCell = null;
         let option = null;
-        if (this.options_ready) {
-            foundCell = this.cells.find(cell => 
-                cell.options != null && 
-                cell.options.length==1);
-            option = foundCell?.options[0];
-        }
-        else {
-            for(let cellid=0; cellid<this.cells.length; cellid+=1) {
-                let options = this.#calcOptions(cellid);
-                if (options != null && options.length == 1) {
-                    foundCell = this.cells[cellid];
-                    option = options[0];
-                    break;
-                }
-            }
-        }
+
+        foundCell = this.cells.find(cell => 
+            cell.options != null && 
+            cell.options.length==1);
+        option = foundCell?.options[0];
 
         if (!foundCell) return null;
         return {
@@ -388,11 +441,11 @@ export class Sudoku {
      *
      * @returns {Object|null} for calling performStep or null for not found
      */
-    #nextStepDimensionWithOneOption() {
-        if (!this.options_ready) this.#initOptions();
+    _nextStepDimensionWithOneOption() {
+        if (!this.options_ready) return null;
         for(let dimension of this.constructor.setup.dimensions) {
             for(let dimid=0; dimid<this.constructor.setup.size; dimid+=1) {
-                let dimcells = this.get_dimension(dimension, dimid);
+                const dimcells = this.dimcells[dimension][dimid];
                 for(let option=0; option<this.constructor.setup.size; option+=1) {
                     if (dimcells.some(cell => cell.value == option)) continue;
                     let foundCells = dimcells.filter(cell => cell.options != null && cell.options.includes(option));
@@ -413,13 +466,57 @@ export class Sudoku {
     }
     
     /**
-     * Retrieves next cell with brute force
+     * Removes options if a pair of options exists identically twice in a dimension
+     * Also: Triplet of triplets etc
      *
      * @returns {Object|null} for calling performStep or null for not found
      */
-    async #nextStepWithBruteForce() {
+    _nextStepRemoveOptionsForPairOfPairs() {
+        if (!this.options_ready) return null;
+        if (!this.config.allow_long_running_steps) return null;
+
+        for(let dimension of this.constructor.setup.dimensions) {
+            for(let dimid=0; dimid<this.constructor.setup.size; dimid+=1) {
+                const dimcells = this.dimcells[dimension][dimid];
+                const subsets = jsext.getSubsets(
+                    dimcells.filter(cell => cell.options != null)
+                );
+
+                for(let subset of subsets) {
+                    const options = [...new Set(subset.reduce((p,c) => p.includes(c)?p:p.concat(c.options), []))];
+                    if (options.length != subset.length) continue;
+                    const cellids = subset.map(cell => cell.cellid);
+
+                    const othercells = dimcells.filter(cell => 
+                        !cellids.includes(cell.cellid) &&
+                        cell.options != null &&
+                        cell.options.some(option => options.includes(option)))
+
+                    if (othercells.length == 0) continue
+
+                    return {
+                        type: 'remove',
+                        cellids: othercells.map(cell => cell.cellid),
+                        option: options.toSorted((a,b) => a-b),
+                        reason: 'Remove options for a pair of pairs',
+                        relatedDimension: dimension,
+                        relatedIds: [dimid]
+                    };
+                }
+            }
+        }
+
+        return null;
+    }
+        
+    /**
+     * Retrieves next cell with brute force, partly random to vary alternatives
+     *
+     * @returns {Object|null} for calling performStep or null for not found
+     */
+    async _nextStepWithBruteForce() {
         if (!this.config.allow_brute_force) return null;
-        if (!this.options_ready) this.#initOptions();
+        if (!this.options_ready) this._initOptions();
 
         const cells_by_options_length = this.cells
         .filter(a => a.options?.length)
@@ -464,7 +561,16 @@ export class Sudoku {
             if (!nextStep) throw new Error(`no solution found`);
             this.performStep(...Object.values(nextStep));
         }
-        this.#logStep("solution");
+        this._logStep("solution");
         return this;
     }
+}
+
+export class LetterSudoku extends Sudoku {
+    static setup = Object.freeze({
+        digits: "ABCDEFGHI",
+        size: 9,
+        dimensions: ["row", "col", "block"]
+    })
+
 }

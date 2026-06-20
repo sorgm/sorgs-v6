@@ -19,7 +19,8 @@
     <p>just type 81 digits and blanks</p>
     <textarea id="sudoku_input" columns="9" rows="9"></textarea>
     <button id="sudoku_solve">Solve</button>
-    <input type="checkbox" id="allow_brute_force" value="false" title="Allow brute force" />
+    <input type="checkbox" id="allow_options" checked="checked" title="Allow options (aka pencil)" />
+    <input type="checkbox" id="allow_brute_force" title="Allow brute force" />
     <button id="sudoku_clear">Clear</button>
     <button id="sudoku_random">Random</button>
     <input type="range" id="sudoku_random_difficulty" min="10" max="90" value="50" step="5" title="Difficulty for random preset" />
@@ -100,10 +101,12 @@
     }
 </style>
 <script type="module">
-    import {Sudoku} from './sudoku.js'
+    import {LetterSudoku as Sudoku} from './sudoku.js'
 
     sudoku_solve.onclick = function () {
+        sudoku_log.innerHTML = "";
         const s = new Sudoku();
+        s.config.allow_options = allow_options.checked;
         s.config.allow_brute_force = allow_brute_force.checked;
         s.callback.step_performed.push(step_performed);
         s.performStep("init", sudoku_input.value);
@@ -121,13 +124,16 @@
         sudoku_log.innerHTML = "";
     };
     sudoku_random.onclick = async function () {
-        sudoku_input.value = await Sudoku.randomPreset(sudoku_random_difficulty.value/100);
-        sudoku_output.innerText = "";
         sudoku_log.innerHTML = "";
+        sudoku_output.innerText = "";
+
+        //Sudoku.callback.step_performed.push(step_performed);
+        sudoku_input.value = await Sudoku.randomPreset(sudoku_random_difficulty.value/100);
+        //Sudoku.callback.step_performed.pop();
     };
 
     function step_performed(s) {
-        sudoku_output.innerText = ""
+        sudoku_output.innerText = "";
         sudoku_output.appendChild(board_to_table(s, s.cells));
 
         log(s, -1)
@@ -181,7 +187,19 @@
         let logentry = s.log.at(at);
         let tr = document.createElement("TR");
         let td = document.createElement("TD");
-        let logtext = `${logentry.reason??logentry.type} (${logentry.relatedDimension??''} ${logentry.relatedIds?.map(i=>i+1).join(',')??''})`
+
+        let logtext = `${logentry.reason??logentry.type}`;
+        if (logentry.relatedDimension) {
+            logtext += ` (${logentry.relatedDimension??''} ${logentry.relatedIds?.map(i=>s.constructor.setup.digits[i]).join(',')??''})`;  
+        }
+        if (logentry.type == 'remove' && logentry.option) {
+            if (Array.isArray(logentry.option)) {
+                logtext += ` - ${logentry.option.map(option => s.constructor.setup.digits[option]).join(",")}`;
+            }
+            else {
+                logtext += `- ${s.constructor.setup.digits[option]}`
+            }
+        }
         td.appendChild(document.createTextNode(logtext));
         tr.appendChild(td);
         td = document.createElement("TD");
