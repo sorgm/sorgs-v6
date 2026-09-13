@@ -1,0 +1,1184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="google-site-verification" content="d7ufTXK2lwvT5S9JJmFloyXXNGC2GJOL6e9-Pq4DqI0" />
+    <meta name="viewport" content="width=device-width">
+
+    <title>Three Body Problem</title>
+    <script src="../main.js" type="module"></script>
+
+    <meta name="description" content="Numerical simulation of multiple bodies in gravitionally bound movement">
+    <meta name="keywords" content="Physics, Three Body Problem, Simulation">
+    <meta name="date" content="2026-09-12">
+</head>
+
+<body>
+    <h1>Three Body Problem</h1>
+    <p>Not trying to solve the problem, but trying to simulate movement of multiple bodies in gravitational bound situation and project it onto a screen. See <a href="#setup">setup</a> below.</p>
+
+    <svg id="virtual_screen"></svg>
+    <button id="start_simulation_button">Start simulation</button>
+    <button id="pause_simulation_button" disabled>Pause</button>
+    <button id="continue_simulation_button" disabled>Continue</button>
+    <div>
+        <p>Config:</p>
+        <dl id="config_dl">
+            <dt><label for="simulation_speed_s_per_run_log_ruler">Simulation speed [s/run]</label></dt>
+            <dd><input type="range" id="simulation_speed_s_per_run_log_ruler" min="1" max="10" value="3" step="1" title="Seconds per simulation run (logarithmic scale)" /> (1e1 to 10e10)</dd>
+            <dt><label for="simruns_per_second_ruler">Frequency of update [runs/s]</label></dt>
+            <dd><input type="range" id="simruns_per_second_ruler" min="1" max="100" value="60" step="1" title="Simulation runs (frames) per second" /> (1 to 100)</dd>
+            <dt><label for="max_simulation_runs_ruler">End simulation after max number of runs</label></dt>
+            <dd><input type="range" id="max_simulation_runs_ruler" min="1" max="1000" value="100" step="1" title="Limit maximum simulation duration to a number of runs" /> (1 to 1000)</dd>
+            <dt><label for="system_select">System to simulate</label></dt>
+            <dd><select id="system_select">
+            <option value="sol_solar_system" default><em>Sol</em> Solar System</option>
+            <option value="random_solar_system">Random Solar System (niy)</option>
+            </select></dd>
+            <dt><label for="real_screen_size_x_cm_input">Real svg screen size on monitor [cm]</label></dt>
+            <dd>[<input id="real_screen_size_x_cm_input" value="22" size="3"/>,
+                <input id="real_screen_size_y_cm_input" value="17" size="3"/>] as [width, height]</dd>
+            <dt><label for="real_screen_distance_cm_input">Your real distance from monitor [cm]</label></dt>
+            <dd><input id="real_screen_distance_cm_input" value="68" size="3"/></dd>
+        </dl>
+    </div>
+    <pre id="simulation_log"></pre>
+
+    <h2 id="setup">Setup</h2>
+    <p>Basic idea is to calculate discrete movement periods. At any point in time any object has a known position and speed (3D vectors). Every object has a known mass. Gravitational pull can be calculated from a total mass and weighted position of all other masses - this induces a force, which induces an acceleration, which with fixed time per run enables to calculate new positions and speeds. Repeat.</p>
+    <p>So we need:</p>
+    <ul>
+        <li>number_of_objects (n): size of setup</li>
+        <li>objects_masses_kg (m): Array [0:n-1] of objects' masses in kg</li>
+        <li>objects_positions_sim_3d_m (p): Array of 3D vectors of objects' postions in simulation in m</li>
+        <li>objects_velocity_sim_3d_m_per_s (v): [3D,..] in m/s (all in <a href="#SI">[SI]</a> base units) </li>
+        <li>objects_other_masses_kg (xm): [kg,..] calculated sum of all other masses per object</li>
+        <li>objects_other_positions_sim_3d_m (xp): [3D,..] calculated center of other masses as average of their positions weighted by mass per object</li>
+        <li>objects_acceleration_sim_3d_m_per_s2 (a): calculated acceleration per object in simulation as 3d vector in meter per second squared per object</li>
+    </ul>
+    <p>To display this, we need an observer and a screen. We assume both are fixed in space and have no mass (which is unrealistic as hell). The observer watches the center of screen orthogonally without blinking. This setup is available in simulation and in reality and is represented in the virtual display at this html page. Having this, we can project an object to the screen in simulation resulting in a position in screen's coordinates. This can be shown in virtual screen using same coordinates. (see also <a href="mattscheibe.html">Abbildung auf Mattscheibe [de]</a>)</p>
+    
+    <p>So we need:</p>
+    <ul>
+        <li>real_screen_size_xy_m: something like [.20,.15] for 20cm wide and 15cm high - real size of the svg shown on monitor</li>
+        <li>real_screen_distance_m: something like .40 for 40cm between eyes and screen - real distance from monitor</li>
+        <li>real_screen_xy_px: size of the svg screen on monitor</li>
+        <li>screen_center_position_3d_m: position of the svg screen (center) in simulation, the window you're observing the scenario from</li>
+        <li>screen_x_3d_m: calculated vector being equivalent to width in svg screen but in simulation measures (left=0)</li>
+        <li>screen_y_3d_m: calculated vector being equivalent to height in svg screen but in simulation measures (top=0)</li>
+        <li>the latter three define a coordinate system in simulation that is equivalent to the svg screen on this page</li>
+        <li>observer_position_3d_m: calculated position of observer in simulation as focus point for projection</li>
+        <li>objects_virtual_positions_xy_px: projected positions of the objects in fraction of screen vectors</li>
+        <li>objects_virtual_diameter_px: projected diameter of the objects in fraction of screen vectors</li>
+    </ul>
+
+    <h2 id="define_screen_in_simulation">Finding the screen's coordinate system in simulation</h2> 
+
+    <p>The screen's center is located at <em>screen_center_position_3d_m</em> [p] and is oriented to <em>observation_target_3d_m</em> [t]. The vector t-p being <em>observation_vector_3d_m</em> [o] is orthogonal to the screens axes <em>screen_axes_xy_m</em> [x] and [y]. Both have fixed length being the screen's width [w] and height [h] from <em>real_screen_size_xy_m</em>, resulting coordinates in screen will be factors of +/-.5.</p>
+
+    <ol>
+    <li><math title="o ≔ t-p">
+        <mover><mi>o</mi><mo>→</mo></mover><mo>≔</mo>
+            <mover><mi>t</mi><mo>→</mo></mover>
+            <mo>-</mo>
+            <mover><mi>p</mi><mo>→</mo></mover>
+        <mo>|</mo><mtext>sn ljlksvj </mtext>
+    </math></li>
+    <li><math title="o⋅x ≔ 0  ∧  o⋅y ≔ 0">
+        <mover><mi>o</mi><mo>→</mo></mover><mo>⋅</mo><mover><mi>x</mi><mo>→</mo></mover><mo>≔</mo><mn>0</mn>
+        <mo>∧</mo>
+        <mover><mi>o</mi><mo>→</mo></mover><mo>⋅</mo><mover><mi>y</mi><mo>→</mo></mover><mo>≔</mo><mn>0</mn>
+    </math></li>
+    <li><math title="‖x‖ ≔ w  ∧  ‖y‖ ≔ h">
+        <mo>‖</mo><mover><mi>x</mi><mo>→</mo></mover><mo>‖</mo><mo>≔</mo><mi>w</mi>
+        <mo>∧</mo>
+        <mo>‖</mo><mover><mi>y</mi><mo>→</mo></mover><mo>‖</mo><mo>≔</mo><mi>h</mi>
+    </math></li>
+    </ol>
+
+    <p>Break down into coordinates assuming 
+        <math><mo>∀</mo><mover><mi>v</mi><mo>→</mo></mover><mo>.</mo>
+            <mover><mi>v</mi><mo>→</mo></mover><mo>≔</mo>
+            <msup><mrow><mo>[</mo><mtable>
+                <mtr><mtd><msub><mi>v</mi><mn>1</mn></msub></mtd>
+                <mtd><msub><mi>v</mi><mn>2</mn></msub></mtd>
+                <mtd><msub><mi>v</mi><mn>3</mn></msub></mtd></mtr>
+                </mtable><mo>]</mo></mrow><mo>T</mo></msup></math> in 3D.</p>
+
+    <ol start="4">
+        <li>(2) ⇒ <math title="o1*x1 + o2*x2 + o3*x3 = 0">
+            <msub><mi>o</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo>
+            <msub><mi>o</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo>
+            <msub><mi>o</mi><mn>3</mn></msub><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn>
+        </math></li>
+        <li>(2) ⇒ <math title="o1*y1 + o2*y2 + o3*y3 = 0">
+            <msub><mi>o</mi><mn>1</mn></msub><msub><mi>y</mi><mn>1</mn></msub><mo>+</mo>
+            <msub><mi>o</mi><mn>2</mn></msub><msub><mi>y</mi><mn>2</mn></msub><mo>+</mo>
+            <msub><mi>o</mi><mn>3</mn></msub><msub><mi>y</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn>
+        </math></li>
+        <li>(3) ⇒ <math title="x1² + x2² + x3² = w²">
+            <msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>x</mi><mn>3</mn><mn>2</mn></msubsup><mo>=</mo>
+            <msup><mi>w</mi><mn>2</mn></msup>
+        </math></li>
+        <li>(3) ⇒ <math title="y1² + y2² + y3² = h²">
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>y</mi><mn>3</mn><mn>2</mn></msubsup><mo>=</mo>
+            <msup><mi>h</mi><mn>2</mn></msup>
+        </math></li>
+    </ol>
+
+    <p>Screen shall be upside up, therefor we search for a solution for y with y2 being max (second coordinate assuming being the "up" direction). Eliminate y3 by setting (5) into (7).</p>
+
+    <ol start="8">
+        <li>(5) ⇒ <math title="y3 = (-o1*y1 + -o2*y2) / o3 = -o1/o3*y1 + -o2/o3*y2">
+            <msub><mi>y</mi><mn>3</mn></msub><mo>=</mo>
+            <mfrac>
+                <mrow>
+                    <mo>-</mo><msub><mi>o</mi><mn>1</mn></msub><mo>×</mo><msub><mi>y</mi><mn>1</mn></msub>
+                    <mo>+</mo>
+                    <mo>-</mo><msub><mi>o</mi><mn>2</mn></msub><mo>×</mo><msub><mi>y</mi><mn>2</mn></msub>
+                </mrow>
+                <mrow>
+                    <msub><mi>o</mi><mn>3</mn></msub>
+                </mrow>
+            </mfrac><mo>=</mo>
+            <mrow>
+                <mo>-</mo><mfrac><msub><mi>o</mi><mn>1</mn></msub><msub><mi>o</mi><mn>3</mn></msub></mfrac>
+                <mo>×</mo><msub><mi>y</mi><mn>1</mn></msub>
+                <mo>+</mo>
+                <mo>-</mo><mfrac><msub><mi>o</mi><mn>2</mn></msub><msub><mi>o</mi><mn>3</mn></msub></mfrac>
+                <mo>×</mo><msub><mi>y</mi><mn>2</mn></msub>
+            </mrow>
+        </math></li>
+        
+        <li>into (7) ⇒ <math title="y1² + y2² + (-o1/o3*y1 + -o2/o3*y2)² = h²">
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msup>
+                <mrow><mo>(</mo>
+                    <mo>-</mo><mfrac><msub><mi>o</mi><mn>1</mn></msub><msub><mi>o</mi><mn>3</mn></msub></mfrac>
+                    <mo>×</mo><msub><mi>y</mi><mn>1</mn></msub>
+                    <mo>+</mo>
+                    <mo>-</mo><mfrac><msub><mi>o</mi><mn>2</mn></msub><msub><mi>o</mi><mn>3</mn></msub></mfrac>
+                    <mo>×</mo><msub><mi>y</mi><mn>2</mn></msub>
+                <mo>)</mo></mrow>
+                <mn>2</mn></msup><mo>=</mo>
+            <msup><mi>h</mi><mn>2</mn></msup>
+        </math></li>
+
+        <li>⇒ <math title="y1² + y2² + o1²/o3²*y1² + 2*o1*o2/o3²*y1*y2 + o2²/o3²*y2² = h²">
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup><mo>+</mo>
+
+            <mfrac>
+                <msubsup><mi>o</mi><mn>1</mn><mn>2</mn></msubsup>
+                <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup>
+            </mfrac><mo>×</mo><msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo>
+
+            <mn>2</mn><mo>×</mo>
+            <mfrac>
+                <mrow><msub><mi>o</mi><mn>1</mn></msub><msub><mi>o</mi><mn>2</mn></msub></mrow>
+                <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup>
+            </mfrac>
+            <mo>×</mo><msub><mi>y</mi><mn>1</mn></msub><mo>×</mo><msub><mi>y</mi><mn>2</mn></msub><mo>+</mo>
+            
+            <mfrac>
+                <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup>
+                <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup>
+            </mfrac><mo>×</mo><msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup>
+            <mo>=</mo>
+            <msup><mi>h</mi><mn>2</mn></msup>
+        </math></li>
+
+        <li>⇒ <math title="(1 + o2²/o3²)*y2² + 2*(o1*o2/o3²)*y1*y2 + (1 + o1²/o3²)*y1² = h²">
+            <mrow>
+                <mo>(</mo>
+                    <mn>1</mn><mo>+</mo>
+                    <mfrac><msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mfrac>
+                <mo>)</mo>
+                <mo>×</mo><msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup>
+            </mrow><mo>+</mo>
+            <mrow>
+                <mn>2</mn><mo>×</mo>
+                <mfrac>
+                    <mrow><msub><mi>o</mi><mn>1</mn></msub><msub><mi>o</mi><mn>2</mn></msub></mrow>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mfrac>
+                <mo>×</mo><msub><mi>y</mi><mn>1</mn></msub>
+                <mo>×</mo><msub><mi>y</mi><mn>2</mn></msub>
+            </mrow><mo>+</mo>
+            <mrow>
+                <mo>(</mo>
+                    <mn>1</mn><mo>+</mo>
+                    <mfrac><msubsup><mi>o</mi><mn>1</mn><mn>2</mn></msubsup>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mfrac>
+                <mo>)</mo>
+                <mo>×</mo><msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            </mrow><mo>=</mo>
+            <msup><mi>h</mi><mn>2</mn></msup>
+        </math></li>
+
+        <li>⇒ <math title="(o3² + o2²)/o3²*y2² + 2*(o1 * o2)/o3²*y1*y2 = h² - (o3² + o1²)/o3²*y1²">
+            <mrow>
+                <mfrac>
+                    <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                        <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup></mrow>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mfrac>
+                <mo>×</mo><msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup>
+            </mrow><mo>+</mo>
+            <mrow>
+                <mn>2</mn><mo>×</mo>
+                <mfrac>
+                    <mrow><msub><mi>o</mi><mn>1</mn></msub><mo>×</mo>
+                        <msub><mi>o</mi><mn>2</mn></msub></mrow>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mfrac>
+                <mo>×</mo><msub><mi>y</mi><mn>1</mn></msub>
+                <mo>×</mo><msub><mi>y</mi><mn>2</mn></msub>
+            </mrow><mo>=</mo>
+            <msup><mi>h</mi><mn>2</mn></msup><mo>-</mo>
+            <mrow>
+                <mfrac>
+                    <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                        <msubsup><mi>o</mi><mn>1</mn><mn>2</mn></msubsup></mrow>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mfrac>
+                <mo>×</mo><msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            </mrow>
+        </math></li>
+
+        <li>⇒ <math title="(o3² + o2²)*y2² + 2*(o1 * o2)*y1*y2 = h²*o3² - (o3² + o1²)*y1²">
+            <mrow>
+                <mrow><mo>(</mo><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                    <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup><mo>)</mo></mrow>
+                <mo>×</mo><msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup>
+            </mrow><mo>+</mo>
+            <mrow>
+                <mn>2</mn><mo>×</mo>
+                <mrow><mo>(</mo><msub><mi>o</mi><mn>1</mn></msub><mo>×</mo>
+                    <msub><mi>o</mi><mn>2</mn></msub><mo>)</mo></mrow>
+                <mo>×</mo><msub><mi>y</mi><mn>1</mn></msub>
+                <mo>×</mo><msub><mi>y</mi><mn>2</mn></msub>
+            </mrow><mo>=</mo>
+            <mrow><msup><mi>h</mi><mn>2</mn></msup>
+                <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mrow><mo>-</mo>
+            <mrow>
+                <mrow><mo>(</mo><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                    <msubsup><mi>o</mi><mn>1</mn><mn>2</mn></msubsup><mo>)</mo></mrow>
+                <mo>×</mo><msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            </mrow>
+        </math></li>
+
+        <li>⇒ <math title="y2² + 2*(o1 * o2)/(o3² + o2²)*y1*y2 = h²*o3²/(o3² + o2²) - (o3² + o1²)/(o3² + o2²)*y1²">
+            <msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup><mo>+</mo>
+
+            <mrow>
+                <mn>2</mn><mo>×</mo>
+                <mfrac>
+                    <mrow><msub><mi>o</mi><mn>1</mn></msub><mo>×</mo>
+                        <msub><mi>o</mi><mn>2</mn></msub></mrow>
+                    <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                        <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup></mrow>
+                </mfrac>
+                <mo>×</mo><msub><mi>y</mi><mn>1</mn></msub>
+                <mo>×</mo><msub><mi>y</mi><mn>2</mn></msub>
+            </mrow><mo>=</mo>
+
+            <mfrac>
+                <mrow><msup><mi>h</mi><mn>2</mn></msup>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mrow>
+                <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                    <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup></mrow>
+            </mfrac><mo>-</mo>
+
+            <mrow>
+                <mfrac>
+                    <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                        <msubsup><mi>o</mi><mn>1</mn><mn>2</mn></msubsup></mrow>
+                    <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                        <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup></mrow>
+                </mfrac>
+                <mo>×</mo><msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            </mrow>
+        </math></li>
+
+    </ol>
+
+    <p>Simplify by replacing complex but constant elements:</p>
+
+    <ol start="15">
+        <li><math title="c1 ≔ (o1 * o2)/(o3² + o2²) and c2 ≔ h²*o3²/(o3² + o2²) and c3 ≔ (o3² + o1²)/(o3² + o2²)">
+            <msub><mi>c</mi><mn>1</mn></msub><mo>≔</mo>
+            <mfrac>
+                <mrow><msub><mi>o</mi><mn>1</mn></msub><mo>×</mo>
+                    <msub><mi>o</mi><mn>2</mn></msub></mrow>
+                <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                    <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup></mrow>
+            </mfrac>
+            <mo>∧</mo>
+            <msub><mi>c</mi><mn>2</mn></msub><mo>≔</mo>
+            <mfrac>
+                <mrow><msup><mi>h</mi><mn>2</mn></msup>
+                    <msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup></mrow>
+                <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                    <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup></mrow>
+            </mfrac>
+            <mo>∧</mo>
+            <msub><mi>c</mi><mn>3</mn></msub><mo>≔</mo>
+            <mfrac>
+                <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                    <msubsup><mi>o</mi><mn>1</mn><mn>2</mn></msubsup></mrow>
+                <mrow><msubsup><mi>o</mi><mn>3</mn><mn>2</mn></msubsup><mo>+</mo>
+                    <msubsup><mi>o</mi><mn>2</mn><mn>2</mn></msubsup></mrow>
+            </mfrac>
+        </math></li>
+
+        <li>⇒ <math title="y2² + 2*c1*y1*y2 = c2 - c3*y1²">
+            <msubsup><mi>y</mi><mn>2</mn><mn>2</mn></msubsup><mo>+</mo>
+
+            <mrow>
+                <mn>2</mn>
+                <msub><mi>c</mi><mn>1</mn></msub>
+                <msub><mi>y</mi><mn>1</mn></msub>
+                <msub><mi>y</mi><mn>2</mn></msub>
+            </mrow><mo>=</mo>
+
+            <msub><mi>c</mi><mn>2</mn></msub>
+                
+            <mo>-</mo>
+            <mrow>
+                <msub><mi>c</mi><mn>3</mn></msub>
+                <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            </mrow>
+        </math></li>
+
+        <li>⇒ <math title="(y2 + c1*y1)² - (c1*y1)² = c2 - c3*y1²">
+            <msup>
+                <mrow><mo>(</mo>
+                    <msub><mi>y</mi><mn>2</mn></msub>
+                    <mo>+</mo>
+                    <mrow>
+                        <msub><mi>c</mi><mn>1</mn></msub>
+                        <msub><mi>y</mi><mn>1</mn></msub>
+                    </mrow>
+                <mo>)</mo></mrow>
+                <mn>2</mn>
+            </msup>
+            <mo>-</mo>
+            <msup>
+                <mrow><mo>(</mo>
+                    <msub><mi>c</mi><mn>1</mn></msub>
+                    <msub><mi>y</mi><mn>1</mn></msub>
+                <mo>)</mo></mrow>
+                <mn>2</mn>
+            </msup>
+            <mo>=</mo>
+            <msub><mi>c</mi><mn>2</mn></msub>
+            <mo>-</mo>
+            <mrow>
+                <msub><mi>c</mi><mn>3</mn></msub>
+                <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            </mrow>
+        </math></li>
+
+        <li>⇒ <math title="(y2 + c1*y1)² = (c1² - c3)*y1² + c2">
+            <msup>
+                <mrow><mo>(</mo>
+                    <msub><mi>y</mi><mn>2</mn></msub>
+                    <mo>+</mo>
+                    <mrow>
+                        <msub><mi>c</mi><mn>1</mn></msub>
+                        <msub><mi>y</mi><mn>1</mn></msub>
+                    </mrow>
+                <mo>)</mo></mrow>
+                <mn>2</mn>
+            </msup>
+            <mo>=</mo>
+            <mrow><mo>(</mo>
+                <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                <mo>-</mo>
+                <msub><mi>c</mi><mn>3</mn></msub>
+            <mo>)</mo></mrow>
+            <mo>×</mo>
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>+</mo>
+            <msub><mi>c</mi><mn>2</mn></msub>
+        </math></li>
+
+        <li>⇒ <math title="y2 = -c1*y1 + ±√((c1² - c3)*y1² + c2)">
+            <msub><mi>y</mi><mn>2</mn></msub>
+            <mo>=</mo>
+            <mrow>
+                <mo>-</mo>
+                <msub><mi>c</mi><mn>1</mn></msub>
+                <msub><mi>y</mi><mn>1</mn></msub>
+            </mrow>
+            <mo>±</mo>
+            <msqrt>
+                <mrow><mo>(</mo>
+                    <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                    <mo>-</mo>
+                    <msub><mi>c</mi><mn>3</mn></msub>
+                <mo>)</mo></mrow>
+                <mo>×</mo>
+                <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+                <mo>+</mo>
+                <msub><mi>c</mi><mn>2</mn></msub>
+            </msqrt>
+        </math></li>
+
+    </ol>
+
+    <p>This formula shows y2 being derived only from y1 and constant parameters. To maximize y2 we need to set the derivative to 0. According to chain rule <math><mo>∀</mo><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>≔</mo><mi>g</mi><mo>(</mo><mi>h</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>)</mo><mo>.</mo><mi>f'</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><mi>g'</mi><mo>(</mo><mi>h</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>)</mo><mo>×</mo><mi>h'</mi><mo>(</mo><mi>x</mi><mo>)</mo></math> and because the derivative of <math><msqrt><mi>x</mi></msqrt></math> is <math><mfrac><mn>1</mn><mrow><mn>2</mn><msqrt><mi>x</mi></msqrt></mrow></mfrac></math> we get:</p>
+
+    <ol start="20">
+        <li><math title="y2' = -c1 ± 1/(2*√((c1² - c3)*y1² + c2)) * (2*(c1² - c3)*y1 + 0)">
+            <msub><mi>y</mi><mn>2</mn></msub><mo>'</mo>
+            <mo>=</mo>
+            <mrow>
+                <mo>-</mo><msub><mi>c</mi><mn>1</mn></msub>
+                <mo>±</mo>
+                <mfrac>
+                    <mn>1</mn>
+                    <mrow>
+                        <mn>2</mn>
+                        <mo>×</mo>
+                        <msqrt>
+                            <mrow><mo>(</mo>
+                                <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                                <mo>-</mo>
+                                <msub><mi>c</mi><mn>3</mn></msub>
+                            <mo>)</mo></mrow>
+                            <mo>×</mo>
+                            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+                            <mo>+</mo>
+                            <msub><mi>c</mi><mn>2</mn></msub>
+                        </msqrt>
+                    </mrow>
+                </mfrac>
+                <mo>×</mo>
+                <mrow>
+                    <mo>(</mo>
+                    <mn>2</mn>
+                    <mo>×</mo>
+                    <mrow><mo>(</mo>
+                        <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                        <mo>-</mo>
+                        <msub><mi>c</mi><mn>3</mn></msub>
+                    <mo>)</mo></mrow>
+                    <mo>×</mo>
+                    <msub><mi>y</mi><mn>1</mn></msub>
+                    <mo>+</mo>
+                    <mn>0</mn>
+                    <mo>)</mo>
+                </mrow>
+            </mrow>
+        </math></li>
+
+        <li><math><msub><mi>y</mi><mn>2</mn></msub><mo>'</mo><mo>≔</mo><mn>0</mn></math>⇒
+            <math title="c1 = ± ((c1² - c3)*y1)/(√((c1² - c3)*y1² + c2))">
+            <msub><mi>c</mi><mn>1</mn></msub>
+            <mo>=</mo>
+            <mo>±</mo>
+            <mfrac>
+               <mrow>
+                    <mrow><mo>(</mo>
+                        <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                        <mo>-</mo>
+                        <msub><mi>c</mi><mn>3</mn></msub>
+                    <mo>)</mo></mrow>
+                    <mo>×</mo>
+                    <msub><mi>y</mi><mn>1</mn></msub>
+                </mrow>
+                <mrow>
+                    <msqrt>
+                        <mrow><mo>(</mo>
+                            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                            <mo>-</mo>
+                            <msub><mi>c</mi><mn>3</mn></msub>
+                        <mo>)</mo></mrow>
+                        <mo>×</mo>
+                        <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+                        <mo>+</mo>
+                        <msub><mi>c</mi><mn>2</mn></msub>
+                    </msqrt>
+                </mrow>
+            </mfrac>
+        </math></li>
+
+        <li>⇒<math title="c1² = ((c1² - c3)*y1)²/(c1² - c3)*y1² + c2)">
+            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>=</mo>
+            <mfrac>
+                <msup>
+                    <mrow><mo>(</mo>
+                        <mrow><mo>(</mo>
+                            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                            <mo>-</mo>
+                            <msub><mi>c</mi><mn>3</mn></msub>
+                        <mo>)</mo></mrow>
+                        <mo>×</mo>
+                        <msub><mi>y</mi><mn>1</mn></msub>
+                    <mo>)</mo></mrow>
+                    <mn>2</mn>
+                </msup>
+                <mrow>
+                    <mrow><mo>(</mo>
+                        <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                        <mo>-</mo>
+                        <msub><mi>c</mi><mn>3</mn></msub>
+                    <mo>)</mo></mrow>
+                    <mo>×</mo>
+                    <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+                    <mo>+</mo>
+                    <msub><mi>c</mi><mn>2</mn></msub>
+                </mrow>
+            </mfrac>
+        </math></li>
+
+        <li>⇒<math title="c1²*((c1² - c3)*y1² + c2) = (c1² - c3)²*y1²">
+            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>×</mo>
+            <mrow><mo>(</mo>
+                <mrow><mo>(</mo>
+                    <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                    <mo>-</mo>
+                    <msub><mi>c</mi><mn>3</mn></msub>
+                <mo>)</mo></mrow>
+                <mo>×</mo>
+                <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+                <mo>+</mo>
+                <msub><mi>c</mi><mn>2</mn></msub>
+            <mo>)</mo></mrow>
+            <mo>=</mo>
+            <msup>
+                <mrow><mo>(</mo>
+                    <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                    <mo>-</mo>
+                    <msub><mi>c</mi><mn>3</mn></msub>
+                <mo>)</mo></mrow>
+                <mn>2</mn>
+            </msup>
+            <mo>×</mo>
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+        </math></li>
+
+        <li>⇒<math title="c1²*(c1² - c3)*y1² - (c1² - c3)²*y1² = -c1²*c2">
+            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>×</mo>
+            <mrow><mo>(</mo>
+                <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                <mo>-</mo>
+                <msub><mi>c</mi><mn>3</mn></msub>
+            <mo>)</mo></mrow>
+            <mo>×</mo>
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>-</mo>
+            <msup>
+                <mrow><mo>(</mo>
+                    <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                    <mo>-</mo>
+                    <msub><mi>c</mi><mn>3</mn></msub>
+                <mo>)</mo></mrow>
+                <mn>2</mn>
+            </msup>
+            <mo>×</mo>
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>=</mo>
+            <mo>-</mo>
+            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>×</mo>
+            <msub><mi>c</mi><mn>2</mn></msub>
+        </math></li>
+
+        <li>⇒<math title="(c1² - (c1² - c3))*(c1² - c3)*y1² = -c1²*c2">
+            <mrow><mo>(</mo>
+                <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                <mo>-</mo>
+                <mrow><mo>(</mo>
+                    <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                    <mo>-</mo>
+                    <msub><mi>c</mi><mn>3</mn></msub>
+                <mo>)</mo></mrow>
+            <mo>)</mo></mrow>
+            <mo>×</mo>
+            <mrow><mo>(</mo>
+                <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                <mo>-</mo>
+                <msub><mi>c</mi><mn>3</mn></msub>
+            <mo>)</mo></mrow>
+            <mo>×</mo>
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>=</mo>
+            <mo>-</mo>
+            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>×</mo>
+            <msub><mi>c</mi><mn>2</mn></msub>
+        </math></li>
+
+        <li>⇒<math title="c3*(c1² - c3)*y1² = -c1²*c2">
+            <msub><mi>c</mi><mn>3</mn></msub>
+            <mo>×</mo>
+            <mrow><mo>(</mo>
+                <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                <mo>-</mo>
+                <msub><mi>c</mi><mn>3</mn></msub>
+            <mo>)</mo></mrow>
+            <mo>×</mo>
+            <msubsup><mi>y</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>=</mo>
+            <mo>-</mo>
+            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+            <mo>×</mo>
+            <msub><mi>c</mi><mn>2</mn></msub>
+        </math></li>
+
+        <li>⇒<math title="y1 = ±√(- (c1²*c2) / (c3*(c1² - c3)))">
+            <msub><mi>y</mi><mn>1</mn></msub>
+            <mo>=</mo>
+            <mo>±</mo>
+            <msqrt>
+                <mfrac>
+                    <mrow>
+                        <mo>-</mo>
+                        <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                        <mo>×</mo>
+                        <msub><mi>c</mi><mn>2</mn></msub>
+                    </mrow>
+                    <mrow>
+                        <msub><mi>c</mi><mn>3</mn></msub>
+                        <mo>×</mo>
+                        <mrow><mo>(</mo>
+                            <msubsup><mi>c</mi><mn>1</mn><mn>2</mn></msubsup>
+                            <mo>-</mo>
+                            <msub><mi>c</mi><mn>3</mn></msub>
+                        <mo>)</mo></mrow>
+                    </mrow>
+                </mfrac>
+            </msqrt>
+        </math></li>
+
+    </ol>
+
+    <p>Using (27), (19) und (8), <math><mover><mi>y</mi><mo>→</mo></mover></math> can be calculated. For <math><mover><mi>x</mi><mo>→</mo></mover></math> we have to go back to (4) and (6), adding that x and y have to be orthogonal, too. All is fixed now except x:</p>
+    
+    <ol>
+        <li><math title="o1*x1 + o2*x2 + o3*x3 = 0">
+            <msub><mi>o</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo>
+            <msub><mi>o</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo>
+            <msub><mi>o</mi><mn>3</mn></msub><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn>
+        </math></li>
+        <li><math title="x1² + x2² + x3² = w²">
+            <msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>+</mo>
+            <msubsup><mi>x</mi><mn>3</mn><mn>2</mn></msubsup><mo>=</mo>
+            <msup><mi>w</mi><mn>2</mn></msup>
+        </math></li>
+        <li><math title="y1*x1 + y2*x2 + y3*x3 = 0">
+            <msub><mi>y</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo>
+            <msub><mi>y</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo>
+            <msub><mi>y</mi><mn>3</mn></msub><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn>
+        </math></li>
+    </ol>
+    <p>tbc</p>
+
+    <h2>References</h2>
+    <p id="SI">[SI] Wikipedia contributors. (2026, September 11). International System of Units. In Wikipedia, The Free Encyclopedia. Retrieved 06:20, September 12, 2026, from <a href="https://en.wikipedia.org/w/index.php?title=International_System_of_Units&oldid=1374353568">https://en.wikipedia.org/w/index.php?title=International_System_of_Units&oldid=1374353568</a></p>
+    <p id="solsys">[solsys] Wikipedia contributors. (2026, September 7). List of Solar System objects. In Wikipedia, The Free Encyclopedia. Retrieved 08:43, September 12, 2026, from <a href="https://en.wikipedia.org/w/index.php?title=List_of_Solar_System_objects&oldid=1373762538">https://en.wikipedia.org/w/index.php?title=List_of_Solar_System_objects&oldid=1373762538</a></a></p>
+    <p id="Newton">[Newton] Wikipedia contributors. (2026, August 23). Newton's law of universal gravitation. In Wikipedia, The Free Encyclopedia. Retrieved 12:39, September 12, 2026, from <a href="https://en.wikipedia.org/w/index.php?title=Newton%27s_law_of_universal_gravitation&oldid=1370960529">https://en.wikipedia.org/w/index.php?title=Newton%27s_law_of_universal_gravitation&oldid=1370960529</a></p>
+    <p id="MathML">[MathML] W3C. (2026, July 27). MathML Core. In W3C Editor's Draft. Retrieved Sept 12, 2026, from <a href="https://w3c.github.io/mathml-core/">https://w3c.github.io/mathml-core/</a> and <a href="https://www.w3.org/TR/MathML3/appendixc.html">https://www.w3.org/TR/MathML3/appendixc.html</a></p>
+</body>
+
+</html>
+
+<style>
+    #virtual_screen {
+        display: block;
+        width: 60%;
+        aspect-ratio: 4 / 3;
+        background-color: black;
+    }
+
+    /* table-like appearance of config dl */
+    #config_dl {width: 55rem;}
+    #config_dl>* {display: inline-block; width: 25rem;}
+
+    /* more space for math li */
+    li:has(math) {margin-top:.2em; margin-bottom:.2em;}
+</style>
+
+<script type="module">
+    /*
+        Configuration includes logging, initialization and interactive controls
+    */
+
+    const config = {
+        // Speed of simulation in (simulated) seconds per run (1e1 to 1e10)
+        get simulation_speed_s_per_run() {
+            return this._simulation_speed_s_per_run;
+        },
+        set simulation_speed_s_per_run(new_value) {
+            let new_exponent = Math.round(Math.log10(new_value));
+            if (new_exponent<1) new_exponent = 1;
+            if (new_exponent>10) new_exponent = 10;
+            new_value = Math.pow(10, new_exponent);
+            this._simulation_speed_s_per_run = new_value;
+            simulation_speed_s_per_run_log_ruler.value = new_exponent;
+            log(`Simulation speed: 10^${new_exponent} s/run`);
+        },
+
+        // Frequency of simulation in runs (i.e. frames) per (real) second (1 to 100)
+        get simruns_per_second() {
+            return this._simruns_per_second;
+        },
+        set simruns_per_second(new_value) {
+            new_value = Math.round(new_value);
+            if (new_value<1) new_value=1;
+            if (new_value>100) new_value=100;
+            this._simruns_per_second = new_value;
+            simruns_per_second_ruler.value = new_value;
+            log(`Frequency of update: ${new_value} runs/s`);
+        },
+
+        // End simulation after max number of runs
+        get max_simulation_runs() {
+            return this._max_simulation_runs;
+        },
+        set max_simulation_runs(new_value) {
+            new_value = Math.round(new_value);
+            if (new_value<1) new_value=1;
+            if (new_value>1000) new_value=1000;
+            this._max_simulation_runs = new_value;
+            max_simulation_runs_ruler.value = new_value;
+            log(`End simulation latest after ${new_value} runs.`);
+        },
+
+        // System to simulate (get value is a function, set by function or function name)
+        get system() {
+            return eval(this._system);
+        },
+        set system(new_value) {
+            if (typeof new_value == 'function') new_value = new_value.name;
+            let options_available = Array.from(system_select.options, option => option.value)
+            try {
+                if (!options_available.includes(new_value)) throw new Error("Invalid system (not in select options)");
+                if (typeof eval(new_value) != 'function') throw new Error("Invalid system (no function)");
+
+                this._system = new_value;
+                system_select.value = new_value;
+                log(`System selected: ${new_value}`);
+
+                eval(this._system)();
+                logobject(simdata);
+                logobject(rundata);
+            } catch (error) {
+                log(`An error occurred selecting system ${new_value}: ${error.toString()}`)
+                system_select.value = this._system;
+            }
+        },
+
+        // real screen size and distance
+        get real_screen_size_xy_m() {
+            return this._real_screen_size_xy_m;
+        },
+        set real_screen_size_xy_m(new_value) {
+            try {
+                if (!Array.isArray(new_value)) throw new Error("new value is no array");
+                if (new_value.length!=2) throw new Error("new value is not 2d");
+                new_value = new_value.map(coordinate => {
+                    coordinate = Math.round(coordinate*10)/10;
+                    if (coordinate<1) coordinate=1;
+                    if (coordinate>100) coordinate=100;
+                });
+                //no log
+                this._real_screen_size_xy_m = new_value;
+            }
+            catch {
+                log(`Error setting real_screen_size_xy_m to ${JSON.stringify(new_value)}: ${error.toString()}}`);
+            }
+            finally {
+                real_screen_size_x_cm_input.value = this._real_screen_size_xy_m[0]*100;
+                real_screen_size_y_cm_input.value = this._real_screen_size_xy_m[1]*100;
+            }
+        },
+        get real_screen_distance_m() {
+            return this._real_screen_distance_m;
+        },
+        set real_screen_distance_m(new_value) {
+            new_value = Math.round(new_value);
+            if (new_value<1) new_value=1;
+            if (new_value>100) new_value=100;
+            this.real_screen_distance_m = new_value;
+            real_screen_distance_cm_input.value = this.real_screen_distance_m*100;
+        }
+    }
+
+    // initialization
+    log(`Initializiation:`, true)
+    config.simulation_speed_s_per_run = simulation_speed_s_per_run_log_ruler.value;
+    config.simruns_per_second = simruns_per_second_ruler.value
+    config.max_simulation_runs = max_simulation_runs_ruler.value
+    // config.system = system_select.value; after init run variables
+
+    // react to interactive controls
+    simulation_speed_s_per_run_log_ruler.onchange = function() {
+        config.simulation_speed_s_per_run = Math.pow(10, simulation_speed_s_per_run_log_ruler.value);
+    }
+    simruns_per_second_ruler.onchange = function() {
+        config.simruns_per_second = simruns_per_second_ruler.value;
+    }
+    max_simulation_runs_ruler.onchange = function() {
+        config.max_simulation_runs = max_simulation_runs_ruler.value;
+    }
+    system_select.onchange = function() {
+        config.system = system_select.value;
+    }
+    real_screen_size_x_cm_input.onchange = function() {
+        config.real_screen_size_xy_m = [real_screen_size_x_cm_input.value/100,real_screen_size_y_cm_input.value/100];
+    }
+    real_screen_size_y_cm_input.onchange = function() {
+        config.real_screen_size_xy_m = [real_screen_size_x_cm_input.value/100,real_screen_size_y_cm_input.value/100];
+    }
+    real_screen_distance_cm_input.onchange = function() {
+        config.real_screen_distance_m = real_screen_distance_cm_input.value/100;
+    }
+
+    /*
+        Simulation run control
+    */
+
+    let simulation_is_running = false;
+    let completed_simulation_runs = 0;
+    let current_run_timeoutID = null;
+
+    start_simulation_button.onclick = function () {
+        pause_simulation_button.disabled = false;
+        continue_simulation_button.disabled = true;
+        simulation_is_running = true;
+        completed_simulation_runs = 0;
+        simulation_log.innerHTML = "";
+        config.system = config.system.name; // reinit
+        current_run_timeoutID = setTimeout(run_simulation, 0);
+    };
+
+    pause_simulation_button.onclick = function () {
+        pause_simulation_button.disabled = true;
+        continue_simulation_button.disabled = false;
+        simulation_is_running = false;
+    };
+
+    continue_simulation_button.onclick = function () {
+        pause_simulation_button.disabled = false;
+        continue_simulation_button.disabled = true;
+        simulation_is_running = true;
+        current_run_timeoutID = setTimeout(run_simulation, 0);
+    };
+
+    /*
+        Simulation
+    */
+
+    async function run_simulation() {
+        let starttime_of_simrun = new Date(Date.now());
+        log(`Simulation run ${completed_simulation_runs+1}:`,true);
+
+        // do the maths
+        calc_next_objects_acceleration_sim_3d_m_per_s2();
+        calc_next_objects_velocity_sim_3d_m();
+        calc_next_objects_positions_sim_3d_m();
+        logobject(rundata)
+
+        await(sleep(Math.random()*100))
+
+        // end of simulation run
+        let endtime_of_simrun = new Date(Date.now());
+        let duration_of_simrun_s = (endtime_of_simrun-starttime_of_simrun)/1000;
+        completed_simulation_runs+=1;
+
+        // end of whole simulation?
+        if (simulation_is_running == false || completed_simulation_runs >= config.max_simulation_runs) {
+            current_run_timeoutID = null;
+            pause_simulation_button.disabled = true;
+            continue_simulation_button.disabled = true;
+            return;
+        }
+
+        // start next run
+        let start_next_run_in_s = 1/config.simruns_per_second - duration_of_simrun_s;
+        if (start_next_run_in_s<0) {
+            log(`Duration of run was: ${duration_of_simrun_s*1000} ms.`);
+            config.simruns_per_second = Math.floor(1/duration_of_simrun_s);
+            start_next_run_in_s = 0;
+        }
+        current_run_timeoutID = setTimeout(run_simulation, start_next_run_in_s*1000);
+    }
+
+    /*
+        Current status of simulation and calculation of object movement in simulation
+    */
+
+    // simulation data
+    let simdata = {
+        number_of_objects: 0,
+        objects_names: [],
+        object_colors: [],
+        objects_masses_kg: [],
+        objects_diameters_m: []
+    }
+
+    // current run data
+    let rundata = {
+        objects_acceleration_sim_3d_m_per_s2: null,
+        objects_positions_sim_3d_m: [],
+        objects_velocity_sim_3d_m_per_s: []
+    }
+
+    // delayed init of system
+    config.system = system_select.value;
+
+    // calculate acceleration for each object based on other objects' masses and positions
+    function calc_next_objects_acceleration_sim_3d_m_per_s2() {
+        // Newton's law of univeral gravitation (see [Newton]): F = G*m1*m2/r^2
+        // Force is mass times acceleration [N ::= kg*m/s^2] => F/m is acceleration => a = G*m2/r^2
+        let result = [];
+        for (let index=0; index<simdata.number_of_objects; index++) {
+            let position = rundata.objects_positions_sim_3d_m[index];
+            let total_acceleration = [0,0,0];
+            for (let other_index=0; other_index<simdata.number_of_objects; other_index++) {
+                if (index==other_index) continue;
+
+                let other_position = rundata.objects_positions_sim_3d_m[other_index];
+                let diff = vdifference(position, other_position);
+                let distance = vlength(diff);
+                let other_mass = simdata.objects_masses_kg[other_index];
+                const G = 6.674e-11 // [m^3/kg/s^2]
+                let acceleration = G * other_mass / Math.pow(distance,2);
+
+                let acceleration_vector = vmults(vmults(diff,1/distance),acceleration);
+                total_acceleration = vsum(total_acceleration, acceleration_vector);
+            }
+            result.push(total_acceleration);
+        }
+        rundata.objects_acceleration_sim_3d_m_per_s2 = result;
+    }
+
+    // apply acceleration to velocity to calculate velocity after n seconds
+    function calc_next_objects_velocity_sim_3d_m() {
+        // Velocity is acceleration over time
+        let result = [];
+        for (let index=0; index<simdata.number_of_objects; index++) {
+            let current_velocity = rundata.objects_velocity_sim_3d_m_per_s[index];
+            let acceleration_vector = rundata.objects_acceleration_sim_3d_m_per_s2[index];
+
+            let new_velocity = vsum(current_velocity, vmults(acceleration_vector, config.simulation_speed_s_per_run));
+
+            result.push(new_velocity);
+        }
+        rundata.objects_velocity_sim_3d_m_per_s = result;
+    }
+    
+    // apply acceleration to velocity to calculate velocity after n seconds
+    function calc_next_objects_positions_sim_3d_m() {
+        // Velocity is acceleration over time
+        let result = [];
+        for (let index=0; index<simdata.number_of_objects; index++) {
+            let current_position = rundata.objects_positions_sim_3d_m[index];
+            let velocity_vector = rundata.objects_velocity_sim_3d_m_per_s[index];
+
+            let new_position = vsum(current_position, vmults(velocity_vector, config.simulation_speed_s_per_run));
+
+            result.push(new_position);
+        }
+        rundata.objects_positions_sim_3d_m = result;
+    }
+
+    /*
+    Define screen in sim and project objects to screen
+    */
+    function define_screen_in_simulation() {
+        // see #define_screen_in_simulation in HTML 
+
+
+    }
+
+
+    // project the objects to virtual_screen (an svg element)
+    function project_to_virtual_screen() {
+        let real_screen_xy_px = [virtual_screen.offsetWidth, virtual_screen.offsetHeight];
+        // config.real_screen_size_xy_m; config.real_screen_distance_m;
+    }
+
+
+    /*
+    Systems for selection
+    */
+    // our solar system ("sol")
+    function sol_solar_system() {
+        simdata.number_of_objects = 3;
+        simdata.objects_names = ['sun', 'mercury', 'venus'];
+        simdata.object_colors = ['#FFD700', '#B1B1B1', '#EEDC82']; // see end of function
+
+        // astronomical base data [solsys]
+        let objects_masses_earths = [332950, 0.055, 0.815];
+        simdata.objects_diameters_m = [2*695500e3,4878.8e3,2*6051.8e3];
+        let objects_semi_major_axis_AU = [0, 0.387098, 0.723332];
+        let objects_avg_orbital_speed_km_per_s = [0, 47.36, 35.02];
+        let objects_inclination_to_ecliptic_degrees = [0, 7.005, 3.39458];
+
+        // recalculate needed data for simulation
+        simdata.objects_masses_kg = vmults(objects_masses_earths, 5.97217e24); // 1 Earth mass
+        let AU_m = 149597870700; // 1 AU = Historical Earth's semi-major axis
+        let objects_semi_major_axis_m = vmults(objects_semi_major_axis_AU, AU_m);
+        
+        // for 3D: [x,y,z]=[0,0,0] is sun, x is from observer to right, y is above ecliptic, z is to oberserver
+        rundata.objects_positions_sim_3d_m = objects_semi_major_axis_m.map(val => [val,0,0]); // all lined up to the right
+        rundata.objects_velocity_sim_3d_m_per_s = objects_avg_orbital_speed_km_per_s.map(val => [0,0,-val]); // no inclination, simplified
+        rundata.objects_acceleration_sim_3d_m_per_s2 = null;
+
+        /* Colors of solar system objects in html encoding according to MS Copilot
+        Object	    Approx. Color	        HTML Hex Code
+        Sun	        Pale Yellow	            #FFD700
+        Mercury	    Gray	                #B1B1B1
+        Venus	    Pale Yellowish-White	#EEDC82
+        Earth	    Blue-Green	            #2E8B57
+        Moon	    Light Gray	            #C0C0C0
+        Mars	    Reddish-Orange	        #B22222
+        Jupiter	    Light Brown/Beige	    #D2B48C
+        Saturn	    Pale Gold	            #F5DEB3
+        Uranus	    Pale Cyan	            #AFEEEE
+        Neptune	    Deep Blue	            #4169E1
+        Pluto	    Light Brownish-Gray	    #C2B280*/
+    }
+
+    // Some weird random solar system
+    function random_solar_system() {
+        sol_solar_system();
+    }
+
+    /*
+        Helper functions
+    */
+
+    function log(logtext, heading=false) {
+        let now = new Date(Date.now());
+        if (heading) {
+            simulation_log.append(now.toLocaleTimeString(), '\n');
+        }
+        simulation_log.append(now.toLocaleTimeString(), '\t', logtext, '\n');
+        if (heading) {
+            simulation_log.append(now.toLocaleTimeString(), '\t', "=".repeat(logtext.length), '\n');
+        }
+    }
+
+    function logobject(obj) {
+        let now = new Date(Date.now());
+
+        let string_table = [];
+        Object.keys(obj).forEach(key => {
+            let line = [key];
+            let val = obj[key];
+            if (val == null) return;
+            if (!Array.isArray(val)) val = [val];
+
+            val.forEach(entry => {
+                // console.log(typeof entry, entry);
+                if (Array.isArray(entry)) {
+                    line.push('['+entry.map(c => {
+                        if (typeof c == 'object' || typeof c == 'function') {
+                            return JSON.stringify(c);
+                        } else if (typeof c == 'number' && c>1e6) {
+                            return c.toExponential(5);
+                        } else if (typeof c == 'number' && !Number.isInteger(c)) {
+                            return c.toPrecision(5);
+                        } else {
+                            return c.toString();
+                        }
+                    }).join(',')+']');
+                } else if (typeof entry == 'object' || typeof entry == 'function') {
+                    line.push(JSON.stringify(entry));
+                } else if (typeof entry == 'number' && entry>1e6) {
+                    line.push(entry.toExponential(5));
+                } else if (typeof entry == 'number' && !Number.isInteger(entry)) {
+                    return entry.toPrecision(5);
+                } else {
+                    line.push(entry.toString());
+                }
+            });
+            string_table.push(line);
+        });
+        // assert: string_table is array of array of string
+        // console.log(obj, string_table);
+
+        let col_widths = [];
+        string_table.forEach(line => {
+            line.forEach((col_value,col_index) => {
+                if (!col_widths[col_index] || col_widths[col_index] < col_value.length) {
+                    col_widths[col_index] = col_value.length;
+                }
+            })
+        });
+        // console.log(col_widths);
+
+        string_table.forEach((line_value,line_index) => {
+            if (line_index==0) {
+                simulation_log.append(now.toLocaleTimeString(), '\t');
+            } else {
+                simulation_log.append('\t\t');
+            }
+            line_value.forEach((col_value,col_index) => {
+                simulation_log.append(col_value.padEnd(col_widths[col_index]+1));
+            });
+            simulation_log.append('\n');
+        });
+
+    }
+
+    // Sleep function
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Vector math: Multiply vector with scalar
+    function vmults(vector, scalar) {
+        return vector.map(component => component*scalar);
+    }
+    // Vector sum (p1+p2)
+    function vsum(p1, p2) {
+        return p1.map((p1_coordinate, coordinate_index) => {
+                return p1_coordinate + p2[coordinate_index];
+            });
+    }
+    // Vector difference (from p1 to p2 => p2-p1)
+    function vdifference(p1, p2) {
+        return p1.map((p1_coordinate, coordinate_index) => {
+                return p2[coordinate_index] - p1_coordinate;
+            });
+    }
+    // Vector length
+    function vlength(v) {
+        return Math.sqrt(
+            v.reduce((sum_of_squares, v_coordinate) => {
+                return sum_of_squares+Math.pow(v_coordinate, 2);
+            },0)
+        );
+    }
+    // Vector normalization to length 1
+    function vnorm(v) {
+        return vmults(v, 1/vlength(v));
+    }
+    // Dot product (scalar product) of two vectors
+    function vdotproduct(v1, v2) {
+        return v1.reduce((result, v1_coordinate, coordinate_index) => {
+            return result + v1_coordinate*v2[coordinate_index];
+        },0)
+    }
+    // Distance of two points in nD
+    function distance(p1, p2) {
+        return Math.sqrt(
+            p1.reduce((squared_distance, p1_coordinate, coordinate_index) => {
+                return squared_distance + Math.pow(p1_coordinate - p2[coordinate_index], 2);
+            }, 0)
+        );
+    }
+    
+</script>
